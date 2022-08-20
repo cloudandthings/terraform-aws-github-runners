@@ -1,0 +1,86 @@
+#cloud-config
+# See https://cloudinit.readthedocs.io/en/latest/
+### Helpful commands ##
+# sudo cat /var/lib/cloud/instance/user-data.txt
+# sudo cat /var/log/cloud-init-output.log
+# cloud-init devel schema --config-file x.yaml
+
+users:
+  - default
+  - name: ec2-user
+    ssh_authorized_keys: %{ for key in ssh_authorized_keys }
+      - ssh-rsa ${key}%{ endfor }
+
+# Update apt database on first boot (run 'apt-get update').
+# Note, if packages are given, or package_upgrade is true, then
+# update will be done independent of this setting.
+#
+# Default: false
+package_update: true
+
+# Install additional packages on first boot
+#
+# Default: none
+#
+# if packages are specified, then package_update will be set to true
+#
+# packages may be supplied as a single package name or as a list
+# with the format [<package>, <version>] wherein the specific
+# package version will be installed.
+packages:
+  - jq
+  - perl-Digest-SHA
+  ############################################
+  # extra stuff the runner needs to run our CI
+  ############################################
+  - docker
+  - python3
+  ###########################################
+
+write_files:
+  - path: /etc/systemd/system/this.service
+    content: |
+      [Unit]
+      Description=this service
+      After=network.target
+      [Service]
+      Type=simple
+      Restart=always
+      RestartSec=30
+      User=ec2-user
+      ExecStart=/home/ec2-user/actions-runner/run.sh
+      [Install]
+      WantedBy=multi-user.target
+runcmd:
+  # install
+  - mkdir actions-runner && cd actions-runner
+  - curl -o actions-runner-linux-x64-2.294.0.tar.gz -L 'https://github.com/actions/runner/releases/download/v2.294.0/actions-runner-linux-x64-2.294.0.tar.gz'
+  - echo "a19a09f4eda5716e5d48ba86b6b78fc014880c5619b9dba4a059eaf65e131780  actions-runner-linux-x64-2.294.0.tar.gz" | shasum -a 256 -c
+  - tar xzf ./actions-runner-linux-x64-2.294.0.tar.gz
+  - cd ..
+  - mv actions-runner /home/ec2-user/actions-runner
+
+  # configure
+  - sudo mkdir /opt/hostedtoolcache
+  - sudo chown -R ec2-user:ec2-user /opt/hostedtoolcache
+  - echo AGENT_TOOLSDIRECTORY=/opt/hostedtoolcache > /home/ec2-user/actions-runner/.env
+  - sudo chown -R ec2-user:ec2-user /home/ec2-user/
+
+  # register
+  - PERSONAL_ACCESS_TOKEN=`aws ssm get-parameter --with-decryption --name ${ssm_parameter_name} --region ${region} | jq -r '.Parameter.Value'`
+  - >
+    TOKEN_RESPONSE=`curl -X POST -H "Accept: application/vnd.github+json" -H "Authorization: token $PERSONAL_ACCESS_TOKEN" https://api.github.com/orgs/${github_organisation_name}/actions/runners/registration-token`
+  - TOKEN=`echo $TOKEN_RESPONSE | jq -r '.token'`
+  - su ec2-user -c "/home/ec2-user/actions-runner/config.sh --url '${url}' --unattended --token $TOKEN"
+
+  ############################################
+  # extra stuff the runner needs to run our CI
+  ############################################
+  - sudo service docker start
+  - sudo usermod -a -G docker ec2-user
+  ############################################
+  ############################################
+
+  # run
+  - sudo systemctl enable this
+  - sudo systemctl start this

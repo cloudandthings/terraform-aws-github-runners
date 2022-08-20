@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 jobs:
   check_format:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     name: Check terraform file are formatted correctly
     steps:
       - name: Checkout
