@@ -2,8 +2,8 @@ formatter: "markdown table" # this is required
 
 version: ">= 0.13.0, < 1.0.0"
 
-# header-from: main.tf
-# footer-from: ""
+header-from: main.tf
+footer-from: ""
 
 # recursive:
 #   enabled: false
@@ -16,10 +16,18 @@ sections:
 
 content: |-
   ## Module Docs
-  ### Examples
 
+  ### Basic Example
   ```hcl
   {{ include "examples/basic/main.tf" }}
+  ```  
+  ### Advanced Example
+  ```hcl
+  {{ include "examples/advanced/main.tf" }}
+  ```  
+  ### Software packs
+  ```hcl
+  {{ include "modules/software/software_packs.tf" }}
   ```  
   ----
   {{ .Inputs }}   
@@ -34,9 +42,6 @@ content: |-
   ----
   {{ .Resources }}  
   ----
-  ### Default excluded scoped actions
-  ```hcl
-  {{ include "/excluded_scoped_actions.tf" }}
   ``` 
 
 

@@ -1,0 +1,10 @@
+black
+boto3
+fabric
+flake8
+mock
+pre-commit
+pytest
+pytest-depends
+pytest_terraform
+PyYAML
