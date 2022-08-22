@@ -37,7 +37,7 @@ resource "aws_security_group" "runners_ec2" {
 }
 
 resource "aws_security_group_rule" "ingress" {
-  count             = length(var.ssh_authorized_keys) > 0 ? 1 : 0
+  count             = length(var.ssh_authorized_key) > 0 ? 1 : 0
   type              = "ingress"
   from_port         = 22
   to_port           = 22
@@ -46,24 +46,31 @@ resource "aws_security_group_rule" "ingress" {
   security_group_id = aws_security_group.runners_ec2.id
 }
 
+module "user_data" {
+  source = "./modules/user_data"
+  config = {
+    github_url               = var.github_url
+    github_organisation_name = var.github_organisation_name
+
+    aws_region             = var.region
+    aws_ssm_parameter_name = data.aws_ssm_parameter.runner.name
+
+    ssh_authorized_key = var.ssh_authorized_key
+  }
+}
+
 resource "aws_launch_configuration" "runners" {
   name_prefix   = "${var.naming_prefix}-runners"
   image_id      = data.aws_ami.ami.id
   instance_type = var.instance_type
   spot_price    = var.spot_price
 
-  user_data = templatefile(
-    "cloud-init.yaml", {
-      ssm_parameter_name       = data.aws_ssm_parameter.runner.name
-      github_organisation_name = var.github_organisation_name
-      ssh_authorized_keys      = var.ssh_authorized_keys
-      region                   = var.region
-      url                      = var.github_url
-  })
+  user_data = module.user_data.user_data
+
   iam_instance_profile = var.iam_instance_profile_arn
   security_groups      = [aws_security_group.runners_ec2.id]
 
-  associate_public_ip_address = length(var.ssh_authorized_keys) > 0 ? true : false
+  associate_public_ip_address = var.associate_public_ip_address
 
   lifecycle {
     create_before_destroy = true

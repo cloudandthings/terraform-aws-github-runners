@@ -5,11 +5,11 @@ variable "ssm_parameter_name" {
   default = "/github/runner/token"
 }
 
-variable "ssh_authorized_keys" {
+variable "ssh_authorized_key" {
   description = "TODO"
 
-  type    = list(string)
-  default = []
+  type    = string
+  default = ""
 }
 
 variable "iam_instance_profile_arn" {
@@ -62,4 +62,10 @@ variable "vpc_id" {
 variable "subnet_ids" {
   type        = list(string)
   description = "TODO"
+}
+
+variable "associate_public_ip_address" {
+  description = "TODO"
+  type        = bool
+  default     = false
 }

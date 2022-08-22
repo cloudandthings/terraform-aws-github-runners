@@ -1,0 +1,4 @@
+pre-commit
+pytest
+pytest_terraform
+PyYAML

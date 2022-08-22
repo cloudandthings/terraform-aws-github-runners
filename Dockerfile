@@ -6,10 +6,10 @@ FROM mcr.microsoft.com/vscode/devcontainers/base:0-${VARIANT}
 
 # Install additional OS packages.
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
-    && apt-get -y install --no-install-recommends python3 python3-pip
+    && apt-get -y install --no-install-recommends python3 python3-pip cloud-init
 
-COPY requirements.txt .
-RUN pip install -r requirements.txt
+COPY requirements-dev.txt .
+RUN pip install -r requirements-dev.txt
 
 COPY .pre-commit-config.yaml .
 RUN git init . && pre-commit install-hooks
