@@ -19,6 +19,7 @@
 | <a name="input_github_url"></a> [github\_url](#input\_github\_url) | TODO | `string` | n/a | yes |
 | <a name="input_iam_instance_profile_arn"></a> [iam\_instance\_profile\_arn](#input\_iam\_instance\_profile\_arn) | TODO | `string` | n/a | yes |
 | <a name="input_instance_type"></a> [instance\_type](#input\_instance\_type) | TODO | `string` | n/a | yes |
+| <a name="input_key_name"></a> [key\_name](#input\_key\_name) | TODO | `string` | `""` | no |
 | <a name="input_max_size"></a> [max\_size](#input\_max\_size) | TODO | `number` | `3` | no |
 | <a name="input_min_size"></a> [min\_size](#input\_min\_size) | TODO | `number` | `0` | no |
 | <a name="input_naming_prefix"></a> [naming\_prefix](#input\_naming\_prefix) | TODO | `string` | n/a | yes |

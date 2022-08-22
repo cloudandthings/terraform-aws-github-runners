@@ -12,6 +12,12 @@ variable "ssh_authorized_key" {
   default = ""
 }
 
+variable "key_name" {
+  description = "TODO"
+  type        = string
+  default     = ""
+}
+
 variable "iam_instance_profile_arn" {
   description = "TODO"
 
