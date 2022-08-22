@@ -46,7 +46,6 @@ write_files:
       Description=this service
       After=network.target
       [Service]
-      Environment=AGENT_TOOLSDIRECTORY=/opt/hostedtoolcache
       Type=simple
       Restart=always
       RestartSec=30
