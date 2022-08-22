@@ -69,3 +69,39 @@ variable "associate_public_ip_address" {
   type        = bool
   default     = false
 }
+
+variable "min_size" {
+  description = "TODO"
+  type        = number
+  default     = 0
+}
+
+variable "desired_size" {
+  description = "TODO"
+  type        = number
+  default     = 1
+}
+
+variable "max_size" {
+  description = "TODO"
+  type        = number
+  default     = 3
+}
+
+variable "aws_autoscaling_schedule_min_recurrences" {
+  description = "TODO"
+  type        = list(string)
+  default     = []
+}
+
+variable "aws_autoscaling_schedule_desired_recurrences" {
+  description = "TODO"
+  type        = list(string)
+  default     = []
+}
+
+variable "aws_autoscaling_schedule_max_recurrences" {
+  description = "TODO"
+  type        = list(string)
+  default     = []
+}
