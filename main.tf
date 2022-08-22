@@ -10,11 +10,11 @@ data "aws_ssm_parameter" "runner" {
 data "aws_ami" "ami" {
   # TODO Ubuntu or AMI filter
   most_recent = true
-  owners      = ["amazon"]
+  owners      = ["099720109477"]
 
   filter {
     name   = "name"
-    values = ["amzn2-ami-kernel-*-x86_64-gp2"]
+    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-20220609"]
   }
 
   filter {
@@ -37,7 +37,7 @@ resource "aws_security_group" "runners_ec2" {
 }
 
 resource "aws_security_group_rule" "ingress" {
-  count             = length(var.ssh_authorized_key) > 0 ? 1 : 0
+  count             = length(var.key_name) > 0 ? 1 : 0
   type              = "ingress"
   from_port         = 22
   to_port           = 22
@@ -54,8 +54,6 @@ module "user_data" {
 
     aws_region             = var.region
     aws_ssm_parameter_name = data.aws_ssm_parameter.runner.name
-
-    ssh_authorized_key = var.ssh_authorized_key
   }
 }
 

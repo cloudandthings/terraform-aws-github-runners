@@ -5,8 +5,6 @@ variable "config" {
 
     github_url               = string
     github_organisation_name = string
-
-    ssh_authorized_key = string
   })
   description = "TODO"
 }

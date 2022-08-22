@@ -25,7 +25,6 @@
 | <a name="input_naming_prefix"></a> [naming\_prefix](#input\_naming\_prefix) | TODO | `string` | n/a | yes |
 | <a name="input_region"></a> [region](#input\_region) | TODO | `string` | n/a | yes |
 | <a name="input_spot_price"></a> [spot\_price](#input\_spot\_price) | TODO | `string` | n/a | yes |
-| <a name="input_ssh_authorized_key"></a> [ssh\_authorized\_key](#input\_ssh\_authorized\_key) | TODO | `string` | `""` | no |
 | <a name="input_ssm_parameter_name"></a> [ssm\_parameter\_name](#input\_ssm\_parameter\_name) | TODO | `string` | `"/github/runner/token"` | no |
 | <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | TODO | `list(string)` | n/a | yes |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | TODO | `string` | n/a | yes |

@@ -5,13 +5,6 @@ variable "ssm_parameter_name" {
   default = "/github/runner/token"
 }
 
-variable "ssh_authorized_key" {
-  description = "TODO"
-
-  type    = string
-  default = ""
-}
-
 variable "key_name" {
   description = "TODO"
   type        = string

@@ -6,8 +6,6 @@ module "user_data_1" {
 
     github_url               = "__TEST_GITHUB_URL__"
     github_organisation_name = "__TEST_GITHUB_ORG_NAME__"
-
-    ssh_authorized_key = "__TEST_SSH_KEY__"
   }
 }
 
@@ -19,7 +17,5 @@ module "user_data_2" {
 
     github_url               = "__TEST_GITHUB_URL__"
     github_organisation_name = "__TEST_GITHUB_ORG_NAME__"
-
-    ssh_authorized_key = ""
   }
 }

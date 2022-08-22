@@ -7,11 +7,6 @@
 
 users:
   - default
-%{~ if length(SSH_AUTHORIZED_KEY) > 0 }
-  - name: ec2-user
-    ssh_authorized_keys:
-      - ssh-rsa ${SSH_AUTHORIZED_KEY}
-%{~ endif }
 
 # Update apt database on first boot (run 'apt-get update').
 # Note, if packages are given, or package_upgrade is true, then
@@ -63,8 +58,8 @@ runcmd:
   - mv actions-runner /home/ec2-user/actions-runner
 
   # configure
-  - sudo mkdir /opt/hostedtoolcache
-  - sudo chown -R ec2-user:ec2-user /opt/hostedtoolcache
+  # - sudo mkdir /opt/hostedtoolcache
+  # - sudo chown -R ec2-user:ec2-user /opt/hostedtoolcache
   - sudo chown -R ec2-user:ec2-user /home/ec2-user/
 
   # register

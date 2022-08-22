@@ -6,7 +6,5 @@ locals {
 
       GITHUB_URL               = var.config.github_url
       GITHUB_ORGANISATION_NAME = var.config.github_organisation_name
-
-      SSH_AUTHORIZED_KEY = var.config.ssh_authorized_key
   })
 }
