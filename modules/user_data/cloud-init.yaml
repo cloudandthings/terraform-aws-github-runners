@@ -46,6 +46,7 @@ write_files:
       Description=this service
       After=network.target
       [Service]
+      Environment=AGENT_TOOLSDIRECTORY=/opt/hostedtoolcache
       Type=simple
       Restart=always
       RestartSec=30
@@ -65,7 +66,6 @@ runcmd:
   # configure
   - sudo mkdir /opt/hostedtoolcache
   - sudo chown -R ec2-user:ec2-user /opt/hostedtoolcache
-  - echo AGENT_TOOLSDIRECTORY=/opt/hostedtoolcache > /home/ec2-user/actions-runner/.env
   - sudo chown -R ec2-user:ec2-user /home/ec2-user/
 
   # register

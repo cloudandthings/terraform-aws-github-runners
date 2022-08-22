@@ -11,6 +11,10 @@ permissions:
   contents: read
 
 jobs:
+  debug:
+    steps:
+      - run: echo ${{ runner.tool_cache }}
+
   python_lint:
     name: 🐍 Python file formatting
     runs-on: self-hosted
