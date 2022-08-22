@@ -12,6 +12,7 @@ permissions:
 
 jobs:
   debug:
+    runs-on: self-hosted
     steps:
       - run: echo ${{ runner.tool_cache }}
 
