@@ -1,7 +1,6 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.245.0/containers/docker-existing-dockerfile
 {
-	"name": "Ubuntu",
 	"build": {
 		"dockerfile": "Dockerfile",
 		// Update 'VARIANT' to pick an Ubuntu version: jammy / ubuntu-22.04, focal / ubuntu-20.04, bionic /ubuntu-18.04
@@ -10,6 +9,7 @@
 			"VARIANT": "ubuntu-22.04"
 		}
 	},
+	
 	// Sets the run context to one level up instead of the .devcontainer folder.
 	"context": "..",
 	
@@ -35,9 +35,16 @@
 		"terraform": "1.0",
 		"aws-cli": "latest"
 	},
-	"customizations": {
-		"vscode": {
-			// "extensions": ["dbaeumer.vscode-eslint"]
-		}
-	}
+
+	// Set *default* container specific settings.json values on container create.
+	"settings": {
+		"python.linting.pylintEnabled": false,
+		"python.linting.flake8Enabled": true,
+		"python.linting.enabled": true
+	},
+
+	"extensions": [
+		"mutantdino.resourcemonitor",
+		"ms-python.python"
+	]
 }

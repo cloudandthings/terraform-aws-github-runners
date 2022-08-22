@@ -5,6 +5,9 @@
 *.tfstate
 *.tfstate.*
 
+# TF cache
+.tfcache
+
 # Crash log files
 crash.log
 
@@ -28,6 +31,12 @@ override.tf.json
 # Include tfplan files to ignore the plan output of command: terraform plan -out=tfplan
 # example: *tfplan*
 .terraform.lock.hcl
+
+# Python
+__pycache__
+
+# pytest-terraform
+tf_resources.json
 
 # VSCode
 *.code-workspace
