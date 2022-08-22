@@ -79,9 +79,9 @@ resource "aws_launch_configuration" "runners" {
 
 resource "aws_autoscaling_group" "runners" {
   name                 = "${var.naming_prefix}-runners"
-  min_size             = 1
-  max_size             = 3
-  desired_capacity     = 1
+  min_size             = var.min_size
+  max_size             = var.max_size
+  desired_capacity     = var.desired_size
   launch_configuration = aws_launch_configuration.runners.name
   vpc_zone_identifier  = var.subnet_ids
 
@@ -94,6 +94,36 @@ resource "aws_autoscaling_group" "runners" {
     value               = "${var.naming_prefix}-runners"
     propagate_at_launch = true
   }
+}
+
+resource "aws_autoscaling_schedule" "min" {
+  count                  = length(var.aws_autoscaling_schedule_min_recurrences)
+  scheduled_action_name  = "${var.naming_prefix}-min-${count.index}"
+  min_size               = var.min_size
+  max_size               = var.max_size
+  desired_capacity       = var.min_size
+  recurrence             = var.aws_autoscaling_schedule_min_recurrences[count.index]
+  autoscaling_group_name = aws_autoscaling_group.runners.name
+}
+
+resource "aws_autoscaling_schedule" "desired" {
+  count                  = length(var.aws_autoscaling_schedule_desired_recurrences)
+  scheduled_action_name  = "${var.naming_prefix}-desired-${count.index}"
+  min_size               = var.min_size
+  max_size               = var.max_size
+  desired_capacity       = var.desired_size
+  recurrence             = var.aws_autoscaling_schedule_desired_recurrences[count.index]
+  autoscaling_group_name = aws_autoscaling_group.runners.name
+}
+
+resource "aws_autoscaling_schedule" "max" {
+  count                  = length(var.aws_autoscaling_schedule_max_recurrences)
+  scheduled_action_name  = "${var.naming_prefix}-max-${count.index}"
+  min_size               = var.min_size
+  max_size               = var.max_size
+  desired_capacity       = var.max_size
+  recurrence             = var.aws_autoscaling_schedule_max_recurrences[count.index]
+  autoscaling_group_name = aws_autoscaling_group.runners.name
 }
 
 resource "aws_autoscaling_policy" "runners_scale_down" {
