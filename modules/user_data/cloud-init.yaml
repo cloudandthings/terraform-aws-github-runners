@@ -28,13 +28,22 @@ packages:
   - awscli
   - jq
   - libdigest-sha-perl
+  ###########################################
   # Extra packages
-%{~ for PACKAGE in PACKAGES }
-  - ${PACKAGE}
+%{~ for X in PACKAGES }
+  - ${X}
 %{~ endfor }
+  ###########################################
   ###########################################
 
 write_files:
+  ###########################################
+  # Extra write_files
+%{~ for X in WRITE_FILES }
+  - ${X}
+%{~ endfor }
+  ###########################################
+  ###########################################
   - path: /etc/systemd/system/this.service
     content: |
       [Unit]
@@ -49,6 +58,16 @@ write_files:
       [Install]
       WantedBy=multi-user.target
 runcmd:
+  ###########################################
+  # Extra runcmds
+  - echo Extra runcmds
+%{~ for X in RUNCMDS }
+  - ${X}
+%{~ endfor }
+  - echo Extra runcmds DONE
+  ###########################################
+  ###########################################
+
   # install this
   - mkdir actions-runner && cd actions-runner
   - curl -o actions-runner-linux-x64-2.294.0.tar.gz -L 'https://github.com/actions/runner/releases/download/v2.294.0/actions-runner-linux-x64-2.294.0.tar.gz'
@@ -68,12 +87,13 @@ runcmd:
     TOKEN_RESPONSE=`curl -X POST -H "Accept: application/vnd.github+json" -H "Authorization: token $PERSONAL_ACCESS_TOKEN" https://api.github.com/orgs/${GITHUB_ORGANISATION_NAME}/actions/runners/registration-token`
   - TOKEN=`echo $TOKEN_RESPONSE | jq -r '.token'`
   - su ubuntu -c "/home/ubuntu/actions-runner/config.sh --url '${GITHUB_URL}' --unattended --token $TOKEN"
-  
-  # Extra runcmds
-%{~ for RUNCMD in RUNCMDS }
-  - ${RUNCMD}
-%{~ endfor }
 
   # run this
   - sudo systemctl enable this
   - sudo systemctl start this
+
+  ###########################################
+  # Other
+%{~ if length(OTHER) > 0 }
+${OTHER}
+%{~ endif }

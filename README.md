@@ -16,8 +16,10 @@
 | <a name="input_autoscaling_schedule_off_recurrences"></a> [autoscaling\_schedule\_off\_recurrences](#input\_autoscaling\_schedule\_off\_recurrences) | TODO | `list(string)` | `[]` | no |
 | <a name="input_autoscaling_schedule_on_recurrences"></a> [autoscaling\_schedule\_on\_recurrences](#input\_autoscaling\_schedule\_on\_recurrences) | TODO | `list(string)` | `[]` | no |
 | <a name="input_autoscaling_time_zone"></a> [autoscaling\_time\_zone](#input\_autoscaling\_time\_zone) | TODO | `string` | `""` | no |
+| <a name="input_cloud_init_extra_other"></a> [cloud\_init\_extra\_other](#input\_cloud\_init\_extra\_other) | TODO | `string` | `""` | no |
 | <a name="input_cloud_init_extra_packages"></a> [cloud\_init\_extra\_packages](#input\_cloud\_init\_extra\_packages) | TODO | `list(string)` | `[]` | no |
 | <a name="input_cloud_init_extra_runcmds"></a> [cloud\_init\_extra\_runcmds](#input\_cloud\_init\_extra\_runcmds) | TODO | `list(string)` | `[]` | no |
+| <a name="input_cloud_init_extra_write_files"></a> [cloud\_init\_extra\_write\_files](#input\_cloud\_init\_extra\_write\_files) | TODO | `list(string)` | `[]` | no |
 | <a name="input_cloud_init_install_docker_engine"></a> [cloud\_init\_install\_docker\_engine](#input\_cloud\_init\_install\_docker\_engine) | TODO | `bool` | `true` | no |
 | <a name="input_cloud_init_install_python3"></a> [cloud\_init\_install\_python3](#input\_cloud\_init\_install\_python3) | TODO | `bool` | `true` | no |
 | <a name="input_cloud_init_install_terraform"></a> [cloud\_init\_install\_terraform](#input\_cloud\_init\_install\_terraform) | TODO | `bool` | `true` | no |

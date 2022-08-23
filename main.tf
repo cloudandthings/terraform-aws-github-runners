@@ -76,8 +76,10 @@ module "user_data" {
     github_url               = var.github_url
     github_organisation_name = var.github_organisation_name
 
-    cloud_init_packages = local.cloud_init_packages
-    cloud_init_runcmds  = local.cloud_init_runcmds
+    cloud_init_packages    = local.cloud_init_packages
+    cloud_init_runcmds     = local.cloud_init_runcmds
+    cloud_init_write_files = var.cloud_init_extra_write_files
+    cloud_init_other       = var.cloud_init_extra_other
 
     aws_region             = var.region
     aws_ssm_parameter_name = data.aws_ssm_parameter.this.name

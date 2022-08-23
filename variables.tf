@@ -130,3 +130,15 @@ variable "cloud_init_extra_runcmds" {
   type        = list(string)
   default     = []
 }
+
+variable "cloud_init_extra_write_files" {
+  description = "TODO"
+  type        = list(string)
+  default     = []
+}
+
+variable "cloud_init_extra_other" {
+  description = "TODO"
+  type        = string
+  default     = ""
+}
