@@ -64,7 +64,7 @@ resource "aws_launch_configuration" "this" {
   instance_type = var.ec2_instance_type
 
   user_data        = module.user_data.user_data
-  user_data_base64 = ""
+  user_data_base64 = null
 
   iam_instance_profile = var.iam_instance_profile_arn
   security_groups      = [aws_security_group.this.id]
