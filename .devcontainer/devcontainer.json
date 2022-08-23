@@ -45,7 +45,8 @@
 
 	"extensions": [
 		"hashicorp.terraform",
-		"mutantdino.resourcemonitor",
-		"ms-python.python"
+		"redhat.vscode-yaml",
+		"ms-python.python",
+		"mutantdino.resourcemonitor"
 	]
 }
