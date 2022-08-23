@@ -37,7 +37,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
       - run: python -m venv .venv && source .venv/bin/activate
-      - run: pip install -t requirements-dev.txt
+      - run: pip install -r requirements-dev.txt
       - run: pre-commit install && pre-commit run --all-files
       - run: pytest --log-level INFO
         env:
