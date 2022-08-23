@@ -3,18 +3,18 @@ data "http" "myip" {
 }
 
 # Not used directly but require that it exists
-data "aws_ssm_parameter" "runner" {
+data "aws_ssm_parameter" "this" {
   name = var.ssm_parameter_name
 }
 
 data "aws_ami" "ami" {
   # TODO Ubuntu or AMI filter
   most_recent = true
-  owners      = ["amazon"]
+  owners      = ["099720109477"]
 
   filter {
     name   = "name"
-    values = ["amzn2-ami-kernel-*-x86_64-gp2"]
+    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-20220609"]
   }
 
   filter {
@@ -23,8 +23,8 @@ data "aws_ami" "ami" {
   }
 }
 
-resource "aws_security_group" "runners_ec2" {
-  name = "${var.naming_prefix}-runners-ec2"
+resource "aws_security_group" "this" {
+  name = "${var.naming_prefix}-ec2"
 
   egress {
     from_port   = 0
@@ -37,13 +37,37 @@ resource "aws_security_group" "runners_ec2" {
 }
 
 resource "aws_security_group_rule" "ingress" {
-  count             = length(var.ssh_authorized_key) > 0 ? 1 : 0
+  count             = length(var.ec2_key_pair_name) > 0 ? 1 : 0
+  description       = "Allow SSH ingress to EC2 instance"
   type              = "ingress"
   from_port         = 22
   to_port           = 22
   protocol          = "tcp"
   cidr_blocks       = ["${chomp(data.http.myip.body)}/32"]
-  security_group_id = aws_security_group.runners_ec2.id
+  security_group_id = aws_security_group.this.id
+}
+
+locals {
+  cloud_init_packages = concat(
+    (var.cloud_init_install_python3
+      ? local.packages_python3
+    : []),
+    (var.cloud_init_install_docker_engine
+      ? local.packages_docker_engine
+    : []),
+    var.cloud_init_extra_packages
+  )
+
+  cloud_init_runcmds = concat(
+    (var.cloud_init_install_docker_engine
+      ? local.runcmds_docker_engine
+    : []),
+    (var.cloud_init_install_terraform
+      ? local.runcmds_terraform
+    : []),
+    var.cloud_init_extra_runcmds
+  )
+
 }
 
 module "user_data" {
@@ -52,38 +76,45 @@ module "user_data" {
     github_url               = var.github_url
     github_organisation_name = var.github_organisation_name
 
-    aws_region             = var.region
-    aws_ssm_parameter_name = data.aws_ssm_parameter.runner.name
+    cloud_init_users       = var.cloud_init_extra_users
+    cloud_init_packages    = local.cloud_init_packages
+    cloud_init_runcmds     = local.cloud_init_runcmds
+    cloud_init_write_files = var.cloud_init_extra_write_files
+    cloud_init_other       = var.cloud_init_extra_other
 
-    ssh_authorized_key = var.ssh_authorized_key
+    aws_region             = var.region
+    aws_ssm_parameter_name = data.aws_ssm_parameter.this.name
   }
 }
 
-resource "aws_launch_configuration" "runners" {
-  name_prefix   = "${var.naming_prefix}-runners"
+resource "aws_launch_configuration" "this" {
+  name_prefix   = var.naming_prefix
   image_id      = data.aws_ami.ami.id
-  instance_type = var.instance_type
-  spot_price    = var.spot_price
+  instance_type = var.ec2_instance_type
 
-  user_data = module.user_data.user_data
+  user_data        = module.user_data.user_data
+  user_data_base64 = null
 
   iam_instance_profile = var.iam_instance_profile_arn
-  security_groups      = [aws_security_group.runners_ec2.id]
+  security_groups      = [aws_security_group.this.id]
 
-  associate_public_ip_address = var.associate_public_ip_address
+  associate_public_ip_address = var.ec2_associate_public_ip_address
+
+  key_name = var.ec2_key_pair_name
 
   lifecycle {
     create_before_destroy = true
   }
 }
 
-resource "aws_autoscaling_group" "runners" {
-  name                 = "${var.naming_prefix}-runners"
-  min_size             = var.min_size
-  max_size             = var.max_size
-  desired_capacity     = var.desired_size
-  launch_configuration = aws_launch_configuration.runners.name
-  vpc_zone_identifier  = var.subnet_ids
+resource "aws_autoscaling_group" "this" {
+  name                 = var.naming_prefix
+  min_size             = var.autoscaling_min_size
+  max_size             = var.autoscaling_max_size
+  desired_capacity     = var.autoscaling_desired_size
+  launch_configuration = aws_launch_configuration.this.name
+
+  vpc_zone_identifier = var.subnet_ids
 
   lifecycle {
     ignore_changes = [desired_capacity, target_group_arns]
@@ -91,53 +122,45 @@ resource "aws_autoscaling_group" "runners" {
 
   tag {
     key                 = "Name"
-    value               = "${var.naming_prefix}-runners"
+    value               = var.naming_prefix
     propagate_at_launch = true
   }
 }
 
-resource "aws_autoscaling_schedule" "min" {
-  count                  = length(var.aws_autoscaling_schedule_min_recurrences)
-  scheduled_action_name  = "${var.naming_prefix}-min-${count.index}"
-  min_size               = var.min_size
-  max_size               = var.max_size
-  desired_capacity       = var.min_size
-  recurrence             = var.aws_autoscaling_schedule_min_recurrences[count.index]
-  autoscaling_group_name = aws_autoscaling_group.runners.name
+resource "aws_autoscaling_schedule" "on" {
+  count                  = length(var.autoscaling_schedule_on_recurrences)
+  scheduled_action_name  = "${var.naming_prefix}-on-${count.index}"
+  min_size               = var.autoscaling_min_size
+  max_size               = var.autoscaling_max_size
+  desired_capacity       = var.autoscaling_desired_size
+  recurrence             = var.autoscaling_schedule_on_recurrences[count.index]
+  time_zone              = var.autoscaling_time_zone
+  autoscaling_group_name = aws_autoscaling_group.this.name
 }
 
-resource "aws_autoscaling_schedule" "desired" {
-  count                  = length(var.aws_autoscaling_schedule_desired_recurrences)
-  scheduled_action_name  = "${var.naming_prefix}-desired-${count.index}"
-  min_size               = var.min_size
-  max_size               = var.max_size
-  desired_capacity       = var.desired_size
-  recurrence             = var.aws_autoscaling_schedule_desired_recurrences[count.index]
-  autoscaling_group_name = aws_autoscaling_group.runners.name
+resource "aws_autoscaling_schedule" "off" {
+  count                  = length(var.autoscaling_schedule_off_recurrences)
+  scheduled_action_name  = "${var.naming_prefix}-off-${count.index}"
+  min_size               = 0
+  max_size               = 0
+  desired_capacity       = 0
+  recurrence             = var.autoscaling_schedule_off_recurrences[count.index]
+  time_zone              = var.autoscaling_time_zone
+  autoscaling_group_name = aws_autoscaling_group.this.name
 }
 
-resource "aws_autoscaling_schedule" "max" {
-  count                  = length(var.aws_autoscaling_schedule_max_recurrences)
-  scheduled_action_name  = "${var.naming_prefix}-max-${count.index}"
-  min_size               = var.min_size
-  max_size               = var.max_size
-  desired_capacity       = var.max_size
-  recurrence             = var.aws_autoscaling_schedule_max_recurrences[count.index]
-  autoscaling_group_name = aws_autoscaling_group.runners.name
-}
-
-resource "aws_autoscaling_policy" "runners_scale_down" {
-  name                   = "${var.naming_prefix}-runners-scale-down"
-  autoscaling_group_name = aws_autoscaling_group.runners.name
+resource "aws_autoscaling_policy" "scale_down" {
+  name                   = "${var.naming_prefix}-scale-down"
+  autoscaling_group_name = aws_autoscaling_group.this.name
   adjustment_type        = "ChangeInCapacity"
   scaling_adjustment     = -1
   cooldown               = 120
 }
 
-resource "aws_cloudwatch_metric_alarm" "runners_scale_down" {
-  alarm_description   = "Monitors CPU utilization for Github runners ASG"
-  alarm_actions       = [aws_autoscaling_policy.runners_scale_down.arn]
-  alarm_name          = "${var.naming_prefix}-runners-scale-down"
+resource "aws_cloudwatch_metric_alarm" "scale_down" {
+  alarm_description   = "Monitor CPU for ASG ${aws_autoscaling_group.this.name}"
+  alarm_actions       = [aws_autoscaling_policy.scale_down.arn]
+  alarm_name          = "${var.naming_prefix}-scale-down"
   comparison_operator = "LessThanOrEqualToThreshold"
   namespace           = "AWS/EC2"
   metric_name         = "CPUUtilization"
@@ -147,6 +170,6 @@ resource "aws_cloudwatch_metric_alarm" "runners_scale_down" {
   statistic           = "Average"
 
   dimensions = {
-    AutoScalingGroupName = aws_autoscaling_group.runners.name
+    AutoScalingGroupName = aws_autoscaling_group.this.name
   }
 }

@@ -1,5 +1,6 @@
 #cloud-config
 # See https://cloudinit.readthedocs.io/en/latest/
+
 ### Helpful commands ##
 # sudo cat /var/lib/cloud/instance/user-data.txt
 # sudo cat /var/log/cloud-init-output.log
@@ -7,39 +8,33 @@
 
 users:
   - default
-%{~ if length(SSH_AUTHORIZED_KEY) > 0 }
-  - name: ec2-user
-    ssh_authorized_keys:
-      - ssh-rsa ${SSH_AUTHORIZED_KEY}
-%{~ endif }
-
-# Update apt database on first boot (run 'apt-get update').
-# Note, if packages are given, or package_upgrade is true, then
-# update will be done independent of this setting.
-#
-# Default: false
-package_update: true
+%{~ for X in USERS }
+  - ${X}
+%{~ endfor }
 
 # Install additional packages on first boot
-#
-# Default: none
-#
-# if packages are specified, then package_update will be set to true
-#
-# packages may be supplied as a single package name or as a list
-# with the format [<package>, <version>] wherein the specific
-# package version will be installed.
+package_update: true
+package_reboot_if_required: false # We'll reboot later
 packages:
+  - awscli
   - jq
-  - perl-Digest-SHA
-  ############################################
-  # extra stuff the runner needs to run our CI
-  ############################################
-  - docker
-  - python3
+  - libdigest-sha-perl
+  ###########################################
+  # Extra packages
+%{~ for X in PACKAGES }
+  - ${X}
+%{~ endfor }
+  ###########################################
   ###########################################
 
 write_files:
+  ###########################################
+  # Extra write_files
+%{~ for X in WRITE_FILES }
+  - ${X}
+%{~ endfor }
+  ###########################################
+  ###########################################
   - path: /etc/systemd/system/this.service
     content: |
       [Unit]
@@ -49,40 +44,50 @@ write_files:
       Type=simple
       Restart=always
       RestartSec=30
-      User=ec2-user
-      ExecStart=/home/ec2-user/actions-runner/run.sh
+      User=ubuntu
+      ExecStart=/home/ubuntu/actions-runner/run.sh
       [Install]
       WantedBy=multi-user.target
 runcmd:
-  # install
+  ###########################################
+  # Extra runcmds
+  - echo ==== EXTRA RUNCMDS ====
+%{~ for X in RUNCMDS }
+  - ${X}
+%{~ endfor }
+  ###########################################
+  ########################################### 
+  - echo ==== RUNNER ====
+  # install this
   - mkdir actions-runner && cd actions-runner
   - curl -o actions-runner-linux-x64-2.294.0.tar.gz -L 'https://github.com/actions/runner/releases/download/v2.294.0/actions-runner-linux-x64-2.294.0.tar.gz'
   - echo "a19a09f4eda5716e5d48ba86b6b78fc014880c5619b9dba4a059eaf65e131780  actions-runner-linux-x64-2.294.0.tar.gz" | shasum -a 256 -c
   - tar xzf ./actions-runner-linux-x64-2.294.0.tar.gz
   - cd ..
-  - mv actions-runner /home/ec2-user/actions-runner
+  - mv actions-runner /home/ubuntu/actions-runner
 
-  # configure
-  - sudo mkdir /opt/hostedtoolcache
-  - sudo chown -R ec2-user:ec2-user /opt/hostedtoolcache
-  - echo AGENT_TOOLSDIRECTORY=/opt/hostedtoolcache > /home/ec2-user/actions-runner/.env
-  - sudo chown -R ec2-user:ec2-user /home/ec2-user/
+  # configure this
+  # - sudo mkdir /opt/hostedtoolcache
+  # - sudo chown -R ubuntu:ubuntu /opt/hostedtoolcache
+  - sudo chown -R ubuntu:ubuntu /home/ubuntu
 
-  # register
+  # register this
   - PERSONAL_ACCESS_TOKEN=`aws ssm get-parameter --with-decryption --name ${AWS_SSM_PARAMETER_NAME} --region ${AWS_REGION} | jq -r '.Parameter.Value'`
   - >
     TOKEN_RESPONSE=`curl -X POST -H "Accept: application/vnd.github+json" -H "Authorization: token $PERSONAL_ACCESS_TOKEN" https://api.github.com/orgs/${GITHUB_ORGANISATION_NAME}/actions/runners/registration-token`
   - TOKEN=`echo $TOKEN_RESPONSE | jq -r '.token'`
-  - su ec2-user -c "/home/ec2-user/actions-runner/config.sh --url '${GITHUB_URL}' --unattended --token $TOKEN"
+  - su ubuntu -c "/home/ubuntu/actions-runner/config.sh --url '${GITHUB_URL}' --unattended --token $TOKEN"
 
-  ############################################
-  # extra stuff the runner needs to run our CI
-  ############################################
-  - sudo service docker start
-  - sudo usermod -a -G docker ec2-user
-  ############################################
-  ############################################
-
-  # run
+  # run on reboot
   - sudo systemctl enable this
-  - sudo systemctl start this
+
+  - echo ==== RUNNER DONE ====
+
+power_state:
+    mode: reboot
+
+###########################################
+# Other
+%{~ if length(OTHER) > 0 }
+${OTHER}
+%{~ endif }

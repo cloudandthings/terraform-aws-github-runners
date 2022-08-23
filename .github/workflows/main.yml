@@ -1,0 +1,45 @@
+name: main
+
+on:
+  pull_request:
+    types:
+      - opened
+  push:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  python_lint:
+    name: 🐍 Python file formatting
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - run: python -m venv .venv && source .venv/bin/activate
+      - run: pip install flake8==4.0.1
+      - run: flake8 --count --max-complexity=10 --max-line-length=90 --statistics
+
+  terraform_lint:
+    name: 🏗 Terraform file format
+    runs-on: self-hosted
+    steps:
+      - uses: dflook/terraform-fmt-check@v1
+        with:
+          path: .
+
+  testing:
+    needs: [python_lint, terraform_lint]
+    name: ✅ Testing
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - run: python -m venv .venv && source .venv/bin/activate
+      - run: pip install -r requirements-dev.txt
+      - run: pre-commit install && pre-commit run --all-files
+      - run: pytest --log-level INFO
+        env:
+          PYTEST_ADDOPTS: "--color=yes"
+        timeout-minutes: 5
