@@ -1,4 +1,4 @@
-name: 🚀 Main 🚀
+name: main
 
 on:
   pull_request:
@@ -11,52 +11,43 @@ permissions:
   contents: read
 
 jobs:
-  debug:
-    runs-on: self-hosted
-    steps:
-      - run: echo ${{ runner.tool_cache }}
-
-  python_lint:
-    name: 🐍 Python file formatting
+  setup:
+    name: 🚧  Environment setup
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
+      - run: python -m venv .venv && source .venv/bin/activate
+      - run: pip install -r requirements-dev.txt
+
+  python_lint:
+    needs: [setup]
+    name: 🐍 Python file formatting
+    runs-on: self-hosted
+    steps:
       - uses: py-actions/flake8@v2
 
   terraform_lint:
+    needs: [setup]
     name: 🏗 Terraform file format
     runs-on: self-hosted
     steps:
-      - uses: actions/checkout@v2
       - uses: dflook/terraform-fmt-check@v1
         with:
           path: .
 
   pre_commit:
+    needs: [setup]
     name: 🔎 pre-commit
     runs-on: self-hosted
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
       - uses: pre-commit/action@v3.0.0
 
   pytest:
-    needs: [terraform_lint, python_lint, pre_commit]
+    needs: [python_lint, pre_commit]
     name: ✅ pytest
     runs-on: self-hosted
-    steps:
-      # - run: echo ${{ github.run_id }}
-      # - run: echo "RUN_DATE=$(date --rfc-3339=date)" >> ${GITHUB_ENV}
-
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
-
-      - name: 🚧 Set up environment
-        run: python -m venv .venv && source .venv/bin/activate
-
-      - run: pip install -r requirements-dev.txt
-      
+    steps:      
       - name: 🚦 Run tests
         run: pytest --log-level INFO
         env:
