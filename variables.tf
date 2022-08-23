@@ -1,47 +1,4 @@
-variable "ssm_parameter_name" {
-  description = "TODO"
-
-  type    = string
-  default = "/github/runner/token"
-}
-
-variable "key_name" {
-  description = "TODO"
-  type        = string
-  default     = ""
-}
-
-variable "iam_instance_profile_arn" {
-  description = "TODO"
-
-  type = string
-}
-
-variable "instance_type" {
-  description = "TODO"
-
-  type = string
-  # default = "t3.micro"
-}
-
-variable "spot_price" {
-  description = "TODO"
-
-  type = string
-}
-
-variable "github_organisation_name" {
-  description = "TODO"
-
-  type = string
-}
-
-variable "github_url" {
-  description = "TODO"
-
-  type = string
-}
-
+# Required variables
 variable "region" {
   description = "TODO"
 
@@ -63,43 +20,76 @@ variable "subnet_ids" {
   description = "TODO"
 }
 
-variable "associate_public_ip_address" {
+variable "ssm_parameter_name" {
+  description = "TODO"
+
+  type    = string
+  default = "/github/runner/token"
+}
+
+variable "iam_instance_profile_arn" {
+  description = "TODO"
+
+  type = string
+}
+
+variable "github_organisation_name" {
+  description = "TODO"
+
+  type = string
+}
+
+variable "github_url" {
+  description = "TODO"
+
+  type = string
+}
+
+# Optional variables
+variable "ec2_key_pair_name" {
+  description = "TODO"
+  type        = string
+  default     = ""
+}
+
+variable "ec2_instance_type" {
+  description = "TODO"
+
+  type    = string
+  default = "t3.micro"
+}
+
+variable "ec2_associate_public_ip_address" {
   description = "TODO"
   type        = bool
   default     = false
 }
 
-variable "min_size" {
-  description = "TODO"
-  type        = number
-  default     = 0
-}
-
-variable "desired_size" {
+variable "autoscaling_min_size" {
   description = "TODO"
   type        = number
   default     = 1
 }
 
-variable "max_size" {
+variable "autoscaling_desired_size" {
+  description = "TODO"
+  type        = number
+  default     = 1
+}
+
+variable "autoscaling_max_size" {
   description = "TODO"
   type        = number
   default     = 3
 }
 
-variable "aws_autoscaling_schedule_min_recurrences" {
+variable "autoscaling_schedule_on_recurrences" {
   description = "TODO"
   type        = list(string)
   default     = []
 }
 
-variable "aws_autoscaling_schedule_desired_recurrences" {
-  description = "TODO"
-  type        = list(string)
-  default     = []
-}
-
-variable "aws_autoscaling_schedule_max_recurrences" {
+variable "autoscaling_schedule_off_recurrences" {
   description = "TODO"
   type        = list(string)
   default     = []
