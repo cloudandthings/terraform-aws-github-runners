@@ -1,5 +1,5 @@
 locals {
-  packages_python3 = ["python3", "python-is-python3", "python3-pip"]
+  packages_python3 = ["python3", "python-is-python3", "python3-pip", "python3-venv"]
 
   packages_docker_engine = ["ca-certificates", "curl", "gnupg", "lsb-release"]
 
