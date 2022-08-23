@@ -11,24 +11,17 @@ permissions:
   contents: read
 
 jobs:
-  setup:
-    name: 🚧  Environment setup
+  python_lint:
+    name: 🐍 Python file formatting
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
       - run: python -m venv .venv && source .venv/bin/activate
       - run: pip install -r requirements-dev.txt
-
-  python_lint:
-    needs: [setup]
-    name: 🐍 Python file formatting
-    runs-on: self-hosted
-    steps:
       - uses: py-actions/flake8@v2
 
   terraform_lint:
-    needs: [setup]
     name: 🏗 Terraform file format
     runs-on: self-hosted
     steps:
@@ -36,20 +29,18 @@ jobs:
         with:
           path: .
 
-  pre_commit:
-    needs: [setup]
-    name: 🔎 pre-commit
+  testing:
+    needs: [python_lint, terraform_lint]
+    name: ✅ Testing
     runs-on: self-hosted
     steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - run: python -m venv .venv && source .venv/bin/activate
+
       - uses: pre-commit/action@v3.0.0
 
-  pytest:
-    needs: [python_lint, pre_commit]
-    name: ✅ pytest
-    runs-on: self-hosted
-    steps:      
-      - name: 🚦 Run tests
-        run: pytest --log-level INFO
+      - run: pytest --log-level INFO
         env:
           PYTEST_ADDOPTS: "--color=yes"
         timeout-minutes: 5
