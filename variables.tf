@@ -113,6 +113,12 @@ variable "cloud_init_install_docker_engine" {
   description = "TODO"
 }
 
+variable "cloud_init_install_terraform" {
+  type        = bool
+  default     = true
+  description = "TODO"
+}
+
 variable "cloud_init_extra_packages" {
   description = "TODO"
   type        = list(string)

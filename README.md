@@ -20,6 +20,7 @@
 | <a name="input_cloud_init_extra_runcmds"></a> [cloud\_init\_extra\_runcmds](#input\_cloud\_init\_extra\_runcmds) | TODO | `list(string)` | `[]` | no |
 | <a name="input_cloud_init_install_docker_engine"></a> [cloud\_init\_install\_docker\_engine](#input\_cloud\_init\_install\_docker\_engine) | TODO | `bool` | `true` | no |
 | <a name="input_cloud_init_install_python3"></a> [cloud\_init\_install\_python3](#input\_cloud\_init\_install\_python3) | TODO | `bool` | `true` | no |
+| <a name="input_cloud_init_install_terraform"></a> [cloud\_init\_install\_terraform](#input\_cloud\_init\_install\_terraform) | TODO | `bool` | `true` | no |
 | <a name="input_ec2_associate_public_ip_address"></a> [ec2\_associate\_public\_ip\_address](#input\_ec2\_associate\_public\_ip\_address) | TODO | `bool` | `false` | no |
 | <a name="input_ec2_instance_type"></a> [ec2\_instance\_type](#input\_ec2\_instance\_type) | TODO | `string` | `"t3.micro"` | no |
 | <a name="input_ec2_key_pair_name"></a> [ec2\_key\_pair\_name](#input\_ec2\_key\_pair\_name) | TODO | `string` | `""` | no |

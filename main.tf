@@ -62,6 +62,9 @@ locals {
     (var.cloud_init_install_docker_engine
       ? local.runcmds_docker_engine
     : []),
+    (var.cloud_init_install_terraform
+      ? local.runcmds_terraform
+    : []),
     var.cloud_init_extra_runcmds
   )
 
