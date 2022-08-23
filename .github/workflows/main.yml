@@ -18,8 +18,8 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
       - run: python -m venv .venv && source .venv/bin/activate
-      - run: pip install -r requirements-dev.txt
-      - uses: py-actions/flake8@v2
+      - run: pip install flake8==4.0.1
+      - run: flake8 --count --max-complexity=10 --max-line-length=90 --statistics
 
   terraform_lint:
     name: 🏗 Terraform file format
