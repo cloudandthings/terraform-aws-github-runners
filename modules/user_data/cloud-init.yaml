@@ -25,8 +25,9 @@ package_update: true
 # with the format [<package>, <version>] wherein the specific
 # package version will be installed.
 packages:
+  - awscli
   - jq
-  - perl-Digest-SHA
+  - libdigest-sha-perl
   ############################################
   # extra stuff
   ############################################
@@ -44,8 +45,8 @@ write_files:
       Type=simple
       Restart=always
       RestartSec=30
-      User=${USER}
-      ExecStart=/home/${USER}/actions-runner/run.sh
+      User=ubuntu
+      ExecStart=/home/ubuntu/actions-runner/run.sh
       [Install]
       WantedBy=multi-user.target
 runcmd:
@@ -55,28 +56,28 @@ runcmd:
   - echo "a19a09f4eda5716e5d48ba86b6b78fc014880c5619b9dba4a059eaf65e131780  actions-runner-linux-x64-2.294.0.tar.gz" | shasum -a 256 -c
   - tar xzf ./actions-runner-linux-x64-2.294.0.tar.gz
   - cd ..
-  - mv actions-runner /home/${USER}/actions-runner
+  - mv actions-runner /home/ubuntu/actions-runner
 
   # configure
   # - sudo mkdir /opt/hostedtoolcache
-  # - sudo chown -R ${USER}:${USER} /opt/hostedtoolcache
-  - sudo chown -R ${USER}:${USER} /home/${USER}
+  # - sudo chown -R ubuntu:ubuntu /opt/hostedtoolcache
+  - sudo chown -R ubuntu:ubuntu /home/ubuntu
 
   # register
   - PERSONAL_ACCESS_TOKEN=`aws ssm get-parameter --with-decryption --name ${AWS_SSM_PARAMETER_NAME} --region ${AWS_REGION} | jq -r '.Parameter.Value'`
   - >
     TOKEN_RESPONSE=`curl -X POST -H "Accept: application/vnd.github+json" -H "Authorization: token $PERSONAL_ACCESS_TOKEN" https://api.github.com/orgs/${GITHUB_ORGANISATION_NAME}/actions/runners/registration-token`
   - TOKEN=`echo $TOKEN_RESPONSE | jq -r '.token'`
-  - su ${USER} -c "/home/${USER}/actions-runner/config.sh --url '${GITHUB_URL}' --unattended --token $TOKEN"
+  - su ubuntu -c "/home/ubuntu/actions-runner/config.sh --url '${GITHUB_URL}' --unattended --token $TOKEN"
+
+  # run
+  - sudo systemctl enable this
+  - sudo systemctl start this
 
   ############################################
   # extra stuff
   ############################################
   - sudo service docker start
-  - sudo usermod -a -G docker ${USER}
+  - sudo usermod -a -G docker ubuntu
   ############################################
   ############################################
-
-  # run
-  - sudo systemctl enable this
-  - sudo systemctl start this

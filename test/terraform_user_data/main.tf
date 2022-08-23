@@ -4,8 +4,6 @@ module "user_data_1" {
     aws_region             = "__TEST_REGION__"
     aws_ssm_parameter_name = "__TEST_SSM__"
 
-    user = "__TEST_USER__"
-
     github_url               = "__TEST_GITHUB_URL__"
     github_organisation_name = "__TEST_GITHUB_ORG_NAME__"
   }
@@ -16,8 +14,6 @@ module "user_data_2" {
   config = {
     aws_region             = "__TEST_REGION__"
     aws_ssm_parameter_name = "__TEST_SSM__"
-
-    user = "__TEST_USER__"
 
     github_url               = "__TEST_GITHUB_URL__"
     github_organisation_name = "__TEST_GITHUB_ORG_NAME__"

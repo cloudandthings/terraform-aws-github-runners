@@ -52,8 +52,6 @@ module "user_data" {
     github_url               = var.github_url
     github_organisation_name = var.github_organisation_name
 
-    user = "ubuntu"
-
     aws_region             = var.region
     aws_ssm_parameter_name = data.aws_ssm_parameter.runner.name
   }

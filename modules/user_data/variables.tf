@@ -3,8 +3,6 @@ variable "config" {
     aws_region             = string
     aws_ssm_parameter_name = string
 
-    user = string
-
     github_url               = string
     github_organisation_name = string
   })
