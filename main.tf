@@ -113,7 +113,8 @@ resource "aws_autoscaling_group" "this" {
   max_size             = var.autoscaling_max_size
   desired_capacity     = var.autoscaling_desired_size
   launch_configuration = aws_launch_configuration.this.name
-  vpc_zone_identifier  = var.subnet_ids
+
+  vpc_zone_identifier = var.subnet_ids
 
   lifecycle {
     ignore_changes = [desired_capacity, target_group_arns]
