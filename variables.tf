@@ -95,8 +95,32 @@ variable "autoscaling_schedule_off_recurrences" {
   default     = []
 }
 
-variable "cloud_init_packages" {
+variable "autoscaling_time_zone" {
+  description = "TODO"
+  type        = string
+  default     = ""
+}
+
+variable "cloud_init_install_python3" {
+  type        = bool
+  default     = true
+  description = "TODO"
+}
+
+variable "cloud_init_install_docker_engine" {
+  type        = bool
+  default     = true
+  description = "TODO"
+}
+
+variable "cloud_init_extra_packages" {
   description = "TODO"
   type        = list(string)
-  default     = ["python3"]
+  default     = []
+}
+
+variable "cloud_init_extra_runcmds" {
+  description = "TODO"
+  type        = list(string)
+  default     = []
 }

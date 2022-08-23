@@ -15,7 +15,11 @@
 | <a name="input_autoscaling_min_size"></a> [autoscaling\_min\_size](#input\_autoscaling\_min\_size) | TODO | `number` | `1` | no |
 | <a name="input_autoscaling_schedule_off_recurrences"></a> [autoscaling\_schedule\_off\_recurrences](#input\_autoscaling\_schedule\_off\_recurrences) | TODO | `list(string)` | `[]` | no |
 | <a name="input_autoscaling_schedule_on_recurrences"></a> [autoscaling\_schedule\_on\_recurrences](#input\_autoscaling\_schedule\_on\_recurrences) | TODO | `list(string)` | `[]` | no |
-| <a name="input_cloud_init_packages"></a> [cloud\_init\_packages](#input\_cloud\_init\_packages) | TODO | `list(string)` | <pre>[<br>  "python3"<br>]</pre> | no |
+| <a name="input_autoscaling_time_zone"></a> [autoscaling\_time\_zone](#input\_autoscaling\_time\_zone) | TODO | `string` | `""` | no |
+| <a name="input_cloud_init_extra_packages"></a> [cloud\_init\_extra\_packages](#input\_cloud\_init\_extra\_packages) | TODO | `list(string)` | `[]` | no |
+| <a name="input_cloud_init_extra_runcmds"></a> [cloud\_init\_extra\_runcmds](#input\_cloud\_init\_extra\_runcmds) | TODO | `list(string)` | `[]` | no |
+| <a name="input_cloud_init_install_docker_engine"></a> [cloud\_init\_install\_docker\_engine](#input\_cloud\_init\_install\_docker\_engine) | TODO | `bool` | `true` | no |
+| <a name="input_cloud_init_install_python3"></a> [cloud\_init\_install\_python3](#input\_cloud\_init\_install\_python3) | TODO | `bool` | `true` | no |
 | <a name="input_ec2_associate_public_ip_address"></a> [ec2\_associate\_public\_ip\_address](#input\_ec2\_associate\_public\_ip\_address) | TODO | `bool` | `false` | no |
 | <a name="input_ec2_instance_type"></a> [ec2\_instance\_type](#input\_ec2\_instance\_type) | TODO | `string` | `"t3.micro"` | no |
 | <a name="input_ec2_key_pair_name"></a> [ec2\_key\_pair\_name](#input\_ec2\_key\_pair\_name) | TODO | `string` | `""` | no |

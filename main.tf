@@ -47,13 +47,34 @@ resource "aws_security_group_rule" "ingress" {
   security_group_id = aws_security_group.this.id
 }
 
+locals {
+  cloud_init_packages = concat(
+    (var.cloud_init_install_python3
+      ? local.packages_python3
+    : []),
+    (var.cloud_init_install_docker_engine
+      ? local.packages_docker_engine
+    : []),
+    var.cloud_init_extra_packages
+  )
+
+  cloud_init_runcmds = concat(
+    (var.cloud_init_install_docker_engine
+      ? local.runcmds_docker_engine
+    : []),
+    var.cloud_init_extra_runcmds
+  )
+
+}
+
 module "user_data" {
   source = "./modules/user_data"
   config = {
     github_url               = var.github_url
     github_organisation_name = var.github_organisation_name
 
-    cloud_init_packages = var.cloud_init_packages
+    cloud_init_packages = local.cloud_init_packages
+    cloud_init_runcmds  = local.cloud_init_runcmds
 
     aws_region             = var.region
     aws_ssm_parameter_name = data.aws_ssm_parameter.this.name
@@ -106,6 +127,7 @@ resource "aws_autoscaling_schedule" "on" {
   max_size               = var.autoscaling_max_size
   desired_capacity       = var.autoscaling_desired_size
   recurrence             = var.autoscaling_schedule_on_recurrences[count.index]
+  time_zone              = var.autoscaling_time_zone
   autoscaling_group_name = aws_autoscaling_group.this.name
 }
 
@@ -116,6 +138,7 @@ resource "aws_autoscaling_schedule" "off" {
   max_size               = 0
   desired_capacity       = 0
   recurrence             = var.autoscaling_schedule_off_recurrences[count.index]
+  time_zone              = var.autoscaling_time_zone
   autoscaling_group_name = aws_autoscaling_group.this.name
 }
 

@@ -4,6 +4,7 @@ variable "config" {
     aws_ssm_parameter_name = string
 
     cloud_init_packages = list(string)
+    cloud_init_runcmds  = list(string)
 
     github_url               = string
     github_organisation_name = string

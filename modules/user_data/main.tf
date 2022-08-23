@@ -6,6 +6,8 @@ locals {
 
       PACKAGES = var.config.cloud_init_packages
 
+      RUNCMDS = var.config.cloud_init_runcmds
+
       GITHUB_URL               = var.config.github_url
       GITHUB_ORGANISATION_NAME = var.config.github_organisation_name
   })
