@@ -1,5 +1,6 @@
 #cloud-config
 # See https://cloudinit.readthedocs.io/en/latest/
+
 ### Helpful commands ##
 # sudo cat /var/lib/cloud/instance/user-data.txt
 # sudo cat /var/log/cloud-init-output.log
@@ -7,23 +8,13 @@
 
 users:
   - default
-
-# Update apt database on first boot (run 'apt-get update').
-# Note, if packages are given, or package_upgrade is true, then
-# update will be done independent of this setting.
-#
-# Default: false
-package_update: true
+%{~ for X in USERS }
+  - ${X}
+%{~ endfor }
 
 # Install additional packages on first boot
-#
-# Default: none
-#
-# if packages are specified, then package_update will be set to true
-#
-# packages may be supplied as a single package name or as a list
-# with the format [<package>, <version>] wherein the specific
-# package version will be installed.
+package_update: true
+package_reboot_if_required: true
 packages:
   - awscli
   - jq
@@ -60,13 +51,13 @@ write_files:
 runcmd:
   ###########################################
   # Extra runcmds
-  - echo **** EXTRA RUNCMDS ****
+  - echo ==== EXTRA RUNCMDS ====
 %{~ for X in RUNCMDS }
   - ${X}
 %{~ endfor }
   ###########################################
   ########################################### 
-  - echo **** RUNNER ****
+  - echo ==== RUNNER ====
   # install this
   - mkdir actions-runner && cd actions-runner
   - curl -o actions-runner-linux-x64-2.294.0.tar.gz -L 'https://github.com/actions/runner/releases/download/v2.294.0/actions-runner-linux-x64-2.294.0.tar.gz'
@@ -93,7 +84,7 @@ runcmd:
 
   ###########################################
   # Other
-  - echo **** OTHER ****
+  - echo ==== OTHER ====
 %{~ if length(OTHER) > 0 }
 ${OTHER}
 %{~ endif }

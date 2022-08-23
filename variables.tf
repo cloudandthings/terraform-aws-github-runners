@@ -119,6 +119,12 @@ variable "cloud_init_install_terraform" {
   description = "TODO"
 }
 
+variable "cloud_init_extra_users" {
+  description = "TODO"
+  type        = list(string)
+  default     = []
+}
+
 variable "cloud_init_extra_packages" {
   description = "TODO"
   type        = list(string)

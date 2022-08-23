@@ -4,6 +4,7 @@ locals {
       AWS_REGION             = var.config.aws_region
       AWS_SSM_PARAMETER_NAME = var.config.aws_ssm_parameter_name
 
+      USERS       = var.config.cloud_init_users
       PACKAGES    = var.config.cloud_init_packages
       RUNCMDS     = var.config.cloud_init_runcmds
       WRITE_FILES = var.config.cloud_init_write_files

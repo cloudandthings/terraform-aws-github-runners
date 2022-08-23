@@ -3,6 +3,7 @@ variable "config" {
     aws_region             = string
     aws_ssm_parameter_name = string
 
+    cloud_init_users       = list(string)
     cloud_init_packages    = list(string)
     cloud_init_runcmds     = list(string)
     cloud_init_write_files = list(string)
