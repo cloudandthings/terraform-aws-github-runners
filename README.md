@@ -17,7 +17,7 @@
 | <a name="input_autoscaling_schedule_on_recurrences"></a> [autoscaling\_schedule\_on\_recurrences](#input\_autoscaling\_schedule\_on\_recurrences) | TODO | `list(string)` | `[]` | no |
 | <a name="input_ec2_associate_public_ip_address"></a> [ec2\_associate\_public\_ip\_address](#input\_ec2\_associate\_public\_ip\_address) | TODO | `bool` | `false` | no |
 | <a name="input_ec2_instance_type"></a> [ec2\_instance\_type](#input\_ec2\_instance\_type) | TODO | `string` | `"t3.micro"` | no |
-| <a name="input_ec2_key_pair_name"></a> [ec2\_key\_pair\_name](#input\_ec2\_key\_pair\_name) | TODO | `string` | `""` | no |
+| <a name="input_ec2_key_pair_name"></a> [ec2\_key\_pair\_name](#input\_ec2\_key\_pair\_name) | TODO | `string` | `null` | no |
 | <a name="input_github_organisation_name"></a> [github\_organisation\_name](#input\_github\_organisation\_name) | TODO | `string` | n/a | yes |
 | <a name="input_github_url"></a> [github\_url](#input\_github\_url) | TODO | `string` | n/a | yes |
 | <a name="input_iam_instance_profile_arn"></a> [iam\_instance\_profile\_arn](#input\_iam\_instance\_profile\_arn) | TODO | `string` | n/a | yes |
