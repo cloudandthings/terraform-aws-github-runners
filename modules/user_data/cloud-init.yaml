@@ -14,7 +14,7 @@ users:
 
 # Install additional packages on first boot
 package_update: true
-package_reboot_if_required: true
+package_reboot_if_required: false # We'll reboot later
 packages:
   - awscli
   - jq
@@ -78,13 +78,16 @@ runcmd:
   - TOKEN=`echo $TOKEN_RESPONSE | jq -r '.token'`
   - su ubuntu -c "/home/ubuntu/actions-runner/config.sh --url '${GITHUB_URL}' --unattended --token $TOKEN"
 
-  # run this
+  # run on reboot
   - sudo systemctl enable this
-  - sudo systemctl start this
 
-  ###########################################
-  # Other
-  - echo ==== OTHER ====
+  - echo ==== RUNNER DONE ====
+
+power_state:
+    mode: reboot
+
+###########################################
+# Other
 %{~ if length(OTHER) > 0 }
 ${OTHER}
 %{~ endif }
