@@ -28,11 +28,9 @@ packages:
   - awscli
   - jq
   - libdigest-sha-perl
-  ############################################
-  # extra stuff
-  ############################################
-  - docker
-  - python3
+%{~ for PACKAGE in PACKAGES }
+  - ${PACKAGE}
+%{~ endfor }
   ###########################################
 
 write_files:

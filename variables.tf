@@ -94,3 +94,9 @@ variable "autoscaling_schedule_off_recurrences" {
   type        = list(string)
   default     = []
 }
+
+variable "cloud_init_packages" {
+  description = "TODO"
+  type        = list(string)
+  default     = ["python3"]
+}
