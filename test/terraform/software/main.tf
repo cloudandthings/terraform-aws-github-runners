@@ -1,5 +1,9 @@
 locals {
-  software = ["python3", "docker_engine", "terraform"]
+  software = [
+    "python3",
+    "docker-engine",
+    "terraform", "terraform-docs", "tflint"
+  ]
 }
 
 module "software" {

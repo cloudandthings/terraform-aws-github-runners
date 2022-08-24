@@ -1,11 +1,12 @@
 locals {
   packages = {
     "python3"       = ["python3", "python-is-python3", "python3-pip", "python3-venv"]
-    "docker_engine" = ["ca-certificates", "curl", "gnupg", "lsb-release"]
+    "docker-engine" = ["ca-certificates", "curl", "gnupg", "lsb-release"]
+    "tflint"        = ["unzip"]
   }
 
   runcmds = {
-    "docker_engine" = [
+    "docker-engine" = [
       "echo **** DOCKER ENGINE ****",
       "sudo mkdir -p /etc/apt/keyrings",
       "curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg",
@@ -21,6 +22,17 @@ locals {
       "echo \"deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main\" | sudo tee /etc/apt/sources.list.d/hashicorp.list",
       "sudo apt-get update",
       "sudo apt-get install -y terraform"
+    ]
+
+    "tflint" = [
+      "sudo curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash"
+    ]
+
+    "terraform-docs" = [
+      "curl -sSLo ./terraform-docs.tar.gz https://terraform-docs.io/dl/v0.16.0/terraform-docs-v0.16.0-$(uname)-amd64.tar.gz",
+      "tar -xzf terraform-docs.tar.gz",
+      "chmod +x terraform-docs",
+      "mv terraform-docs /usr/local/bin/terraform-docs"
     ]
   }
 

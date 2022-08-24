@@ -4,8 +4,8 @@ variable "software" {
 
   validation {
     condition = contains([
-      "python3", "docker_engine", "terraform"
+      "python3", "docker-engine", "terraform", "terraform-docs", "tflint"
     ], var.software)
-    error_message = "The software must be one of [\"python3\", \"docker_engine\", \"terraform\"]."
+    error_message = "The software must be one of [\"python3\", \"docker-engine\", \"terraform\", \"terraform-docs\", \"tflint\"]."
   }
 }

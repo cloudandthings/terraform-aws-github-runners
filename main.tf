@@ -14,7 +14,7 @@ data "aws_ami" "ami" {
 
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-20220609"]
+    values = [var.ami_name]
   }
 
   filter {
@@ -60,9 +60,11 @@ module "user_data" {
     github_organisation_name = var.github_organisation_name
 
     cloud_init_users = var.cloud_init_extra_users
-    cloud_init_packages = concat(
-      flatten(module.software[*].packages),
-      var.cloud_init_extra_packages
+    cloud_init_packages = distinct(
+      concat(
+        flatten(module.software[*].packages),
+        var.cloud_init_extra_packages
+      )
     )
     cloud_init_runcmds = concat(
       flatten(module.software[*].runcmds),
