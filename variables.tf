@@ -101,22 +101,10 @@ variable "autoscaling_time_zone" {
   default     = ""
 }
 
-variable "cloud_init_install_python3" {
-  type        = bool
-  default     = true
+variable "software" {
+  type        = list(string)
   description = "TODO"
-}
 
-variable "cloud_init_install_docker_engine" {
-  type        = bool
-  default     = true
-  description = "TODO"
-}
-
-variable "cloud_init_install_terraform" {
-  type        = bool
-  default     = true
-  description = "TODO"
 }
 
 variable "cloud_init_extra_users" {

@@ -1,5 +1,5 @@
 module "user_data_1" {
-  source = "../../modules/user_data"
+  source = "../../../modules/user_data"
   config = {
     aws_region             = "__TEST_REGION__"
     aws_ssm_parameter_name = "__TEST_SSM__"
@@ -16,7 +16,7 @@ module "user_data_1" {
 }
 
 module "user_data_2" {
-  source = "../../modules/user_data"
+  source = "../../../modules/user_data"
   config = {
     aws_region             = "__TEST_REGION__"
     aws_ssm_parameter_name = "__TEST_SSM__"

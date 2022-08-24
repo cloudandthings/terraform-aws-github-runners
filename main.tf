@@ -47,27 +47,10 @@ resource "aws_security_group_rule" "ingress" {
   security_group_id = aws_security_group.this.id
 }
 
-locals {
-  cloud_init_packages = concat(
-    (var.cloud_init_install_python3
-      ? local.packages_python3
-    : []),
-    (var.cloud_init_install_docker_engine
-      ? local.packages_docker_engine
-    : []),
-    var.cloud_init_extra_packages
-  )
-
-  cloud_init_runcmds = concat(
-    (var.cloud_init_install_docker_engine
-      ? local.runcmds_docker_engine
-    : []),
-    (var.cloud_init_install_terraform
-      ? local.runcmds_terraform
-    : []),
-    var.cloud_init_extra_runcmds
-  )
-
+module "software" {
+  source   = "./modules/software"
+  count    = length(var.software)
+  software = var.software[count.index]
 }
 
 module "user_data" {
@@ -76,9 +59,15 @@ module "user_data" {
     github_url               = var.github_url
     github_organisation_name = var.github_organisation_name
 
-    cloud_init_users       = var.cloud_init_extra_users
-    cloud_init_packages    = local.cloud_init_packages
-    cloud_init_runcmds     = local.cloud_init_runcmds
+    cloud_init_users = var.cloud_init_extra_users
+    cloud_init_packages = concat(
+      flatten(module.software[*].packages),
+      var.cloud_init_extra_packages
+    )
+    cloud_init_runcmds = concat(
+      flatten(module.software[*].runcmds),
+      var.cloud_init_extra_runcmds
+    )
     cloud_init_write_files = var.cloud_init_extra_write_files
     cloud_init_other       = var.cloud_init_extra_other
 
