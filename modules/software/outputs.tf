@@ -1,9 +1,9 @@
 output "packages" {
-  value       = toset(local.packages_out)
+  value       = local.packages_out
   description = "TODO"
 }
 
 output "runcmds" {
-  value       = toset(local.runcmds_out)
+  value       = local.runcmds_out
   description = "TODO"
 }

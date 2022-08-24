@@ -111,6 +111,13 @@ variable "software" {
   type        = list(string)
   description = "TODO"
   default     = []
+
+  validation {
+    condition = contains([
+      "python3", "docker-engine", "terraform", "terraform-docs", "tflint"
+    ], var.software)
+    error_message = "The software must be one of [\"python3\", \"docker-engine\", \"terraform\", \"terraform-docs\", \"tflint\"]."
+  }
 }
 
 variable "cloud_init_extra_packages" {

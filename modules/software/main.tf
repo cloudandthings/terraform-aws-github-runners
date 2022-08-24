@@ -36,6 +36,10 @@ locals {
       "chmod +x terraform-docs",
       "mv terraform-docs /usr/local/bin/terraform-docs"
     ]
+
+    "__TEST__" = [
+      "z1", "y2", "x3", "w4", "v5"
+    ]
   }
 
   packages_out = lookup(local.packages, var.software, [])

@@ -11,3 +11,8 @@ module "software" {
   count    = length(local.software)
   software = local.software[count.index]
 }
+
+module "software_test" {
+  source   = "../../../modules/software"
+  software = "__TEST__"
+}
