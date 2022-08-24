@@ -113,9 +113,11 @@ variable "software" {
   default     = []
 
   validation {
-    condition = contains([
-      "python3", "docker-engine", "terraform", "terraform-docs", "tflint"
-    ], var.software)
+    condition = alltrue([
+      for x in var.software : contains([
+        "python3", "docker-engine", "terraform", "terraform-docs", "tflint"
+      ], x)
+    ])
     error_message = "The software must be one of [\"python3\", \"docker-engine\", \"terraform\", \"terraform-docs\", \"tflint\"]."
   }
 }
