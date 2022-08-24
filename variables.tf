@@ -146,5 +146,5 @@ variable "runner_group" {
 variable "runner_labels" {
   description = "TODO"
   type        = list(string)
-  default     = null
+  default     = []
 }
