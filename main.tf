@@ -61,12 +61,12 @@ module "user_data" {
 
     cloud_init_packages = distinct(
       concat(
-        concat(module.software[*].packages),
+        module.software[*].packages,
         var.cloud_init_extra_packages
       )
     )
     cloud_init_runcmds = concat(
-      concat(module.software[*].runcmds),
+      module.software[*].runcmds,
       var.cloud_init_extra_runcmds
     )
     cloud_init_other = var.cloud_init_extra_other
