@@ -15,3 +15,5 @@ Deploy one instance and verify cloud init log and conn to GitHub
 [18:54, 20/08/2022] Bjorn: Zip of cloud init file
 
 [06:25, 24/08/2022] Bjorn: Documentation
+
+Use ubuntu-latest for public repos

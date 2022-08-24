@@ -110,7 +110,7 @@ variable "autoscaling_time_zone" {
 variable "software" {
   type        = list(string)
   description = "TODO"
-
+  default     = []
 }
 
 variable "cloud_init_extra_packages" {
