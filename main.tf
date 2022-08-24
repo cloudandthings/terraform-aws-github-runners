@@ -103,6 +103,7 @@ resource "aws_launch_template" "this" {
 
   network_interfaces {
     associate_public_ip_address = var.ec2_associate_public_ip_address
+    security_groups             = [aws_security_group.this.id]
   }
 
   # security_group_names   = length(var.vpc_id) > 0 ? null : [aws_security_group.this.id]
