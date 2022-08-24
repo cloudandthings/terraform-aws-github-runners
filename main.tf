@@ -91,12 +91,15 @@ resource "aws_launch_template" "this" {
   }
 
   iam_instance_profile {
-    name = var.iam_instance_profile_arn
+    arn = var.iam_instance_profile_arn
   }
+
   image_id = data.aws_ami.ami.id
+
   instance_market_options {
     market_type = "spot"
   }
+
   instance_type = var.ec2_instance_type
 
   key_name = var.ec2_key_pair_name
@@ -105,9 +108,6 @@ resource "aws_launch_template" "this" {
     associate_public_ip_address = var.ec2_associate_public_ip_address
     security_groups             = [aws_security_group.this.id]
   }
-
-  # security_group_names   = length(var.vpc_id) > 0 ? null : [aws_security_group.this.id]
-  # vpc_security_group_ids = length(var.vpc_id) > 0 ? [aws_security_group.this.id] : null
 
   user_data = base64encode(module.user_data.user_data)
 
