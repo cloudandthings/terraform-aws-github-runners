@@ -83,6 +83,13 @@ module "user_data" {
 resource "aws_launch_template" "this" {
   name = var.naming_prefix
 
+  block_device_mappings {
+    device_name = "/dev/sda1"
+    ebs {
+      encrypted = true
+    }
+  }
+
   iam_instance_profile {
     name = var.iam_instance_profile_arn
   }
@@ -96,10 +103,9 @@ resource "aws_launch_template" "this" {
 
   network_interfaces {
     associate_public_ip_address = var.ec2_associate_public_ip_address
-    security_groups             = [aws_security_group.this.id]
   }
 
-  security_group_names   = length(var.vpc_id) > 0 ? null : [aws_security_group.this.id]
+  # security_group_names   = length(var.vpc_id) > 0 ? null : [aws_security_group.this.id]
   vpc_security_group_ids = length(var.vpc_id) > 0 ? [aws_security_group.this.id] : null
 
   user_data = base64encode(module.user_data.user_data)
