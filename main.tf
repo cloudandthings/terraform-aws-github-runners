@@ -107,7 +107,7 @@ resource "aws_launch_template" "this" {
   }
 
   # security_group_names   = length(var.vpc_id) > 0 ? null : [aws_security_group.this.id]
-  vpc_security_group_ids = length(var.vpc_id) > 0 ? [aws_security_group.this.id] : null
+  # vpc_security_group_ids = length(var.vpc_id) > 0 ? [aws_security_group.this.id] : null
 
   user_data = base64encode(module.user_data.user_data)
 
