@@ -8,7 +8,7 @@
 
 # Install additional packages on first boot
 package_update: true
-package_reboot_if_required: false # We'll reboot later
+package_reboot_if_required: true
 packages:
   - awscli
   - jq
