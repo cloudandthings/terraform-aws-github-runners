@@ -7,6 +7,10 @@ variable "config" {
     cloud_init_runcmds  = list(string)
     cloud_init_other    = string
 
+    runner_name   = string
+    runner_group  = string
+    runner_labels = list(string)
+
     github_url               = string
     github_organisation_name = string
   })

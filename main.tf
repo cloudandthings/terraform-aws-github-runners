@@ -71,6 +71,10 @@ module "user_data" {
     )
     cloud_init_other = var.cloud_init_extra_other
 
+    runner_name   = var.runner_name
+    runner_group  = var.runner_group
+    runner_labels = var.runner_labels
+
     aws_region             = var.region
     aws_ssm_parameter_name = data.aws_ssm_parameter.this.name
   }

@@ -130,3 +130,21 @@ variable "cloud_init_extra_other" {
   type        = string
   default     = ""
 }
+
+variable "runner_name" {
+  description = "TODO"
+  type        = string
+  default     = ""
+}
+
+variable "runner_group" {
+  description = "TODO"
+  type        = string
+  default     = ""
+}
+
+variable "runner_labels" {
+  description = "TODO"
+  type        = list(string)
+  default     = null
+}
