@@ -6,12 +6,6 @@
 # sudo cat /var/log/cloud-init-output.log
 # cloud-init devel schema --config-file x.yaml
 
-users:
-  - default
-%{~ for X in USERS }
-  - ${X}
-%{~ endfor }
-
 # Install additional packages on first boot
 package_update: true
 package_reboot_if_required: false # We'll reboot later
@@ -27,27 +21,6 @@ packages:
   ###########################################
   ###########################################
 
-write_files:
-  ###########################################
-  # Extra write_files
-%{~ for X in WRITE_FILES }
-  - ${X}
-%{~ endfor }
-  ###########################################
-  ###########################################
-  - path: /etc/systemd/system/this.service
-    content: |
-      [Unit]
-      Description=this service
-      After=network.target
-      [Service]
-      Type=simple
-      Restart=always
-      RestartSec=30
-      User=ubuntu
-      ExecStart=/home/ubuntu/actions-runner/run.sh
-      [Install]
-      WantedBy=multi-user.target
 runcmd:
   ###########################################
   # Extra runcmds
@@ -57,31 +30,25 @@ runcmd:
 %{~ endfor }
   ###########################################
   ########################################### 
-  - echo ==== RUNNER ====
-  # install this
+  - echo ==== ACTIONS-RUNNER ====
+  # install actions-runner
   - mkdir actions-runner && cd actions-runner
   - curl -o actions-runner-linux-x64-2.294.0.tar.gz -L 'https://github.com/actions/runner/releases/download/v2.294.0/actions-runner-linux-x64-2.294.0.tar.gz'
   - echo "a19a09f4eda5716e5d48ba86b6b78fc014880c5619b9dba4a059eaf65e131780  actions-runner-linux-x64-2.294.0.tar.gz" | shasum -a 256 -c
   - tar xzf ./actions-runner-linux-x64-2.294.0.tar.gz
   - cd ..
   - mv actions-runner /home/ubuntu/actions-runner
-
-  # configure this
-  # - sudo mkdir /opt/hostedtoolcache
-  # - sudo chown -R ubuntu:ubuntu /opt/hostedtoolcache
   - sudo chown -R ubuntu:ubuntu /home/ubuntu
 
-  # register this
+  # configure actions-runner
   - PERSONAL_ACCESS_TOKEN=`aws ssm get-parameter --with-decryption --name ${AWS_SSM_PARAMETER_NAME} --region ${AWS_REGION} | jq -r '.Parameter.Value'`
   - >
     TOKEN_RESPONSE=`curl -X POST -H "Accept: application/vnd.github+json" -H "Authorization: token $PERSONAL_ACCESS_TOKEN" https://api.github.com/orgs/${GITHUB_ORGANISATION_NAME}/actions/runners/registration-token`
   - TOKEN=`echo $TOKEN_RESPONSE | jq -r '.token'`
   - su ubuntu -c "/home/ubuntu/actions-runner/config.sh --url '${GITHUB_URL}' --unattended --token $TOKEN"
-
-  # run on reboot
-  - sudo systemctl enable this
-
-  - echo ==== RUNNER DONE ====
+  # Install as service
+  - sudo /home/ubuntu/actions-runner/svc.sh install ubuntu
+  - echo ==== ACTIONS-RUNNER DONE ====
 
 power_state:
     mode: reboot

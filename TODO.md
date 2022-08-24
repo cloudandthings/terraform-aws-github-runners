@@ -6,7 +6,6 @@ Advanced example
 
 [18:11, 20/08/2022] Bjorn: GitHub runners customisation:
 
-[18:11, 20/08/2022] Bjorn: Instance type, spot price or auto price
 [18:13, 20/08/2022] Bjorn: Ci Features:
 Cloud init validation
 Deploy one instance and verify cloud init log and conn to GitHub

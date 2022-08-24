@@ -113,12 +113,6 @@ variable "software" {
 
 }
 
-variable "cloud_init_extra_users" {
-  description = "TODO"
-  type        = list(string)
-  default     = []
-}
-
 variable "cloud_init_extra_packages" {
   description = "TODO"
   type        = list(string)
@@ -126,12 +120,6 @@ variable "cloud_init_extra_packages" {
 }
 
 variable "cloud_init_extra_runcmds" {
-  description = "TODO"
-  type        = list(string)
-  default     = []
-}
-
-variable "cloud_init_extra_write_files" {
   description = "TODO"
   type        = list(string)
   default     = []

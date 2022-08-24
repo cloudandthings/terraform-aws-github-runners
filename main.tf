@@ -59,7 +59,6 @@ module "user_data" {
     github_url               = var.github_url
     github_organisation_name = var.github_organisation_name
 
-    cloud_init_users = var.cloud_init_extra_users
     cloud_init_packages = distinct(
       concat(
         flatten(module.software[*].packages),
@@ -70,8 +69,7 @@ module "user_data" {
       flatten(module.software[*].runcmds),
       var.cloud_init_extra_runcmds
     )
-    cloud_init_write_files = var.cloud_init_extra_write_files
-    cloud_init_other       = var.cloud_init_extra_other
+    cloud_init_other = var.cloud_init_extra_other
 
     aws_region             = var.region
     aws_ssm_parameter_name = data.aws_ssm_parameter.this.name

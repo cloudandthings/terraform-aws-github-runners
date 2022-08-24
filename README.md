@@ -20,8 +20,6 @@
 | <a name="input_cloud_init_extra_other"></a> [cloud\_init\_extra\_other](#input\_cloud\_init\_extra\_other) | TODO | `string` | `""` | no |
 | <a name="input_cloud_init_extra_packages"></a> [cloud\_init\_extra\_packages](#input\_cloud\_init\_extra\_packages) | TODO | `list(string)` | `[]` | no |
 | <a name="input_cloud_init_extra_runcmds"></a> [cloud\_init\_extra\_runcmds](#input\_cloud\_init\_extra\_runcmds) | TODO | `list(string)` | `[]` | no |
-| <a name="input_cloud_init_extra_users"></a> [cloud\_init\_extra\_users](#input\_cloud\_init\_extra\_users) | TODO | `list(string)` | `[]` | no |
-| <a name="input_cloud_init_extra_write_files"></a> [cloud\_init\_extra\_write\_files](#input\_cloud\_init\_extra\_write\_files) | TODO | `list(string)` | `[]` | no |
 | <a name="input_ec2_associate_public_ip_address"></a> [ec2\_associate\_public\_ip\_address](#input\_ec2\_associate\_public\_ip\_address) | TODO | `bool` | `false` | no |
 | <a name="input_ec2_instance_type"></a> [ec2\_instance\_type](#input\_ec2\_instance\_type) | TODO | `string` | `"t3.micro"` | no |
 | <a name="input_ec2_key_pair_name"></a> [ec2\_key\_pair\_name](#input\_ec2\_key\_pair\_name) | TODO | `string` | `""` | no |
