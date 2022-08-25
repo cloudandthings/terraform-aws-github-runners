@@ -47,6 +47,7 @@ runcmd:
   - TOKEN=`echo $TOKEN_RESPONSE | jq -r '.token'`
   - su ubuntu -c "/home/ubuntu/actions-runner/config.sh --url '${GITHUB_URL}' --unattended --token $TOKEN ${ARG_NAME} ${ARG_RUNNERGROUP} ${ARG_LABELS}"
   # Install as service
+  # This roundabout way of doing things hopefully prevents an issue with _work folders
   - su ubuntu -c "cd /home/ubuntu/actions-runner/ && sudo bash ./svc.sh install ubuntu"
   - echo ==== ACTIONS-RUNNER DONE ====
 

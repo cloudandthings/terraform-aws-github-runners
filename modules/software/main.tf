@@ -1,7 +1,7 @@
 locals {
   packages = {
     "python3"       = ["python3", "python3-pip", "python3-venv", "python-is-python3"]
-    "docker-engine" = ["ca-certificates", "curl", "gnupg", "lsb-release"]
+    "docker-engine" = ["ca-certificates", "curl", "gnupg", "lsb-release", "uidmap", "dbus-user-session"]
     "tflint"        = ["unzip"]
   }
 
@@ -13,7 +13,8 @@ locals {
       "echo \"deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable\" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null",
       "sudo apt-get update",
       "sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin",
-      "sudo usermod -aG docker ubuntu"
+      "sudo usermod -aG docker ubuntu",
+      "su ubuntu -c \"dockerd-rootless-setuptool.sh install\""
     ]
 
     "terraform" = [
