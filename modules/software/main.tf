@@ -1,6 +1,6 @@
 locals {
   packages = {
-    "python3"       = ["python3", "python3-pip", "python3-venv", "python-is-python3"]
+    "python3"       = ["python3", "python-is-python3", "python3-pip", "python3-venv"]
     "docker-engine" = ["ca-certificates", "curl", "gnupg", "lsb-release"]
     "tflint"        = ["unzip"]
   }
@@ -14,7 +14,7 @@ locals {
       "sudo apt-get update",
       "sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin",
       "sudo usermod -aG docker ubuntu",
-      "sudo usermod -a -G root ubuntu" # TODO
+      "sudo usermod -a -G root ubuntu" # issue #6
     ]
 
     "terraform" = [

@@ -108,7 +108,7 @@ variable "autoscaling_time_zone" {
 }
 
 variable "autoscaling_max_instance_lifetime" {
-  description = "TODO"
+  description = "The maximum amount of time, in seconds, that an instance can be in service. Values must be either equal to 0 or between 86400 and 31536000 seconds."
   type        = string
   default     = 0
 }
