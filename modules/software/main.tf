@@ -1,6 +1,6 @@
 locals {
   packages = {
-    "python3"       = ["python3", "python-is-python3", "python3-pip", "python3-venv"]
+    "python3"       = ["python3", "python3-pip", "python3-venv"]
     "docker-engine" = ["ca-certificates", "curl", "gnupg", "lsb-release"]
     "tflint"        = ["unzip"]
   }
