@@ -46,6 +46,12 @@ variable "github_url" {
 }
 
 # Optional variables
+variable "ami_name" {
+  description = "TODO"
+  type        = string
+  default     = "ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-20220609"
+}
+
 variable "ec2_key_pair_name" {
   description = "TODO"
   type        = string
@@ -101,28 +107,19 @@ variable "autoscaling_time_zone" {
   default     = ""
 }
 
-variable "cloud_init_install_python3" {
-  type        = bool
-  default     = true
-  description = "TODO"
-}
-
-variable "cloud_init_install_docker_engine" {
-  type        = bool
-  default     = true
-  description = "TODO"
-}
-
-variable "cloud_init_install_terraform" {
-  type        = bool
-  default     = true
-  description = "TODO"
-}
-
-variable "cloud_init_extra_users" {
-  description = "TODO"
+variable "software" {
   type        = list(string)
+  description = "TODO"
   default     = []
+
+  validation {
+    condition = alltrue([
+      for x in var.software : contains([
+        "python3", "docker-engine", "terraform", "terraform-docs", "tflint"
+      ], x)
+    ])
+    error_message = "The software must be one of [\"python3\", \"docker-engine\", \"terraform\", \"terraform-docs\", \"tflint\"]."
+  }
 }
 
 variable "cloud_init_extra_packages" {
@@ -137,14 +134,26 @@ variable "cloud_init_extra_runcmds" {
   default     = []
 }
 
-variable "cloud_init_extra_write_files" {
-  description = "TODO"
-  type        = list(string)
-  default     = []
-}
-
 variable "cloud_init_extra_other" {
   description = "TODO"
   type        = string
   default     = ""
+}
+
+variable "runner_name" {
+  description = "TODO"
+  type        = string
+  default     = ""
+}
+
+variable "runner_group" {
+  description = "TODO"
+  type        = string
+  default     = ""
+}
+
+variable "runner_labels" {
+  description = "TODO"
+  type        = list(string)
+  default     = []
 }

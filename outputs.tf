@@ -8,7 +8,7 @@ output "aws_security_group_id" {
   value       = aws_security_group.this.id
 }
 
-output "aws_launch_configuration_arn" {
+output "aws_launch_template_arn" {
   description = "TODO"
-  value       = aws_launch_configuration.this.arn
+  value       = aws_launch_template.this.arn
 }

@@ -1,3 +1,4 @@
+flake8
 pre-commit
 pytest
 pytest_terraform

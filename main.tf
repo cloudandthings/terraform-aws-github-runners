@@ -14,7 +14,7 @@ data "aws_ami" "ami" {
 
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-20220609"]
+    values = [var.ami_name]
   }
 
   filter {
@@ -47,27 +47,10 @@ resource "aws_security_group_rule" "ingress" {
   security_group_id = aws_security_group.this.id
 }
 
-locals {
-  cloud_init_packages = concat(
-    (var.cloud_init_install_python3
-      ? local.packages_python3
-    : []),
-    (var.cloud_init_install_docker_engine
-      ? local.packages_docker_engine
-    : []),
-    var.cloud_init_extra_packages
-  )
-
-  cloud_init_runcmds = concat(
-    (var.cloud_init_install_docker_engine
-      ? local.runcmds_docker_engine
-    : []),
-    (var.cloud_init_install_terraform
-      ? local.runcmds_terraform
-    : []),
-    var.cloud_init_extra_runcmds
-  )
-
+module "software" {
+  source   = "./modules/software"
+  count    = length(var.software)
+  software = var.software[count.index]
 }
 
 module "user_data" {
@@ -76,31 +59,57 @@ module "user_data" {
     github_url               = var.github_url
     github_organisation_name = var.github_organisation_name
 
-    cloud_init_users       = var.cloud_init_extra_users
-    cloud_init_packages    = local.cloud_init_packages
-    cloud_init_runcmds     = local.cloud_init_runcmds
-    cloud_init_write_files = var.cloud_init_extra_write_files
-    cloud_init_other       = var.cloud_init_extra_other
+    cloud_init_packages = distinct(
+      concat(
+        flatten(module.software[*].packages),
+        var.cloud_init_extra_packages
+      )
+    )
+    cloud_init_runcmds = concat(
+      flatten(module.software[*].runcmds),
+      var.cloud_init_extra_runcmds
+    )
+    cloud_init_other = var.cloud_init_extra_other
+
+    runner_name   = var.runner_name
+    runner_group  = var.runner_group
+    runner_labels = var.runner_labels
 
     aws_region             = var.region
     aws_ssm_parameter_name = data.aws_ssm_parameter.this.name
   }
 }
 
-resource "aws_launch_configuration" "this" {
-  name_prefix   = var.naming_prefix
-  image_id      = data.aws_ami.ami.id
+resource "aws_launch_template" "this" {
+  name = var.naming_prefix
+
+  block_device_mappings {
+    device_name = "/dev/sda1"
+    ebs {
+      encrypted = true
+    }
+  }
+
+  iam_instance_profile {
+    arn = var.iam_instance_profile_arn
+  }
+
+  image_id = data.aws_ami.ami.id
+
+  instance_market_options {
+    market_type = "spot"
+  }
+
   instance_type = var.ec2_instance_type
 
-  user_data        = module.user_data.user_data
-  user_data_base64 = null
-
-  iam_instance_profile = var.iam_instance_profile_arn
-  security_groups      = [aws_security_group.this.id]
-
-  associate_public_ip_address = var.ec2_associate_public_ip_address
-
   key_name = var.ec2_key_pair_name
+
+  network_interfaces {
+    associate_public_ip_address = var.ec2_associate_public_ip_address
+    security_groups             = [aws_security_group.this.id]
+  }
+
+  user_data = base64encode(module.user_data.user_data)
 
   lifecycle {
     create_before_destroy = true
@@ -108,11 +117,15 @@ resource "aws_launch_configuration" "this" {
 }
 
 resource "aws_autoscaling_group" "this" {
-  name                 = var.naming_prefix
-  min_size             = var.autoscaling_min_size
-  max_size             = var.autoscaling_max_size
-  desired_capacity     = var.autoscaling_desired_size
-  launch_configuration = aws_launch_configuration.this.name
+  name             = var.naming_prefix
+  min_size         = var.autoscaling_min_size
+  max_size         = var.autoscaling_max_size
+  desired_capacity = var.autoscaling_desired_size
+
+  launch_template {
+    id      = aws_launch_template.this.id
+    version = aws_launch_template.this.latest_version # trigger instance refresh
+  }
 
   vpc_zone_identifier = var.subnet_ids
 
