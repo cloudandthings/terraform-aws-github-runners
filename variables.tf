@@ -107,6 +107,12 @@ variable "autoscaling_time_zone" {
   default     = ""
 }
 
+variable "autoscaling_max_instance_lifetime" {
+  description = "TODO"
+  type        = string
+  default     = 0
+}
+
 variable "software" {
   type        = list(string)
   description = "TODO"

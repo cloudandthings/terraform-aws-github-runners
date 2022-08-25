@@ -86,7 +86,8 @@ resource "aws_launch_template" "this" {
   block_device_mappings {
     device_name = "/dev/sda1"
     ebs {
-      encrypted = true
+      encrypted             = true
+      delete_on_termination = true
     }
   }
 
@@ -123,8 +124,15 @@ resource "aws_autoscaling_group" "this" {
   desired_capacity = var.autoscaling_desired_size
 
   launch_template {
-    id      = aws_launch_template.this.id
-    version = aws_launch_template.this.latest_version # trigger instance refresh
+    id = aws_launch_template.this.id
+    # trigger instance refresh
+    version = aws_launch_template.this.latest_version
+  }
+
+  max_instance_lifetime = var.autoscaling_max_instance_lifetime
+
+  instance_refresh {
+    strategy = "Rolling"
   }
 
   vpc_zone_identifier = var.subnet_ids
