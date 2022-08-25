@@ -8,7 +8,6 @@ data "aws_ssm_parameter" "this" {
 }
 
 data "aws_ami" "ami" {
-  # TODO Ubuntu or AMI filter
   most_recent = true
   owners      = ["099720109477"]
 
@@ -47,10 +46,10 @@ resource "aws_security_group_rule" "ingress" {
   security_group_id = aws_security_group.this.id
 }
 
-module "software" {
-  source   = "./modules/software"
-  count    = length(var.software)
-  software = var.software[count.index]
+module "software_packs" {
+  source        = "./modules/software"
+  count         = length(var.software_packs)
+  software_pack = var.software_packs[count.index]
 }
 
 module "user_data" {
@@ -61,19 +60,19 @@ module "user_data" {
 
     cloud_init_packages = distinct(
       concat(
-        flatten(module.software[*].packages),
+        flatten(module.software_packs[*].packages),
         var.cloud_init_extra_packages
       )
     )
     cloud_init_runcmds = concat(
-      flatten(module.software[*].runcmds),
+      flatten(module.software_packs[*].runcmds),
       var.cloud_init_extra_runcmds
     )
     cloud_init_other = var.cloud_init_extra_other
 
-    runner_name   = var.runner_name
-    runner_group  = var.runner_group
-    runner_labels = var.runner_labels
+    runner_name   = var.github_runner_name
+    runner_group  = var.github_runner_group
+    runner_labels = var.github_runner_labels
 
     aws_region             = var.region
     aws_ssm_parameter_name = data.aws_ssm_parameter.this.name
@@ -155,7 +154,7 @@ resource "aws_autoscaling_schedule" "on" {
   max_size               = var.autoscaling_max_size
   desired_capacity       = var.autoscaling_desired_size
   recurrence             = var.autoscaling_schedule_on_recurrences[count.index]
-  time_zone              = var.autoscaling_time_zone
+  time_zone              = var.autoscaling_schedule_time_zone
   autoscaling_group_name = aws_autoscaling_group.this.name
 }
 
@@ -166,7 +165,7 @@ resource "aws_autoscaling_schedule" "off" {
   max_size               = 0
   desired_capacity       = 0
   recurrence             = var.autoscaling_schedule_off_recurrences[count.index]
-  time_zone              = var.autoscaling_time_zone
+  time_zone              = var.autoscaling_schedule_time_zone
   autoscaling_group_name = aws_autoscaling_group.this.name
 }
 
