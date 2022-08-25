@@ -10,8 +10,17 @@ locals {
       RUNCMDS  = var.config.cloud_init_runcmds
       OTHER    = var.config.cloud_init_other
 
-      GITHUB_URL               = var.config.github_url
-      GITHUB_ORGANISATION_NAME = var.config.github_organisation_name
+      GITHUB_URL = var.config.github_url
+      GITHUB_ORGANISATION_NAME = (
+        length(var.config.github_organisation_name) > 0
+        ? var.config.github_organisation_name
+        : split("/",
+          regex(
+            #https://www.rfc-editor.org/rfc/rfc3986#appendix-B
+            "^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#(.*))?",
+          var.config.github_url)[4]
+        )[1]
+      )
 
       ARG_NAME        = length(var.config.runner_name) > 0 ? "--name '${var.config.runner_name}'" : ""
       ARG_RUNNERGROUP = length(var.config.runner_group) > 0 ? "--runnergroup '${var.config.runner_group}'" : ""

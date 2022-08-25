@@ -42,6 +42,6 @@ locals {
     ]
   }
 
-  packages_out = lookup(local.packages, var.software, [])
-  runcmds_out  = lookup(local.runcmds, var.software, [])
+  packages_out = lookup(local.packages, var.software_pack, [])
+  runcmds_out  = lookup(local.runcmds, var.software_pack, [])
 }

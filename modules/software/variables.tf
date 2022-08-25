@@ -1,4 +1,4 @@
-variable "software" {
+variable "software_pack" {
   type        = string
-  description = "TODO"
+  description = "Pre-defined software pack."
 }

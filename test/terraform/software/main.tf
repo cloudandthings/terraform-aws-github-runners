@@ -7,12 +7,12 @@ locals {
 }
 
 module "software" {
-  source   = "../../../modules/software"
-  count    = length(local.software)
-  software = local.software[count.index]
+  source        = "../../../modules/software"
+  count         = length(local.software)
+  software_pack = local.software[count.index]
 }
 
 module "software_test" {
-  source   = "../../../modules/software"
-  software = "__TEST__"
+  source        = "../../../modules/software"
+  software_pack = "__TEST__"
 }
