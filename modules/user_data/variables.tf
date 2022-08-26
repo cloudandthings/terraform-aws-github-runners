@@ -14,5 +14,5 @@ variable "config" {
     github_url               = string
     github_organisation_name = string
   })
-  description = "Various configuration needed to generate a Github Runner cloudinit script."
+  description = "Various configuration needed to generate a GitHub Runner cloudinit script."
 }
