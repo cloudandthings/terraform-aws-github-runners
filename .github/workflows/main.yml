@@ -17,9 +17,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
-      - run: python -m venv .venv && source .venv/bin/activate
-      - run: pip install flake8==4.0.1
-      - run: flake8 --count --max-complexity=10 --max-line-length=90 --statistics
+      - run: |
+          python -m venv .venv && source .venv/bin/activate
+          pip install -r requirements-dev.txt
+          flake8
+          black .
 
   terraform_lint:
     name: 🏗 Terraform file format
@@ -36,10 +38,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
-      - run: python -m venv .venv && source .venv/bin/activate
-      - run: pip install -r requirements-dev.txt
-      - run: pre-commit install && pre-commit run --all-files
-      - run: pytest --log-level INFO
+      - run: |
+          python -m venv .venv && source .venv/bin/activate
+          pip install -r requirements-dev.txt
+          pre-commit install && pre-commit run --all-files
+          pytest --log-level INFO
         env:
           PYTEST_ADDOPTS: "--color=yes"
         timeout-minutes: 5
