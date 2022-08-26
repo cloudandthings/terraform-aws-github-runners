@@ -108,8 +108,7 @@ module "user_data" {
     runner_group  = var.github_runner_group
     runner_labels = var.github_runner_labels
 
-    # aws_region             = var.region
-    ssm_parameter_name = data.aws_ssm_parameter.this.name
+    ssm_parameter_arn = data.aws_ssm_parameter.this.arn
   }
 }
 

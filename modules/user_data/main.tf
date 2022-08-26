@@ -1,10 +1,15 @@
 locals {
   runner_labels = join(",", var.config.runner_labels)
 
+  ssm_match = regex("^arn:aws:ssm:(.*):.*:parameter(.*)$", var.config.ssm_parameter_arn)
+
+  ssm_region         = local.ssm_match[0]
+  ssm_parameter_name = local.ssm_match[1]
+
   user_data = templatefile(
     "${path.module}/cloud-init.yaml", {
-      # AWS_REGION             = var.config.aws_region
-      SSM_PARAMETER_NAME = var.config.ssm_parameter_name
+      SSM_REGION         = local.ssm_region
+      SSM_PARAMETER_NAME = local.ssm_parameter_name
 
       PACKAGES = var.config.cloud_init_packages
       RUNCMDS  = var.config.cloud_init_runcmds
