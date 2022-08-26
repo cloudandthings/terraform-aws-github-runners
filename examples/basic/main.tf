@@ -24,6 +24,7 @@ module "github_runner" {
 
   ssm_parameter_name = "my/parameter"
 
+  autoscaling_schedule_time_zone       = "Africa/Johannesburg"
   autoscaling_schedule_off_recurrences = ["0 20 * * *"]
   autoscaling_schedule_on_recurrences  = ["0 6 * * *"]
 }

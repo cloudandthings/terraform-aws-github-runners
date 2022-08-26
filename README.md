@@ -29,6 +29,7 @@ module "github_runner" {
 
   ssm_parameter_name = "my/parameter"
 
+  autoscaling_schedule_time_zone       = "Africa/Johannesburg"
   autoscaling_schedule_off_recurrences = ["0 20 * * *"]
   autoscaling_schedule_on_recurrences  = ["0 6 * * *"]
 }
@@ -45,7 +46,7 @@ module "github_runner" {
 | <a name="input_autoscaling_min_size"></a> [autoscaling\_min\_size](#input\_autoscaling\_min\_size) | The minimum size of the Auto Scaling Group. | `number` | `1` | no |
 | <a name="input_autoscaling_schedule_off_recurrences"></a> [autoscaling\_schedule\_off\_recurrences](#input\_autoscaling\_schedule\_off\_recurrences) | A list of schedule cron expressions, specifying when the Auto Scaling Group will terminate all instances. Example: ["0 20 * * *"] | `list(string)` | `[]` | no |
 | <a name="input_autoscaling_schedule_on_recurrences"></a> [autoscaling\_schedule\_on\_recurrences](#input\_autoscaling\_schedule\_on\_recurrences) | A list of schedule cron expressions, specifying when the Auto Scaling Group will launch instances. Example: ["0 6 * * *"] | `list(string)` | `[]` | no |
-| <a name="input_autoscaling_schedule_time_zone"></a> [autoscaling\_schedule\_time\_zone](#input\_autoscaling\_schedule\_time\_zone) | The timezone for schedule cron expressions. | `string` | `""` | no |
+| <a name="input_autoscaling_schedule_time_zone"></a> [autoscaling\_schedule\_time\_zone](#input\_autoscaling\_schedule\_time\_zone) | The timezone for schedule cron expressions. See https://www.joda.org/joda-time/timezones.html . | `string` | `""` | no |
 | <a name="input_cloud_init_extra_other"></a> [cloud\_init\_extra\_other](#input\_cloud\_init\_extra\_other) | Any other text to append to the cloudinit script. | `string` | `""` | no |
 | <a name="input_cloud_init_extra_packages"></a> [cloud\_init\_extra\_packages](#input\_cloud\_init\_extra\_packages) | A list of strings to append beneath the `packages:` section of the cloudinit script. See https://cloudinit.readthedocs.io/en/latest/topics/modules.html#package-update-upgrade-install . | `list(string)` | `[]` | no |
 | <a name="input_cloud_init_extra_runcmds"></a> [cloud\_init\_extra\_runcmds](#input\_cloud\_init\_extra\_runcmds) | A list of strings to append beneath the `runcmd:` section of the cloudinit script. See https://cloudinit.readthedocs.io/en/latest/topics/modules.html#runcmd . | `list(string)` | `[]` | no |

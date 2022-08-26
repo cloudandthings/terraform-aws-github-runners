@@ -4,6 +4,8 @@ Documetn default software
 
 Docker runner
 
+Test that default software was actually installed and working
+
 #TODO sort these variables nicely
 
 Advanced example

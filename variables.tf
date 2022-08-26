@@ -69,7 +69,7 @@ variable "autoscaling_schedule_off_recurrences" {
 }
 
 variable "autoscaling_schedule_time_zone" {
-  description = "The timezone for schedule cron expressions."
+  description = "The timezone for schedule cron expressions. See https://www.joda.org/joda-time/timezones.html ."
   type        = string
   default     = ""
 }
