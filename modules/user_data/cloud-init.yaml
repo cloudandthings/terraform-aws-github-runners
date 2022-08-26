@@ -41,7 +41,7 @@ runcmd:
   - sudo chown -R ubuntu:ubuntu /home/ubuntu
 
   # configure actions-runner
-  - PERSONAL_ACCESS_TOKEN=`aws ssm get-parameter --with-decryption --name ${SSM_PARAMETER_NAME} --REGION ${SSM_REGION} | jq -r '.Parameter.Value'`
+  - PERSONAL_ACCESS_TOKEN=`aws ssm get-parameter --with-decryption --name ${SSM_PARAMETER_NAME} --region ${SSM_REGION} | jq -r '.Parameter.Value'`
   - >
     TOKEN_RESPONSE=`curl -X POST -H "Accept: application/vnd.github+json" -H "Authorization: token $PERSONAL_ACCESS_TOKEN" https://api.github.com/orgs/${GITHUB_ORGANISATION_NAME}/actions/runners/registration-token`
   - TOKEN=`echo $TOKEN_RESPONSE | jq -r '.token'`
