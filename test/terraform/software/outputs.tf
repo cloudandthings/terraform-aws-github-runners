@@ -1,20 +1,20 @@
 
-output "packages" {
-  value       = module.software[*].packages
+output "test_packages" {
+  value       = module.test_software[*].packages
   description = "packages"
 }
 
-output "runcmds" {
-  value       = module.software[*].runcmds
+output "test_runcmds" {
+  value       = module.test_software[*].runcmds
   description = "runcmds"
 }
 
-output "packages_test" {
-  value       = module.software_test.packages
+output "test_default_packages" {
+  value       = module.test_software_default.packages
   description = "packages"
 }
 
-output "runcmds_test" {
-  value       = module.software_test.runcmds
+output "test_order_runcmds" {
+  value       = module.test_software_order.runcmds
   description = "runcmds"
 }

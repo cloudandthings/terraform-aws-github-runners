@@ -15,12 +15,11 @@ module "github_runner" {
   ec2_instance_type        = "t3.micro"
   iam_instance_profile_arn = "arn:aws:iam::112233445566:role/terraform-aws-github-runners"
 
+  # Optional. If not specified then all default software is installed.
   software_packs = [
-    "python3",
     "docker-engine",
-    "terraform",
-    "terraform-docs",
-    "tflint"
+    "node",
+    "python3",
   ]
 
   autoscaling_schedule_off_recurrences = ["0 20 * * *"]
@@ -57,7 +56,7 @@ module "github_runner" {
 | <a name="input_iam_instance_profile_arn"></a> [iam\_instance\_profile\_arn](#input\_iam\_instance\_profile\_arn) | IAM Instance Profile to launch the instance with. Must allow permissions to read the SSM Parameter. | `string` | n/a | yes |
 | <a name="input_naming_prefix"></a> [naming\_prefix](#input\_naming\_prefix) | Created resources will be prefixed with this. | `string` | `"github-runner"` | no |
 | <a name="input_region"></a> [region](#input\_region) | AWS Region for the SSM Parameter. | `string` | n/a | yes |
-| <a name="input_software_packs"></a> [software\_packs](#input\_software\_packs) | A list of pre-defined software packs to install. Valid options are: ["python3", "docker-engine", "terraform", "terraform-docs", "tflint"] | `list(string)` | `[]` | no |
+| <a name="input_software_packs"></a> [software\_packs](#input\_software\_packs) | A list of pre-defined software packs to install. Valid options are: ["\_\_DEFAULT\_\_", "docker-engine", "node", "python3", "terraform", "terraform-docs", "tflint"] | `list(string)` | <pre>[<br>  "__DEFAULT__"<br>]</pre> | no |
 | <a name="input_ssm_parameter_name"></a> [ssm\_parameter\_name](#input\_ssm\_parameter\_name) | SSM Parameter name for the GitHub Runner token. | `string` | `"/github/runner/token"` | no |
 | <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | The list of Subnet IDs to launch EC2 instances in. If `autoscaling_enabled=false` then the first Subnet ID from this list will be used. | `list(string)` | n/a | yes |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | The VPC ID to launch instances in. | `string` | n/a | yes |

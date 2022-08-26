@@ -10,12 +10,11 @@ module "github_runner" {
   ec2_instance_type        = "t3.micro"
   iam_instance_profile_arn = "arn:aws:iam::112233445566:role/terraform-aws-github-runners"
 
+  # Optional. If not specified then all default software is installed.
   software_packs = [
-    "python3",
     "docker-engine",
-    "terraform",
-    "terraform-docs",
-    "tflint"
+    "node",
+    "python3",
   ]
 
   autoscaling_schedule_off_recurrences = ["0 20 * * *"]

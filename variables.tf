@@ -110,16 +110,16 @@ variable "autoscaling_max_instance_lifetime" {
 
 variable "software_packs" {
   type        = list(string)
-  description = "A list of pre-defined software packs to install. Valid options are: [\"python3\", \"docker-engine\", \"terraform\", \"terraform-docs\", \"tflint\"]"
-  default     = []
+  description = "A list of pre-defined software packs to install. Valid options are: [\"__DEFAULT__\", \"docker-engine\", \"node\", \"python3\", \"terraform\", \"terraform-docs\", \"tflint\"]"
+  default     = ["__DEFAULT__"]
 
   validation {
     condition = alltrue([
       for x in var.software_packs : contains([
-        "python3", "docker-engine", "terraform", "terraform-docs", "tflint"
+        "__DEFAULT__", "docker-engine", "node", "python3", "terraform", "terraform-docs", "tflint"
       ], x)
     ])
-    error_message = "Software packs must be one of [\"python3\", \"docker-engine\", \"terraform\", \"terraform-docs\", \"tflint\"]."
+    error_message = "Software packs must be in [\"__DEFAULT__\", \"docker-engine\", \"node\", \"python3\", \"terraform\", \"terraform-docs\", \"tflint\"]."
   }
 }
 

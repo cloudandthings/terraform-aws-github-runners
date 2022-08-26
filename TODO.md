@@ -1,5 +1,9 @@
 search for TODO
 
+Documetn default software
+
+Docker runner
+
 #TODO sort these variables nicely
 
 Advanced example
