@@ -21,7 +21,7 @@ variable "subnet_ids" {
 }
 
 variable "ssm_parameter_name" {
-  description = "SSM Parameter name for the Github Runner token."
+  description = "SSM Parameter name for the GitHub Runner token."
   type        = string
   default     = "/github/runner/token"
 }
@@ -32,19 +32,19 @@ variable "iam_instance_profile_arn" {
 }
 
 variable "github_organisation_name" {
-  description = "Github orgnisation name. Derived from `github_url` by default."
+  description = "GitHub orgnisation name. Derived from `github_url` by default."
   type        = string
   default     = ""
 }
 
 variable "github_url" {
-  description = "Github url, for example: \"https://github.com/cloudandthings/\"."
+  description = "GitHub url, for example: \"https://github.com/cloudandthings/\"."
   type        = string
 }
 
 # Optional variables
 variable "ami_name" {
-  description = "AWS AMI name filter for launching instances. Github supports specific operating systems and architectures, including Ubuntu 22.04 amd64 which is the default. The included software packs are not tested with other AMIs."
+  description = "AWS AMI name filter for launching instances. GitHub supports specific operating systems and architectures, including Ubuntu 22.04 amd64 which is the default. The included software packs are not tested with other AMIs."
   type        = string
   default     = "ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-20220609"
 }
@@ -57,9 +57,7 @@ variable "ec2_key_pair_name" {
 
 variable "ec2_instance_type" {
   description = "EC2 instance type for launched instances."
-
-  type    = string
-  default = "t3.micro"
+  type        = string
 }
 
 variable "ec2_associate_public_ip_address" {
@@ -144,19 +142,19 @@ variable "cloud_init_extra_other" {
 }
 
 variable "github_runner_name" {
-  description = "Custom Github runner name."
+  description = "Custom GitHub runner name."
   type        = string
   default     = ""
 }
 
 variable "github_runner_group" {
-  description = "Custom Github runner group."
+  description = "Custom GitHub runner group."
   type        = string
   default     = ""
 }
 
 variable "github_runner_labels" {
-  description = "Custom Github runner labels, for example: \"gpu,x64,linux\"."
+  description = "Custom GitHub runner labels, for example: \"gpu,x64,linux\"."
   type        = list(string)
   default     = []
 }
