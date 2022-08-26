@@ -54,8 +54,9 @@ repos:
       - id: end-of-file-fixer
       - id: mixed-line-ending
       - id: name-tests-test
-      - id: no-commit-to-branch
-        args: [--branch, develop, --branch, main]
+      # Causes PRs to main to fail
+      #- id: no-commit-to-branch
+      #  args: [--branch, develop, --branch, main]
       - id: requirements-txt-fixer
 
   - repo: local
