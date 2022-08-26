@@ -1,7 +1,8 @@
 locals {
   packages = {
-    "python3"       = ["python3", "python-is-python3", "python3-pip", "python3-venv"]
     "docker-engine" = ["ca-certificates", "curl", "gnupg", "lsb-release"]
+    "node"          = ["nodejs"]
+    "python3"       = ["python3", "python-is-python3", "python3-pip", "python3-venv"]
     "tflint"        = ["unzip"]
   }
 
@@ -38,11 +39,19 @@ locals {
       "mv terraform-docs /usr/local/bin/terraform-docs"
     ]
 
-    "__TEST__" = [
+    "__TEST_ORDER__" = [
       "z1", "y2", "x3", "w4", "v5"
     ]
   }
 
-  packages_out = lookup(local.packages, var.software_pack, [])
-  runcmds_out  = lookup(local.runcmds, var.software_pack, [])
+  packages_out = (
+    var.software_pack == "__DEFAULT__"
+    ? flatten([for k, v in local.packages : v])
+    : lookup(local.packages, var.software_pack, [])
+  )
+  runcmds_out = (
+    var.software_pack == "__DEFAULT__"
+    ? flatten([for k, v in local.runcmds : v])
+    : lookup(local.runcmds, var.software_pack, [])
+  )
 }

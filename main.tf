@@ -1,29 +1,63 @@
-data "http" "myip" {
-  url = "http://ipv4.icanhazip.com"
+resource "aws_iam_policy" "this" {
+  count = length(var.iam_instance_profile_arn) == 0 ? 1 : 0
+  name  = var.naming_prefix
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action   = ["ssm:GetParameter*"]
+        Effect   = "Allow"
+        Resource = data.aws_ssm_parameter.this.arn
+      },
+    ]
+  })
 }
 
-# Not used directly but require that it exists
-data "aws_ssm_parameter" "this" {
-  name = var.ssm_parameter_name
+resource "aws_iam_role" "this" {
+  count = length(var.iam_instance_profile_arn) == 0 ? 1 : 0
+  name  = var.naming_prefix
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+      }
+    ]
+  })
+
+  tags = {
+    Name = var.naming_prefix
+  }
 }
 
-data "aws_ami" "ami" {
-  most_recent = true
-  owners      = ["099720109477"]
+resource "aws_iam_role_policy_attachment" "this" {
+  count      = length(var.iam_instance_profile_arn) == 0 ? 1 : 0
+  role       = aws_iam_role.this[count.index].name
+  policy_arn = aws_iam_policy.this[count.index].arn
+}
 
-  filter {
-    name   = "name"
-    values = [var.ami_name]
-  }
+resource "aws_iam_instance_profile" "this" {
+  count = length(var.iam_instance_profile_arn) == 0 ? 1 : 0
+  name  = var.naming_prefix
+  role  = aws_iam_role.this[count.index].name
+}
 
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
+locals {
+  iam_instance_profile_arn = (
+    length(var.iam_instance_profile_arn) == 0
+    ? aws_iam_instance_profile.this[0].arn
+    : var.iam_instance_profile_arn
+  )
 }
 
 resource "aws_security_group" "this" {
-  name = "${var.naming_prefix}-ec2"
+  name = var.naming_prefix
 
   egress {
     from_port   = 0
@@ -74,8 +108,7 @@ module "user_data" {
     runner_group  = var.github_runner_group
     runner_labels = var.github_runner_labels
 
-    aws_region             = var.region
-    aws_ssm_parameter_name = data.aws_ssm_parameter.this.name
+    ssm_parameter_arn = data.aws_ssm_parameter.this.arn
   }
 }
 
@@ -91,7 +124,7 @@ resource "aws_launch_template" "this" {
   }
 
   iam_instance_profile {
-    arn = var.iam_instance_profile_arn
+    arn = local.iam_instance_profile_arn
   }
 
   image_id = data.aws_ami.ami.id

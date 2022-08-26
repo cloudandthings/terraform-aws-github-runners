@@ -1,8 +1,7 @@
 module "user_data_1" {
   source = "../../../modules/user_data"
   config = {
-    aws_region             = "__TEST_REGION__"
-    aws_ssm_parameter_name = "__TEST_SSM__"
+    ssm_parameter_arn = "arn:aws:ssm:__TEST_REGION__:__TEST_ACCOUNT__:parameter/__TEST_PARAMETER__"
 
     cloud_init_packages = []
     cloud_init_runcmds  = []
@@ -20,8 +19,7 @@ module "user_data_1" {
 module "user_data_2" {
   source = "../../../modules/user_data"
   config = {
-    aws_region             = "__TEST_REGION__"
-    aws_ssm_parameter_name = "__TEST_SSM__"
+    ssm_parameter_arn = "arn:aws:ssm:__TEST_REGION__:__TEST_ACCOUNT__:parameter/__TEST_PARAMETER__"
 
     cloud_init_packages = ["some_package1", "some_package2"]
     cloud_init_runcmds  = ["some_cmd_1", "some_cmd_2"]

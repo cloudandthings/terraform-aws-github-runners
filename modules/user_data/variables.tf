@@ -1,7 +1,6 @@
 variable "config" {
   type = object({
-    aws_region             = string
-    aws_ssm_parameter_name = string
+    ssm_parameter_arn = string
 
     cloud_init_packages = list(string)
     cloud_init_runcmds  = list(string)

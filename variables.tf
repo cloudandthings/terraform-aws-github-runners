@@ -1,6 +1,6 @@
 # Required variables
-variable "region" {
-  description = "AWS Region for the SSM Parameter."
+variable "github_url" {
+  description = "GitHub url, for example: \"https://github.com/cloudandthings/\"."
   type        = string
 }
 
@@ -10,9 +10,9 @@ variable "naming_prefix" {
   default     = "github-runner"
 }
 
-variable "vpc_id" {
+variable "ssm_parameter_name" {
+  description = "SSM Parameter name for the GitHub Runner token."
   type        = string
-  description = "The VPC ID to launch instances in."
 }
 
 variable "subnet_ids" {
@@ -20,26 +20,9 @@ variable "subnet_ids" {
   description = "The list of Subnet IDs to launch EC2 instances in. If `autoscaling_enabled=false` then the first Subnet ID from this list will be used."
 }
 
-variable "ssm_parameter_name" {
-  description = "SSM Parameter name for the GitHub Runner token."
+variable "vpc_id" {
   type        = string
-  default     = "/github/runner/token"
-}
-
-variable "iam_instance_profile_arn" {
-  description = "IAM Instance Profile to launch the instance with. Must allow permissions to read the SSM Parameter."
-  type        = string
-}
-
-variable "github_organisation_name" {
-  description = "GitHub orgnisation name. Derived from `github_url` by default."
-  type        = string
-  default     = ""
-}
-
-variable "github_url" {
-  description = "GitHub url, for example: \"https://github.com/cloudandthings/\"."
-  type        = string
+  description = "The VPC ID to launch instances in."
 }
 
 # Optional variables
@@ -47,23 +30,6 @@ variable "ami_name" {
   description = "AWS AMI name filter for launching instances. GitHub supports specific operating systems and architectures, including Ubuntu 22.04 amd64 which is the default. The included software packs are not tested with other AMIs."
   type        = string
   default     = "ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-20220609"
-}
-
-variable "ec2_key_pair_name" {
-  description = "EC2 Key Pair name to allow SSH to launched instances."
-  type        = string
-  default     = ""
-}
-
-variable "ec2_instance_type" {
-  description = "EC2 instance type for launched instances."
-  type        = string
-}
-
-variable "ec2_associate_public_ip_address" {
-  description = "Whether to associate a public IP address with instances in a VPC."
-  type        = bool
-  default     = false
 }
 
 variable "autoscaling_min_size" {
@@ -84,6 +50,12 @@ variable "autoscaling_max_size" {
   default     = 3
 }
 
+variable "autoscaling_max_instance_lifetime" {
+  description = "The maximum amount of time, in seconds, that an instance can be in service. Values must be either equal to 0 or between 86400 and 31536000 seconds."
+  type        = string
+  default     = 0
+}
+
 variable "autoscaling_schedule_on_recurrences" {
   description = "A list of schedule cron expressions, specifying when the Auto Scaling Group will launch instances. Example: [\"0 6 * * *\"]"
   type        = list(string)
@@ -97,30 +69,9 @@ variable "autoscaling_schedule_off_recurrences" {
 }
 
 variable "autoscaling_schedule_time_zone" {
-  description = "The timezone for schedule cron expressions."
+  description = "The timezone for schedule cron expressions. See https://www.joda.org/joda-time/timezones.html ."
   type        = string
   default     = ""
-}
-
-variable "autoscaling_max_instance_lifetime" {
-  description = "The maximum amount of time, in seconds, that an instance can be in service. Values must be either equal to 0 or between 86400 and 31536000 seconds."
-  type        = string
-  default     = 0
-}
-
-variable "software_packs" {
-  type        = list(string)
-  description = "A list of pre-defined software packs to install. Valid options are: [\"python3\", \"docker-engine\", \"terraform\", \"terraform-docs\", \"tflint\"]"
-  default     = []
-
-  validation {
-    condition = alltrue([
-      for x in var.software_packs : contains([
-        "python3", "docker-engine", "terraform", "terraform-docs", "tflint"
-      ], x)
-    ])
-    error_message = "Software packs must be one of [\"python3\", \"docker-engine\", \"terraform\", \"terraform-docs\", \"tflint\"]."
-  }
 }
 
 variable "cloud_init_extra_packages" {
@@ -141,8 +92,25 @@ variable "cloud_init_extra_other" {
   default     = ""
 }
 
-variable "github_runner_name" {
-  description = "Custom GitHub runner name."
+variable "ec2_associate_public_ip_address" {
+  description = "Whether to associate a public IP address with instances in a VPC."
+  type        = bool
+  default     = false
+}
+
+variable "ec2_instance_type" {
+  description = "EC2 instance type for launched instances."
+  type        = string
+}
+
+variable "ec2_key_pair_name" {
+  description = "EC2 Key Pair name to allow SSH to launched instances."
+  type        = string
+  default     = ""
+}
+
+variable "github_organisation_name" {
+  description = "GitHub orgnisation name. Derived from `github_url` by default."
   type        = string
   default     = ""
 }
@@ -157,4 +125,31 @@ variable "github_runner_labels" {
   description = "Custom GitHub runner labels, for example: \"gpu,x64,linux\"."
   type        = list(string)
   default     = []
+}
+
+variable "github_runner_name" {
+  description = "Custom GitHub runner name."
+  type        = string
+  default     = ""
+}
+
+variable "iam_instance_profile_arn" {
+  description = "IAM Instance Profile to launch the instance with. Must allow permissions to read the SSM Parameter. Will be created by default."
+  type        = string
+  default     = ""
+}
+
+variable "software_packs" {
+  type        = list(string)
+  description = "A list of pre-defined software packs to install. Valid options are: [\"__DEFAULT__\", \"docker-engine\", \"node\", \"python3\", \"terraform\", \"terraform-docs\", \"tflint\"]"
+  default     = ["__DEFAULT__"]
+
+  validation {
+    condition = alltrue([
+      for x in var.software_packs : contains([
+        "__DEFAULT__", "docker-engine", "node", "python3", "terraform", "terraform-docs", "tflint"
+      ], x)
+    ])
+    error_message = "Software packs must be in [\"__DEFAULT__\", \"docker-engine\", \"node\", \"python3\", \"terraform\", \"terraform-docs\", \"tflint\"]."
+  }
 }
