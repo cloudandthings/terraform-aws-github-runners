@@ -51,7 +51,7 @@ resource "aws_iam_instance_profile" "this" {
 locals {
   iam_instance_profile_arn = (
     length(var.iam_instance_profile_arn) == 0
-    ? aws_iam_instance_profile.this[*].arn
+    ? aws_iam_instance_profile.this[0].arn
     : var.iam_instance_profile_arn
   )
 }
