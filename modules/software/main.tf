@@ -3,6 +3,7 @@ locals {
     "docker-engine" = ["ca-certificates", "curl", "gnupg", "lsb-release"]
     "node"          = ["nodejs"]
     "python3"       = ["python3", "python-is-python3", "python3-pip", "python3-venv"]
+    "pre-commit"    = ["pre-commit"]
     "tflint"        = ["unzip"]
   }
 
