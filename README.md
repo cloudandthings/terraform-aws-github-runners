@@ -60,6 +60,8 @@ module "github_runner" {
 | <a name="input_github_url"></a> [github\_url](#input\_github\_url) | GitHub url, for example: "https://github.com/cloudandthings/". | `string` | n/a | yes |
 | <a name="input_iam_instance_profile_arn"></a> [iam\_instance\_profile\_arn](#input\_iam\_instance\_profile\_arn) | IAM Instance Profile to launch the instance with. Must allow permissions to read the SSM Parameter. Will be created by default. | `string` | `""` | no |
 | <a name="input_naming_prefix"></a> [naming\_prefix](#input\_naming\_prefix) | Created resources will be prefixed with this. | `string` | `"github-runner"` | no |
+| <a name="input_scaling_mode"></a> [scaling\_mode](#input\_scaling\_mode) | TODO. How instances should be created and scaled. | `string` | `"autoscaling-group"` | no |
+| <a name="input_security_groups"></a> [security\_groups](#input\_security\_groups) | A list of security groups to assign to EC2 instances. If none are provided, a new security group will be used, which will deny inbound traffic (including SSH). | `list(string)` | `[]` | no |
 | <a name="input_software_packs"></a> [software\_packs](#input\_software\_packs) | A list of pre-defined software packs to install. Valid options are: ["\_\_DEFAULT\_\_", "docker-engine", "node", "python3", "terraform", "terraform-docs", "tflint"] | `list(string)` | <pre>[<br>  "__DEFAULT__"<br>]</pre> | no |
 | <a name="input_ssm_parameter_name"></a> [ssm\_parameter\_name](#input\_ssm\_parameter\_name) | SSM Parameter name for the GitHub Runner token. | `string` | n/a | yes |
 | <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | The list of Subnet IDs to launch EC2 instances in. If `autoscaling_enabled=false` then the first Subnet ID from this list will be used. | `list(string)` | n/a | yes |
@@ -78,14 +80,13 @@ module "github_runner" {
 |------|-------------|
 | <a name="output_aws_autoscaling_group_arn"></a> [aws\_autoscaling\_group\_arn](#output\_aws\_autoscaling\_group\_arn) | The Auto Scaling Group ARN. |
 | <a name="output_aws_launch_template_arn"></a> [aws\_launch\_template\_arn](#output\_aws\_launch\_template\_arn) | The EC2 launch template. |
-| <a name="output_aws_security_group_id"></a> [aws\_security\_group\_id](#output\_aws\_security\_group\_id) | The Security Group ID associated with EC2 instances. |
+| <a name="output_security_groups"></a> [security\_groups](#output\_security\_groups) | The Security Groups associated with EC2 instances. |
 ----
 ### Providers
 
 | Name | Version |
 |------|---------|
 | <a name="provider_aws"></a> [aws](#provider\_aws) | 4.27.0 |
-| <a name="provider_http"></a> [http](#provider\_http) | 3.0.1 |
 ----
 ### Requirements
 
@@ -110,10 +111,8 @@ module "github_runner" {
 | [aws_iam_role_policy_attachment.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_launch_template.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/launch_template) | resource |
 | [aws_security_group.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
-| [aws_security_group_rule.ingress](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
 | [aws_ami.ami](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami) | data source |
 | [aws_ssm_parameter.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ssm_parameter) | data source |
-| [http_http.myip](https://registry.terraform.io/providers/hashicorp/http/3.0.1/docs/data-sources/http) | data source |
 ----
 ```
 <!-- END_TF_DOCS -->

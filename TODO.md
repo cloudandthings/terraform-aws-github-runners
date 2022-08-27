@@ -6,8 +6,6 @@ Docker runner
 
 Test that default software was actually installed and working
 
-#TODO sort these variables nicely
-
 Advanced example
 
 [18:11, 20/08/2022] Bjorn: GitHub runners customisation:

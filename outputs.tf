@@ -1,11 +1,11 @@
 output "aws_autoscaling_group_arn" {
   description = "The Auto Scaling Group ARN."
-  value       = aws_autoscaling_group.this.arn
+  value       = flatten(aws_autoscaling_group.this[*].arn)
 }
 
-output "aws_security_group_id" {
-  description = "The Security Group ID associated with EC2 instances."
-  value       = aws_security_group.this.id
+output "security_groups" {
+  description = "The Security Groups associated with EC2 instances."
+  value       = local.security_groups
 }
 
 output "aws_launch_template_arn" {

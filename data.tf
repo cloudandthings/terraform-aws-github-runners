@@ -1,7 +1,3 @@
-data "http" "myip" {
-  url = "http://ipv4.icanhazip.com"
-}
-
 data "aws_ssm_parameter" "this" {
   name = var.ssm_parameter_name
 }

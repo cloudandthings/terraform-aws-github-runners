@@ -32,6 +32,19 @@ variable "ami_name" {
   default     = "ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-20220609"
 }
 
+variable "scaling_mode" {
+  description = "TODO. How instances should be created and scaled."
+  type        = string
+  default     = "autoscaling-group"
+
+  validation {
+    condition = contains([
+      "autoscaling-group", "single-instance", "none"
+    ], var.scaling_mode)
+    error_message = "The scaling mode must be one of \"autoscaling-group\", \"single-instance\" or \"none\"."
+  }
+}
+
 variable "autoscaling_min_size" {
   description = "The minimum size of the Auto Scaling Group."
   type        = number
@@ -137,6 +150,12 @@ variable "iam_instance_profile_arn" {
   description = "IAM Instance Profile to launch the instance with. Must allow permissions to read the SSM Parameter. Will be created by default."
   type        = string
   default     = ""
+}
+
+variable "security_groups" {
+  description = "A list of security groups to assign to EC2 instances. If none are provided, a new security group will be used, which will deny inbound traffic (including SSH)."
+  type        = list(string)
+  default     = []
 }
 
 variable "software_packs" {
