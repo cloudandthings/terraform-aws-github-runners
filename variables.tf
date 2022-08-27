@@ -17,7 +17,7 @@ variable "ssm_parameter_name" {
 
 variable "subnet_ids" {
   type        = list(string)
-  description = "The list of Subnet IDs to launch EC2 instances in. If `autoscaling_enabled=false` then the first Subnet ID from this list will be used."
+  description = "The list of Subnet IDs to launch EC2 instances in. If `scaling_mode=single-instance` then the first Subnet ID from this list will be used."
 }
 
 variable "vpc_id" {
@@ -46,43 +46,43 @@ variable "scaling_mode" {
 }
 
 variable "autoscaling_min_size" {
-  description = "The minimum size of the Auto Scaling Group."
+  description = "The minimum size of the Auto Scaling Group. (When `scaling_mode=autoscaling-group`)."
   type        = number
   default     = 1
 }
 
 variable "autoscaling_desired_size" {
-  description = "The number of Amazon EC2 instances that should be running in the group."
+  description = "The number of Amazon EC2 instances that should be running. (When `scaling_mode=autoscaling-group`)"
   type        = number
   default     = 1
 }
 
 variable "autoscaling_max_size" {
-  description = "The maximum size of the Auto Scaling Group."
+  description = "The maximum size of the Auto Scaling Group. (When `scaling_mode=autoscaling-group`)"
   type        = number
   default     = 3
 }
 
 variable "autoscaling_max_instance_lifetime" {
-  description = "The maximum amount of time, in seconds, that an instance can be in service. Values must be either equal to 0 or between 86400 and 31536000 seconds."
+  description = "The maximum amount of time, in seconds, that an instance can be in service. Values must be either equal to 0 or between 86400 and 31536000 seconds. (When `scaling_mode=autoscaling-group`)"
   type        = string
   default     = 0
 }
 
 variable "autoscaling_schedule_on_recurrences" {
-  description = "A list of schedule cron expressions, specifying when the Auto Scaling Group will launch instances. Example: [\"0 6 * * *\"]"
+  description = "A list of schedule cron expressions, specifying when the Auto Scaling Group will launch instances. Example: [\"0 6 * * *\"] (When `scaling_mode=autoscaling-group`)"
   type        = list(string)
   default     = []
 }
 
 variable "autoscaling_schedule_off_recurrences" {
-  description = "A list of schedule cron expressions, specifying when the Auto Scaling Group will terminate all instances. Example: [\"0 20 * * *\"]"
+  description = "A list of schedule cron expressions, specifying when the Auto Scaling Group will terminate all instances. Example: [\"0 20 * * *\"] (When `scaling_mode=autoscaling-group`)"
   type        = list(string)
   default     = []
 }
 
 variable "autoscaling_schedule_time_zone" {
-  description = "The timezone for schedule cron expressions. See https://www.joda.org/joda-time/timezones.html ."
+  description = "The timezone for schedule cron expressions. See https://www.joda.org/joda-time/timezones.html . (When `scaling_mode=autoscaling-group`)"
   type        = string
   default     = ""
 }
@@ -106,18 +106,18 @@ variable "cloud_init_extra_other" {
 }
 
 variable "ec2_associate_public_ip_address" {
-  description = "Whether to associate a public IP address with instances in a VPC."
+  description = "Whether to associate a public IP address with EC2 instances in a VPC."
   type        = bool
   default     = false
 }
 
 variable "ec2_instance_type" {
-  description = "EC2 instance type for launched instances."
+  description = "Instance type for EC2 instances."
   type        = string
 }
 
 variable "ec2_key_pair_name" {
-  description = "EC2 Key Pair name to allow SSH to launched instances."
+  description = "EC2 Key Pair name to allow SSH to EC2 instances."
   type        = string
   default     = ""
 }
@@ -147,7 +147,7 @@ variable "github_runner_name" {
 }
 
 variable "iam_instance_profile_arn" {
-  description = "IAM Instance Profile to launch the instance with. Must allow permissions to read the SSM Parameter. Will be created by default."
+  description = "IAM Instance Profile to launch EC2 instances with. Must allow permissions to read the SSM Parameter. Will be created by default."
   type        = string
   default     = ""
 }
@@ -160,15 +160,21 @@ variable "security_groups" {
 
 variable "software_packs" {
   type        = list(string)
-  description = "A list of pre-defined software packs to install. Valid options are: [\"__DEFAULT__\", \"docker-engine\", \"node\", \"python3\", \"terraform\", \"terraform-docs\", \"tflint\"]"
-  default     = ["__DEFAULT__"]
+  description = "A list of pre-defined software packs to install. Valid options are: [\"ALL\", \"docker-engine\", \"node\", \"python3\", \"terraform\", \"terraform-docs\", \"tflint\"]. An empty list will mean none are installed."
+  default     = ["ALL"]
 
   validation {
-    condition = alltrue([
-      for x in var.software_packs : contains([
-        "__DEFAULT__", "docker-engine", "node", "python3", "terraform", "terraform-docs", "tflint"
-      ], x)
-    ])
-    error_message = "Software packs must be in [\"__DEFAULT__\", \"docker-engine\", \"node\", \"python3\", \"terraform\", \"terraform-docs\", \"tflint\"]."
+    condition = alltrue(
+      concat(
+        [for x in var.software_packs : contains([
+          "ALL", "docker-engine", "node", "python3", "terraform", "terraform-docs", "tflint"
+        ], x)],
+        anytrue([
+          length(var.software_packs) != 1,
+          var.software_packs == ["ALL"]
+        ])
+      )
+    )
+    error_message = "Software packs must be a list of: [\"ALL\", \"docker-engine\", \"node\", \"python3\", \"terraform\", \"terraform-docs\", \"tflint\"]."
   }
 }

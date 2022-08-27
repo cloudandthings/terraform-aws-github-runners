@@ -237,3 +237,12 @@ resource "aws_cloudwatch_metric_alarm" "scale_down" {
     AutoScalingGroupName = local.autoscaling_group_name
   }
 }
+
+resource "aws_instance" "this" {
+  count = var.scaling_mode == "single-instance" ? 0 : 1
+  launch_template {
+    id      = aws_launch_template.this.id
+    version = aws_launch_template.this.latest_version
+  }
+  subnet_id = var.subnet_ids[0]
+}
