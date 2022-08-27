@@ -9,7 +9,7 @@ locals {
 
 module "test_software_default" {
   source        = "../../../modules/software"
-  software_pack = "__DEFAULT__"
+  software_pack = "ALL"
 }
 
 module "test_software_order" {

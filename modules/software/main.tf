@@ -46,12 +46,12 @@ locals {
   }
 
   packages_out = (
-    var.software_pack == "__DEFAULT__"
+    var.software_pack == "ALL"
     ? flatten([for k, v in local.packages : v])
     : lookup(local.packages, var.software_pack, [])
   )
   runcmds_out = (
-    var.software_pack == "__DEFAULT__"
+    var.software_pack == "ALL"
     ? flatten([for k, v in local.runcmds : v])
     : lookup(local.runcmds, var.software_pack, [])
   )
