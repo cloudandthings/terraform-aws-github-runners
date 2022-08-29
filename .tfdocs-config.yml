@@ -2,8 +2,8 @@ formatter: "markdown table" # this is required
 
 version: ">= 0.13.0, < 1.0.0"
 
-# header-from: main.tf
-# footer-from: ""
+header-from: main.tf
+footer-from: ""
 
 # recursive:
 #   enabled: false
@@ -16,6 +16,7 @@ sections:
 
 content: |-
   ## Module Docs
+
   ### Examples
 
   ```hcl
