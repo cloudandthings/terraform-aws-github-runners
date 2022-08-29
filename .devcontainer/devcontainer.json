@@ -55,6 +55,6 @@
 	],
 
 	// Hack for terraform-ls
-	"postStartCommand": "nohup bash -c '/home/vscode/.vscode-server/extensions/hashicorp.terraform-2.24.1-linux-arm64/bin/terraform-ls serve -port 3000 &'"
+	// "postStartCommand": "nohup bash -c '/home/vscode/.vscode-server/extensions/hashicorp.terraform-2.24.1-linux-arm64/bin/terraform-ls serve -port 3000 &'"
 
 }
