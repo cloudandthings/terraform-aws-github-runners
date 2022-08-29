@@ -18,11 +18,12 @@ def test_software_order(software):
     assert runcmds["value"] == ["z1", "y2", "x3", "w4", "v5"]
 
 
-def test_software_default(software):
-    runcmds = software.outputs["test_default_packages"]
-    assert "nodejs" in runcmds["value"]
-    assert "python3" in runcmds["value"]
-    assert "python3-venv" in runcmds["value"]
+def test_software_all(software):
+    software_packs = software.outputs["test_all_software_packs"]
+    assert "node" in software_packs["value"]
+    assert "python3" in software_packs["value"]
 
-
-# TODO generate cloud init file?
+    packages = software.outputs["test_all_packages"]
+    assert "nodejs" in packages["value"]
+    assert "python3" in packages["value"]
+    assert "python3-venv" in packages["value"]

@@ -1,9 +1,19 @@
 locals {
+  all = [
+    "docker-engine",
+    "node",
+    "pre-commit",
+    "python3",
+    "terraform",
+    "terraform-docs",
+    "tflint",
+  ]
+
   packages = {
     "docker-engine" = ["ca-certificates", "curl", "gnupg", "lsb-release"]
     "node"          = ["nodejs"]
-    "python3"       = ["python3", "python-is-python3", "python3-pip", "python3-venv"]
     "pre-commit"    = ["pre-commit"]
+    "python3"       = ["python3", "python-is-python3", "python3-pip", "python3-venv"]
     "tflint"        = ["unzip"]
   }
 
@@ -16,7 +26,7 @@ locals {
       "sudo apt-get update",
       "sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin",
       "sudo usermod -aG docker ubuntu",
-      "sudo usermod -a -G root ubuntu" # issue #6
+      # "sudo usermod -a -G root ubuntu" # issue #6
     ]
 
     "terraform" = [
@@ -27,17 +37,17 @@ locals {
       "sudo apt-get install -y terraform"
     ]
 
-    "tflint" = [
-      "echo ==== TFLINT ====",
-      "sudo curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash"
-    ]
-
     "terraform-docs" = [
       "echo ==== TERRAFORM-DOCS ====",
       "curl -sSLo ./terraform-docs.tar.gz https://terraform-docs.io/dl/v0.16.0/terraform-docs-v0.16.0-$(uname)-amd64.tar.gz",
       "tar -xzf terraform-docs.tar.gz",
       "chmod +x terraform-docs",
       "mv terraform-docs /usr/local/bin/terraform-docs"
+    ]
+
+    "tflint" = [
+      "echo ==== TFLINT ====",
+      "sudo curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash"
     ]
 
     "__TEST_ORDER__" = [
@@ -54,5 +64,11 @@ locals {
     var.software_pack == "ALL"
     ? flatten([for k, v in local.runcmds : v])
     : lookup(local.runcmds, var.software_pack, [])
+  )
+
+  software_packs = (
+    var.software_pack == "ALL"
+    ? local.all
+    : [var.software_pack]
   )
 }

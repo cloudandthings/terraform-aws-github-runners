@@ -57,7 +57,7 @@ locals {
 }
 
 resource "aws_security_group" "this" {
-  count = length(var.security_groups) > 0 ? 1 : 0
+  count = length(var.security_groups) > 0 ? 0 : 1
   name  = var.naming_prefix
 
   egress {
@@ -74,7 +74,7 @@ locals {
   security_groups = (
     length(var.security_groups) > 0
     ? var.security_groups
-    : [aws_security_group.this[*].id]
+    : flatten(aws_security_group.this[*].id)
   )
 }
 
@@ -140,7 +140,7 @@ resource "aws_launch_template" "this" {
     security_groups             = local.security_groups
   }
 
-  user_data = base64encode(module.user_data.user_data)
+  user_data = base64gzip(module.user_data.user_data)
 
   lifecycle {
     create_before_destroy = true
@@ -239,7 +239,7 @@ resource "aws_cloudwatch_metric_alarm" "scale_down" {
 }
 
 resource "aws_instance" "this" {
-  count = var.scaling_mode == "single-instance" ? 0 : 1
+  count = var.scaling_mode == "single-instance" ? 1 : 0
   launch_template {
     id      = aws_launch_template.this.id
     version = aws_launch_template.this.latest_version

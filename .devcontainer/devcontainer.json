@@ -17,7 +17,7 @@
 	"dockerFile": "../Dockerfile",
 	
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// "forwardPorts": [],
+	"forwardPorts": [3000],
 	
 	// Uncomment the next line to run commands after the container is created - for example installing curl.
 	// "postCreateCommand": "apt-get update && apt-get install -y curl",
@@ -40,7 +40,11 @@
 	"settings": {
 		"python.linting.pylintEnabled": false,
 		"python.linting.flake8Enabled": true,
-		"python.linting.enabled": true
+		"python.linting.enabled": true,
+		"terraform.languageServer.args": [
+			"-port 3000"
+		],
+		"terraform.languageServer.tcp.port": 3000
 	},
 
 	"extensions": [
@@ -48,5 +52,9 @@
 		"redhat.vscode-yaml",
 		"ms-python.python",
 		"mutantdino.resourcemonitor"
-	]
+	],
+
+	// Hack for terraform-ls
+	"postStartCommand": "nohup bash -c '/home/vscode/.vscode-server/extensions/hashicorp.terraform-2.24.1-linux-arm64/bin/terraform-ls serve -port 3000 &'"
+
 }

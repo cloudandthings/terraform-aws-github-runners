@@ -35,8 +35,14 @@ override.tf.json
 # Python
 __pycache__
 
-# pytest-terraform
+# Testing artefacts
 tf_resources.json
+test-rsa.*
+.out
+*.tar.gz
 
 # VSCode
 *.code-workspace
+
+# Apple
+.DS_Store

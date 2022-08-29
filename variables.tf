@@ -39,50 +39,50 @@ variable "scaling_mode" {
 
   validation {
     condition = contains([
-      "autoscaling-group", "single-instance", "none"
+      "autoscaling-group", "single-instance"
     ], var.scaling_mode)
-    error_message = "The scaling mode must be one of \"autoscaling-group\", \"single-instance\" or \"none\"."
+    error_message = "The scaling mode must be \"autoscaling-group\" or \"single-instance\"."
   }
 }
 
 variable "autoscaling_min_size" {
-  description = "The minimum size of the Auto Scaling Group. (When `scaling_mode=autoscaling-group`)."
+  description = "The minimum size of the Auto Scaling Group (when `scaling_mode=autoscaling-group`)."
   type        = number
   default     = 1
 }
 
 variable "autoscaling_desired_size" {
-  description = "The number of Amazon EC2 instances that should be running. (When `scaling_mode=autoscaling-group`)"
+  description = "The number of Amazon EC2 instances that should be running (when `scaling_mode=autoscaling-group`)."
   type        = number
   default     = 1
 }
 
 variable "autoscaling_max_size" {
-  description = "The maximum size of the Auto Scaling Group. (When `scaling_mode=autoscaling-group`)"
+  description = "The maximum size of the Auto Scaling Group (when `scaling_mode=autoscaling-group`)."
   type        = number
   default     = 3
 }
 
 variable "autoscaling_max_instance_lifetime" {
-  description = "The maximum amount of time, in seconds, that an instance can be in service. Values must be either equal to 0 or between 86400 and 31536000 seconds. (When `scaling_mode=autoscaling-group`)"
+  description = "The maximum amount of time, in seconds, that an instance can be in service. Values must be either equal to 0 or between 86400 and 31536000 seconds (when `scaling_mode=autoscaling-group`)."
   type        = string
   default     = 0
 }
 
 variable "autoscaling_schedule_on_recurrences" {
-  description = "A list of schedule cron expressions, specifying when the Auto Scaling Group will launch instances. Example: [\"0 6 * * *\"] (When `scaling_mode=autoscaling-group`)"
+  description = "A list of schedule cron expressions, specifying when the Auto Scaling Group will launch instances. Example: [\"0 6 * * *\"] (when `scaling_mode=autoscaling-group`)."
   type        = list(string)
   default     = []
 }
 
 variable "autoscaling_schedule_off_recurrences" {
-  description = "A list of schedule cron expressions, specifying when the Auto Scaling Group will terminate all instances. Example: [\"0 20 * * *\"] (When `scaling_mode=autoscaling-group`)"
+  description = "A list of schedule cron expressions, specifying when the Auto Scaling Group will terminate all instances. Example: [\"0 20 * * *\"] (when `scaling_mode=autoscaling-group`)."
   type        = list(string)
   default     = []
 }
 
 variable "autoscaling_schedule_time_zone" {
-  description = "The timezone for schedule cron expressions. See https://www.joda.org/joda-time/timezones.html . (When `scaling_mode=autoscaling-group`)"
+  description = "The timezone for schedule cron expressions. See https://www.joda.org/joda-time/timezones.html (when `scaling_mode=autoscaling-group`)."
   type        = string
   default     = ""
 }
@@ -169,10 +169,7 @@ variable "software_packs" {
         [for x in var.software_packs : contains([
           "ALL", "docker-engine", "node", "python3", "terraform", "terraform-docs", "tflint"
         ], x)],
-        anytrue([
-          length(var.software_packs) != 1,
-          var.software_packs == ["ALL"]
-        ])
+        [anytrue([(length(var.software_packs) != 1), contains(var.software_packs, "ALL")])]
       )
     )
     error_message = "Software packs must be a list of: [\"ALL\", \"docker-engine\", \"node\", \"python3\", \"terraform\", \"terraform-docs\", \"tflint\"]."
