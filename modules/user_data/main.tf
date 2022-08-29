@@ -31,6 +31,13 @@ locals {
       ARG_RUNNERGROUP = length(var.config.runner_group) > 0 ? "--runnergroup '${var.config.runner_group}'" : ""
       ARG_LABELS      = length(local.runner_labels) > 0 ? "--labels '${local.runner_labels}'" : ""
   })
+  user_data_no_comments = join("\n",
+    concat(
+      ["#cloud-config"], [
+        for x in split("\n", local.user_data) : x
+      if length(regexall("^[[:blank:]]*#", x)) == 0]
+    )
+  )
 }
 
 /*

@@ -57,7 +57,8 @@ locals {
 }
 
 resource "aws_security_group" "this" {
-  name = var.naming_prefix
+  count = length(var.security_groups) > 0 ? 0 : 1
+  name  = var.naming_prefix
 
   egress {
     from_port   = 0
@@ -69,15 +70,12 @@ resource "aws_security_group" "this" {
   vpc_id = var.vpc_id
 }
 
-resource "aws_security_group_rule" "ingress" {
-  count             = length(var.ec2_key_pair_name) > 0 ? 1 : 0
-  description       = "Allow SSH ingress to EC2 instance"
-  type              = "ingress"
-  from_port         = 22
-  to_port           = 22
-  protocol          = "tcp"
-  cidr_blocks       = ["${chomp(data.http.myip.body)}/32"]
-  security_group_id = aws_security_group.this.id
+locals {
+  security_groups = (
+    length(var.security_groups) > 0
+    ? var.security_groups
+    : flatten(aws_security_group.this[*].id)
+  )
 }
 
 module "software_packs" {
@@ -139,18 +137,23 @@ resource "aws_launch_template" "this" {
 
   network_interfaces {
     associate_public_ip_address = var.ec2_associate_public_ip_address
-    security_groups             = [aws_security_group.this.id]
+    security_groups             = local.security_groups
   }
 
-  user_data = base64encode(module.user_data.user_data)
+  user_data = base64gzip(module.user_data.user_data)
 
   lifecycle {
     create_before_destroy = true
   }
 }
 
+locals {
+  autoscaling_group_name = var.naming_prefix
+}
+
 resource "aws_autoscaling_group" "this" {
-  name             = var.naming_prefix
+  count            = (var.scaling_mode == "autoscaling-group" ? 1 : 0)
+  name             = local.autoscaling_group_name
   min_size         = var.autoscaling_min_size
   max_size         = var.autoscaling_max_size
   desired_capacity = var.autoscaling_desired_size
@@ -181,38 +184,46 @@ resource "aws_autoscaling_group" "this" {
 }
 
 resource "aws_autoscaling_schedule" "on" {
-  count                  = length(var.autoscaling_schedule_on_recurrences)
+  count = (
+    var.scaling_mode == "autoscaling-group"
+    ? length(var.autoscaling_schedule_on_recurrences)
+  : 0)
   scheduled_action_name  = "${var.naming_prefix}-on-${count.index}"
   min_size               = var.autoscaling_min_size
   max_size               = var.autoscaling_max_size
   desired_capacity       = var.autoscaling_desired_size
   recurrence             = var.autoscaling_schedule_on_recurrences[count.index]
   time_zone              = var.autoscaling_schedule_time_zone
-  autoscaling_group_name = aws_autoscaling_group.this.name
+  autoscaling_group_name = local.autoscaling_group_name
 }
 
 resource "aws_autoscaling_schedule" "off" {
-  count                  = length(var.autoscaling_schedule_off_recurrences)
+  count = (
+    var.scaling_mode == "autoscaling-group"
+    ? length(var.autoscaling_schedule_off_recurrences)
+  : 0)
   scheduled_action_name  = "${var.naming_prefix}-off-${count.index}"
   min_size               = 0
   max_size               = 0
   desired_capacity       = 0
   recurrence             = var.autoscaling_schedule_off_recurrences[count.index]
   time_zone              = var.autoscaling_schedule_time_zone
-  autoscaling_group_name = aws_autoscaling_group.this.name
+  autoscaling_group_name = local.autoscaling_group_name
 }
 
 resource "aws_autoscaling_policy" "scale_down" {
+  count                  = (var.scaling_mode == "autoscaling-group" ? 1 : 0)
   name                   = "${var.naming_prefix}-scale-down"
-  autoscaling_group_name = aws_autoscaling_group.this.name
+  autoscaling_group_name = local.autoscaling_group_name
   adjustment_type        = "ChangeInCapacity"
   scaling_adjustment     = -1
   cooldown               = 120
 }
 
 resource "aws_cloudwatch_metric_alarm" "scale_down" {
-  alarm_description   = "Monitor CPU for ASG ${aws_autoscaling_group.this.name}"
-  alarm_actions       = [aws_autoscaling_policy.scale_down.arn]
+  count               = (var.scaling_mode == "autoscaling-group" ? 1 : 0)
+  alarm_description   = "Monitor CPU for ASG ${local.autoscaling_group_name}"
+  alarm_actions       = [aws_autoscaling_policy.scale_down[count.index].arn]
   alarm_name          = "${var.naming_prefix}-scale-down"
   comparison_operator = "LessThanOrEqualToThreshold"
   namespace           = "AWS/EC2"
@@ -223,6 +234,15 @@ resource "aws_cloudwatch_metric_alarm" "scale_down" {
   statistic           = "Average"
 
   dimensions = {
-    AutoScalingGroupName = aws_autoscaling_group.this.name
+    AutoScalingGroupName = local.autoscaling_group_name
   }
+}
+
+resource "aws_instance" "this" {
+  count = var.scaling_mode == "single-instance" ? 1 : 0
+  launch_template {
+    id      = aws_launch_template.this.id
+    version = aws_launch_template.this.latest_version
+  }
+  subnet_id = var.subnet_ids[0]
 }

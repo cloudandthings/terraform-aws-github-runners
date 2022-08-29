@@ -2,14 +2,17 @@ locals {
   software = [
     "docker-engine",
     "node",
+    "pre-commit",
     "python3",
-    "terraform", "terraform-docs", "tflint"
+    "terraform",
+    "terraform-docs",
+    "tflint",
   ]
 }
 
-module "test_software_default" {
+module "test_software_all" {
   source        = "../../../modules/software"
-  software_pack = "__DEFAULT__"
+  software_pack = "ALL"
 }
 
 module "test_software_order" {

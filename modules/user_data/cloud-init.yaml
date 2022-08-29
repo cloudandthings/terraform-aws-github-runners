@@ -12,7 +12,6 @@ package_reboot_if_required: true
 packages:
   - awscli
   - jq
-  - libdigest-sha-perl
   ###########################################
   # Extra packages
 %{~ for X in PACKAGES }
@@ -33,9 +32,10 @@ runcmd:
   - echo ==== ACTIONS-RUNNER ====
   # install actions-runner
   - mkdir actions-runner && cd actions-runner
-  - curl -o actions-runner-linux-x64-2.294.0.tar.gz -L 'https://github.com/actions/runner/releases/download/v2.294.0/actions-runner-linux-x64-2.294.0.tar.gz'
-  - echo "a19a09f4eda5716e5d48ba86b6b78fc014880c5619b9dba4a059eaf65e131780  actions-runner-linux-x64-2.294.0.tar.gz" | shasum -a 256 -c
-  - tar xzf ./actions-runner-linux-x64-2.294.0.tar.gz
+  - curl -s https://github.com/actions/runner/releases | grep -o -E "https://github.*actions-runner-linux-x64-[0-9\.]+.tar.gz" | sort | uniq > versions.txt
+  - RUNNER_FILE_LINK=`cat versions.txt | tail -n1`
+  - curl -o actions-runner-linux-x64.tar.gz -L $RUNNER_FILE_LINK
+  - tar xzf ./actions-runner-linux-x64.tar.gz
   - cd ..
   - mv actions-runner /home/ubuntu/actions-runner
   - sudo chown -R ubuntu:ubuntu /home/ubuntu

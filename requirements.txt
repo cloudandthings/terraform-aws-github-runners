@@ -1,0 +1,10 @@
+black
+# TODO split into requirements-dev and requirements-test
+boto3
+fabric
+flake8
+mock
+pre-commit
+pytest
+pytest_terraform
+PyYAML
