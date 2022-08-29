@@ -22,3 +22,7 @@ Separate test and dev requirements
 
 [10:52, 27/08/2022] Bjorn: Add cloud init users and write files
 [10:52, 27/08/2022] Bjorn: Document recommendations Iam user
+
+Set up safe test environment so CI can run
+
+Github run ID to test resources
