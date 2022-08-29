@@ -44,7 +44,7 @@ jobs:
           python -m venv .venv && source .venv/bin/activate
           pip install -r requirements.txt
           pre-commit install
-          pre-commit run --all-files
+          pre-commit run
           pytest
         env:
           PYTEST_ADDOPTS: "--color=yes"
