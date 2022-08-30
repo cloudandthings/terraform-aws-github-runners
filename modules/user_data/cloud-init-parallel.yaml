@@ -46,7 +46,7 @@ write_files:
     #!/bin/bash
     NPROC=`nproc`
     echo NPROC=$NPROC
-    seq 99999 | parallel -j $NPROC -a - 'su ubuntu -c "/home/ubuntu/ephemeral_runner.sh {}" ; rm -rf /home/ubuntu/actions-runner-{} ; sleep 5'
+    seq 99999 | parallel -j $NPROC -a - 'su ubuntu -c "/home/ubuntu/ephemeral_runner.sh {}" ; rm -rf /home/ubuntu/actions-runner-{} ; sleep 1'
 - path: /etc/systemd/system/this.service
   content: |
     [Unit]
