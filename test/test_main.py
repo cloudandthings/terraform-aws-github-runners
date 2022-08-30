@@ -164,8 +164,9 @@ def test_ec2_completed(main):
             with connection() as c:
                 result = c.run("cloud-init status")
                 if result.ok:
-                    raise Exception(f"stdout={result.stdout} stderr={result.stderr}")
-                    completed = True
+                    logging.info(f"stdout={result.stdout} stderr={result.stderr}")
+                    if "status:" in result.stdout and "done" in result.stdout:
+                        completed = True
         except TimeoutError:
             pass
         attempt_count = attempt_count + 1
