@@ -11,6 +11,8 @@ from pytest import mark
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives import serialization
 from fabric.connection import Connection
+from paramiko.ssh_exception import NoValidConnectionsError
+
 
 from pytest_terraform import terraform
 
@@ -164,10 +166,10 @@ def test_ec2_completed(main):
             with connection() as c:
                 result = c.run("cloud-init status")
                 if result.ok:
-                    logging.info(f"stdout={result.stdout} stderr={result.stderr}")
+                    logging.info(f"stdout={result.stdout=} {result.stderr=}")
                     if "status:" in result.stdout and "done" in result.stdout:
                         completed = True
-        except TimeoutError:
+        except (TimeoutError, NoValidConnectionsError):
             pass
         attempt_count = attempt_count + 1
         if completed or attempt_count > 6 * 10:
@@ -188,7 +190,7 @@ def test_installed_software(main):
         for software_pack in software_packs:
             logging.info(f"Testing {software_pack=}")
             result = c.run(SOFTWARE_PACK_TEST_CMDS[software_pack])
-            logging.info(f"{result=}")
+            logging.info(f"{result.stdout=} {result.stderr=}")
             assert result.ok
 
 
