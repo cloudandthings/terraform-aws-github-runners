@@ -100,7 +100,7 @@ module "user_data" {
       flatten(module.software_packs[*].runcmds),
       var.cloud_init_extra_runcmds
     )
-    cloud_init_write_files = [] # TODO
+    cloud_init_write_files = var.cloud_init_extra_write_files
     cloud_init_other       = var.cloud_init_extra_other
 
     runner_name   = var.github_runner_name

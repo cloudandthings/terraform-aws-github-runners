@@ -40,7 +40,6 @@ module "this" {
 
   github_url = var.github_url
 
-  ec2_key_pair_name               = "bjorn" # TODO
   security_groups                 = [aws_security_group.this.id]
   ec2_instance_type               = "t3.micro"
   ec2_associate_public_ip_address = true

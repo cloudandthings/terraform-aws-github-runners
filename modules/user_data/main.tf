@@ -12,12 +12,10 @@ locals {
       SSM_REGION         = local.ssm_region
       SSM_PARAMETER_NAME = local.ssm_parameter_name
 
-      SSH_AUTHORIZED_KEYS = [] # TODO
-      USERS               = [] # TODO
-      PACKAGES            = var.config.cloud_init_packages
-      RUNCMDS             = var.config.cloud_init_runcmds
-      WRITE_FILES         = var.config.cloud_init_write_files
-      OTHER               = var.config.cloud_init_other
+      PACKAGES    = var.config.cloud_init_packages
+      RUNCMDS     = var.config.cloud_init_runcmds
+      WRITE_FILES = var.config.cloud_init_write_files
+      OTHER       = var.config.cloud_init_other
 
       GITHUB_URL = var.config.github_url
       GITHUB_ORGANISATION_NAME = (

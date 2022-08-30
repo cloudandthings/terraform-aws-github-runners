@@ -6,19 +6,6 @@
 # sudo cat /var/log/cloud-init-output.log
 # cloud-init devel schema --config-file x.yaml
 
-users:
-- default
-%{~ if length(SSH_AUTHORIZED_KEYS) > 0 }
-- name: ubuntu
-  ssh_authorized_keys: 
-  %{~ for X in SSH_AUTHORIZED_KEYS }
-  - ${X}
-  %{~ endfor }
-%{~ endif }
-%{~ for X in USERS }
-- ${X}
-%{~ endfor }
-
 # Install additional packages on first boot
 package_update: true
 package_reboot_if_required: true
