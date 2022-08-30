@@ -6,6 +6,10 @@ on:
       - opened
   push:
 
+env:
+  AWS_REGION: eu-west-1
+  AWS_ROLE: cat-genrl-prd-infra-gh-tf-aws-github-runners
+
 permissions:
   id-token: write
   contents: read
@@ -38,12 +42,21 @@ jobs:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v2
+      - uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: ${{ env.AWS_ROLE }}
+          role-duration-seconds: 3600
       - uses: actions/setup-python@v2
       - uses: hashicorp/setup-terraform@v2
-      - run: |
+      - run: | # Installation
           python -m venv .venv && source .venv/bin/activate
           pip install -r requirements.txt
           pre-commit install
+          echo "run_id = \"${{ github.run_id }}\"" >> ./test/terraform/main/terraform.tfvars
+      - run: | # Execution
           pre-commit run
           pytest
         env:
