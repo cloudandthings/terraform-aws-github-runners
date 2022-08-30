@@ -69,7 +69,7 @@ runcmd:
 # download actions-runner
 - mkdir actions-runner && cd actions-runner
 - curl -s https://github.com/actions/runner/releases | grep -o -E "https://github.*actions-runner-linux-x64-[0-9\.]+.tar.gz" | sort | uniq > versions.txt
-- RUNNER_FILE_LINK=$$(cat versions.txt | tail -n1)
+- RUNNER_FILE_LINK=`cat versions.txt | tail -n1`
 - curl -o actions-runner-linux-x64.tar.gz -L $RUNNER_FILE_LINK
 - tar xzf ./actions-runner-linux-x64.tar.gz
 - cd ..
