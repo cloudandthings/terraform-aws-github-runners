@@ -13,6 +13,11 @@ variable "naming_prefix" {
   description = "TODO"
 }
 
+variable "run_id" {
+  type        = string
+  description = "TODO"
+}
+
 variable "aws_account_id" {
   type        = string
   description = "TODO"

@@ -11,6 +11,8 @@ from pytest import mark
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives import serialization
 from fabric.connection import Connection
+from paramiko.ssh_exception import NoValidConnectionsError
+
 
 from pytest_terraform import terraform
 
@@ -164,8 +166,10 @@ def test_ec2_completed(main):
             with connection() as c:
                 result = c.run("cloud-init status")
                 if result.ok:
-                    completed = True
-        except TimeoutError:
+                    logging.info(f"stdout={result.stdout=} {result.stderr=}")
+                    if "status:" in result.stdout and "done" in result.stdout:
+                        completed = True
+        except (TimeoutError, NoValidConnectionsError):
             pass
         attempt_count = attempt_count + 1
         if completed or attempt_count > 6 * 10:
@@ -180,26 +184,28 @@ def test_ec2_completed(main):
 @mark.slow
 @patch("sys.stdin", new=open("/dev/null"))
 @terraform("main", scope="session", replay=False)
+def test_installed_software(main):
+    software_packs = main.outputs["software_packs"]["value"]
+    with connection() as c:
+        for software_pack in software_packs:
+            logging.info(f"Testing {software_pack=}")
+            result = c.run(SOFTWARE_PACK_TEST_CMDS[software_pack])
+            logging.info(f"{result.stdout=} {result.stderr=}")
+            assert result.ok
+
+
+"""
+# Download cloud-init logs.
+# Useful for local debugging.
+@mark.slow
+@patch("sys.stdin", new=open("/dev/null"))
+@terraform("main", scope="session", replay=False)
 def test_cloud_init_get_logs(main):
     with connection() as c:
         assert c.run("cloud-init collect-logs").ok
         c.get("cloud-init.tar.gz")
-
-
-@mark.slow
-@patch("sys.stdin", new=open("/dev/null"))
-@terraform("main", scope="session", replay=False)
-def test_installed_software(main):
-    software_packs = main.outputs["software_packs"]["value"]
-    with connection() as c:
-        assert c.run("cloud-init collect-logs").ok
-        c.get("cloud-init.tar.gz")
-        for software_pack in software_packs:
-            logging.info(f"Testing {software_pack=}")
-            result = c.run(SOFTWARE_PACK_TEST_CMDS[software_pack])
-            logging.info(f"{result=}")
-            assert result.ok
-
+        # TODO Add sudo get for user data....
+"""
 
 # TODO stack overflow
 # env.hosts = [public_ip_address]

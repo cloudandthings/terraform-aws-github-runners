@@ -2,12 +2,16 @@ data "aws_caller_identity" "current" {
   provider = aws
 }
 
+locals {
+  naming_prefix = "${var.naming_prefix}-${var.run_id}"
+}
+
 resource "null_resource" "tf_guard_provider_account_match" {
   count = tonumber(data.aws_caller_identity.current.account_id == var.aws_account_id ? "1" : "fail")
 }
 
 resource "aws_security_group" "this" {
-  name = var.naming_prefix
+  name = local.naming_prefix
 
   egress {
     from_port   = 0
@@ -36,7 +40,7 @@ resource "aws_security_group_rule" "ingress" {
 module "this" {
   source = "../../../"
 
-  naming_prefix = var.naming_prefix
+  naming_prefix = local.naming_prefix
 
   github_url = var.github_url
 
@@ -47,10 +51,6 @@ module "this" {
 
   ssm_parameter_name = "/github/runner/token"
 
-  # cloud_init_extra_packages = ["cloud-utils"]
-  # cloud_init_extra_runcmds = [
-  #   "INSTANCE_ID=`ec2metadata --instance-id`",
-  #   "aws ec2 create-tags --resources $INSTANCE_ID --tags Key=cloud-init,Value=DONE"]
   cloud_init_extra_other = <<-EOT
         users:
           - default
