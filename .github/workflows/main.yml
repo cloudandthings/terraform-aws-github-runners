@@ -52,13 +52,15 @@ jobs:
           role-duration-seconds: 3600
       - uses: actions/setup-python@v2
       - uses: hashicorp/setup-terraform@v2
-      - run: | # Installation
+      - name: Install tests
+        run: |
           python -m venv .venv
           source .venv/bin/activate
           pip install -r requirements.txt
           pre-commit install
           echo "run_id = \"${{ github.run_id }}\"" >> ./test/terraform/main/terraform.tfvars
-      - run: | # Execution
+      - name: Execute tests
+        run: |
           source .venv/bin/activate
           pre-commit run
           pytest

@@ -180,26 +180,28 @@ def test_ec2_completed(main):
 @mark.slow
 @patch("sys.stdin", new=open("/dev/null"))
 @terraform("main", scope="session", replay=False)
-def test_cloud_init_get_logs(main):
-    with connection() as c:
-        assert c.run("cloud-init collect-logs").ok
-        c.get("cloud-init.tar.gz")
-
-
-@mark.slow
-@patch("sys.stdin", new=open("/dev/null"))
-@terraform("main", scope="session", replay=False)
 def test_installed_software(main):
     software_packs = main.outputs["software_packs"]["value"]
     with connection() as c:
-        assert c.run("cloud-init collect-logs").ok
-        c.get("cloud-init.tar.gz")
         for software_pack in software_packs:
             logging.info(f"Testing {software_pack=}")
             result = c.run(SOFTWARE_PACK_TEST_CMDS[software_pack])
             logging.info(f"{result=}")
             assert result.ok
 
+
+"""
+# Download cloud-init logs.
+# Useful for local debugging.
+@mark.slow
+@patch("sys.stdin", new=open("/dev/null"))
+@terraform("main", scope="session", replay=False)
+def test_cloud_init_get_logs(main):
+    with connection() as c:
+        assert c.run("cloud-init collect-logs").ok
+        c.get("cloud-init.tar.gz")
+        # TODO Add sudo get for user data....
+"""
 
 # TODO stack overflow
 # env.hosts = [public_ip_address]
