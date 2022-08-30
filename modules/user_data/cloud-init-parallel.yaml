@@ -49,7 +49,7 @@ write_files:
     After=network.target
     [Service]
     Type=simple
-    User=ubuntu
+    User=root
     ExecStart=/home/ubuntu/ephemeral_runner_svc.sh
     [Install]
     WantedBy=multi-user.target
