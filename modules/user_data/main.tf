@@ -7,13 +7,17 @@ locals {
   ssm_parameter_name = local.ssm_match[1]
 
   user_data = templatefile(
-    "${path.module}/cloud-init.yaml", {
+    "${path.module}/cloud-init-parallel.yaml", {
+      GRAVE              = "`"
       SSM_REGION         = local.ssm_region
       SSM_PARAMETER_NAME = local.ssm_parameter_name
 
-      PACKAGES = var.config.cloud_init_packages
-      RUNCMDS  = var.config.cloud_init_runcmds
-      OTHER    = var.config.cloud_init_other
+      SSH_AUTHORIZED_KEYS = [] # TODO
+      USERS               = [] # TODO
+      PACKAGES            = var.config.cloud_init_packages
+      RUNCMDS             = var.config.cloud_init_runcmds
+      WRITE_FILES         = var.config.cloud_init_write_files
+      OTHER               = var.config.cloud_init_other
 
       GITHUB_URL = var.config.github_url
       GITHUB_ORGANISATION_NAME = (
@@ -32,11 +36,10 @@ locals {
       ARG_LABELS      = length(local.runner_labels) > 0 ? "--labels '${local.runner_labels}'" : ""
   })
   user_data_no_comments = join("\n",
-    concat(
-      ["#cloud-config"], [
-        for x in split("\n", local.user_data) : x
-      if length(regexall("^[[:blank:]]*#", x)) == 0]
-    )
+    [ # Comments stripped if they start with "# "
+      for x in split("\n", local.user_data) : x
+      if length(regexall("^[[:blank:]]*#[[:blank:]]", x)) == 0
+    ]
   )
 }
 

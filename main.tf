@@ -100,7 +100,8 @@ module "user_data" {
       flatten(module.software_packs[*].runcmds),
       var.cloud_init_extra_runcmds
     )
-    cloud_init_other = var.cloud_init_extra_other
+    cloud_init_write_files = [] # TODO
+    cloud_init_other       = var.cloud_init_extra_other
 
     runner_name   = var.github_runner_name
     runner_group  = var.github_runner_group
@@ -245,4 +246,7 @@ resource "aws_instance" "this" {
     version = aws_launch_template.this.latest_version
   }
   subnet_id = var.subnet_ids[0]
+  tags = {
+    Name = var.naming_prefix
+  }
 }

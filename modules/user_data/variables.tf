@@ -2,9 +2,10 @@ variable "config" {
   type = object({
     ssm_parameter_arn = string
 
-    cloud_init_packages = list(string)
-    cloud_init_runcmds  = list(string)
-    cloud_init_other    = string
+    cloud_init_packages    = list(string)
+    cloud_init_runcmds     = list(string)
+    cloud_init_write_files = list(string)
+    cloud_init_other       = string
 
     runner_name   = string
     runner_group  = string
