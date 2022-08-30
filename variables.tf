@@ -99,6 +99,12 @@ variable "cloud_init_extra_runcmds" {
   default     = []
 }
 
+variable "cloud_init_extra_write_files" {
+  description = "A list of strings to append beneath the `write_files:` section of the cloudinit script. See https://cloudinit.readthedocs.io/en/latest/topics/modules.html#write-files ."
+  type        = list(string)
+  default     = []
+}
+
 variable "cloud_init_extra_other" {
   description = "Any other text to append to the cloudinit script."
   type        = string

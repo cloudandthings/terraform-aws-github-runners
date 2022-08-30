@@ -26,3 +26,5 @@ Separate test and dev requirements
 Set up safe test environment so CI can run
 
 Github run ID to test resources 
+
+Home dir ebs
