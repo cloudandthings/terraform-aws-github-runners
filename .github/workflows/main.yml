@@ -22,7 +22,8 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
       - run: |
-          python -m venv .venv && source .venv/bin/activate
+          python -m venv .venv
+          source .venv/bin/activate
           pip install -r requirements.txt
           flake8
           black .
@@ -52,11 +53,13 @@ jobs:
       - uses: actions/setup-python@v2
       - uses: hashicorp/setup-terraform@v2
       - run: | # Installation
-          python -m venv .venv && source .venv/bin/activate
+          python -m venv .venv
+          source .venv/bin/activate
           pip install -r requirements.txt
           pre-commit install
           echo "run_id = \"${{ github.run_id }}\"" >> ./test/terraform/main/terraform.tfvars
       - run: | # Execution
+          source .venv/bin/activate
           pre-commit run
           pytest
         env:
