@@ -54,7 +54,7 @@ write_files:
   permissions: '700'
   content: |
     #!/bin/bash
-    seq 2 | parallel -a - 'su ubuntu -c "/home/ubuntu/ephemeral_runner.sh {}" && rm -rf /home/ubuntu/actions-runner-{}'
+    seq 99999 | parallel -a - 'su ubuntu -c "/home/ubuntu/ephemeral_runner.sh {}" && rm -rf /home/ubuntu/actions-runner-{}'
 - path: /etc/systemd/system/this.service
   content: |
     [Unit]
