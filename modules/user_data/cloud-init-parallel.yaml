@@ -26,22 +26,27 @@ write_files:
   content: |
     #!/bin/bash
     set -e
+    die() { echo "$*" 1>&2 ; exit 1; }
     [ "$#" -eq 1 ] || die "1 argument required, $# provided."
     RUN=$1
     cp -R /home/ubuntu/actions-runner /home/ubuntu/actions-runner-$RUN
     PERSONAL_ACCESS_TOKEN=`aws ssm get-parameter --with-decryption --name ${SSM_PARAMETER_NAME} --region ${SSM_REGION} | jq -r '.Parameter.Value'`
-    [ "$${#PERSONAL_ACCESS_TOKEN}" -gt 0 ] || die "Unable to retrieve access token."
+    [ "$PERSONAL_ACCESS_TOKEN" != "" ] || die "Unable to retrieve access token."
     TOKEN_RESPONSE=`curl -s -X POST -H "Accept: application/vnd.github+json" -H "Authorization: token $PERSONAL_ACCESS_TOKEN" "https://api.github.com/orgs/${GITHUB_ORGANISATION_NAME}/actions/runners/registration-token"`
-    TOKEN=`echo $TOKEN_RESPONSE | jq -r '.token')`
-    [ "$${#TOKEN}" -ne "null" ] || die "Unable to retrieve token."
+    TOKEN=`echo $TOKEN_RESPONSE | jq -r '.token'`
+    [ "$TOKEN" != "null" ] || die "Unable to retrieve token."
     NAME=`hostname`-run-$RUN
+    echo NAME=$NAME
     /home/ubuntu/actions-runner-$RUN/config.sh --url '${GITHUB_URL}' --ephemeral --disableupdate --token $TOKEN --name $NAME ${ARG_RUNNERGROUP} ${ARG_LABELS}
-    cd /home/ubuntu/actions-runner-$RUN/ && bash ./run.sh
+    cd /home/ubuntu/actions-runner-$RUN/
+    bash ./run.sh
 - path: /home/ubuntu/ephemeral_runner_svc.sh
   permissions: '700'
   content: |
     #!/bin/bash
-    seq 99999 | parallel -a - 'su ubuntu -c "/home/ubuntu/ephemeral_runner.sh {}" && rm -rf /home/ubuntu/actions-runner-{}'
+    NPROC=`nproc`
+    echo NPROC=$NPROC
+    seq 99999 | parallel -j $NPROC -a - 'su ubuntu -c "/home/ubuntu/ephemeral_runner.sh {}" ; rm -rf /home/ubuntu/actions-runner-{} ; sleep 5'
 - path: /etc/systemd/system/this.service
   content: |
     [Unit]

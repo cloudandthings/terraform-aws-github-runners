@@ -8,7 +8,6 @@ locals {
 
   user_data = templatefile(
     "${path.module}/cloud-init-parallel.yaml", {
-      GRAVE              = "`"
       SSM_REGION         = local.ssm_region
       SSM_PARAMETER_NAME = local.ssm_parameter_name
 
