@@ -3,6 +3,7 @@ locals {
     "docker-engine",
     "node",
     "pre-commit",
+    "python2",
     "python3",
     "terraform",
     "terraform-docs",
@@ -13,7 +14,8 @@ locals {
     "docker-engine" = ["ca-certificates", "curl", "gnupg", "lsb-release"]
     "node"          = ["nodejs"]
     "pre-commit"    = ["pre-commit"]
-    "python3"       = ["python3", "python-is-python3", "python3-pip", "python3-venv"]
+    "python2"       = ["python2"]
+    "python3"       = ["python3", "python3-pip", "python3-venv"]
     "tflint"        = ["unzip"]
   }
 

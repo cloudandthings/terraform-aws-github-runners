@@ -1,6 +1,8 @@
 variable "config" {
   type = object({
-    ssm_parameter_arn = string
+    region               = string
+    ssm_parameter_name   = string
+    cloudwatch_log_group = string
 
     cloud_init_packages    = list(string)
     cloud_init_runcmds     = list(string)

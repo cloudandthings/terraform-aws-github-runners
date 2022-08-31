@@ -23,6 +23,7 @@ SOFTWARE_PACK_TEST_CMDS = {
     "docker-engine": "docker version",
     "node": "node --version",
     "pre-commit": "pre-commit --version",
+    "python2": "python2 --version",
     "python3": "python3 --version",
     "terraform": "terraform --version",
     "terraform-docs": "terraform-docs --version",

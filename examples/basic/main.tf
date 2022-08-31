@@ -3,6 +3,7 @@ module "github_runner" {
 
   # Required parameters
   ############################
+  region     = "af-south-1"
   github_url = "https://github.com/my-org"
 
   # Naming for all created resources

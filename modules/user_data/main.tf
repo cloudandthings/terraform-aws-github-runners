@@ -1,15 +1,11 @@
 locals {
   runner_labels = join(",", var.config.runner_labels)
 
-  ssm_match = regex("^arn:aws:ssm:(.*):.*:parameter(.*)$", var.config.ssm_parameter_arn)
-
-  ssm_region         = local.ssm_match[0]
-  ssm_parameter_name = local.ssm_match[1]
-
   user_data = templatefile(
     "${path.module}/cloud-init-ephemeral.yaml", {
-      SSM_REGION         = local.ssm_region
-      SSM_PARAMETER_NAME = local.ssm_parameter_name
+      REGION               = var.config.region
+      SSM_PARAMETER_NAME   = var.config.ssm_parameter_name
+      CLOUDWATCH_LOG_GROUP = var.config.cloudwatch_log_group
 
       PACKAGES    = var.config.cloud_init_packages
       RUNCMDS     = var.config.cloud_init_runcmds

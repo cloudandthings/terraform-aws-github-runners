@@ -1,7 +1,10 @@
+# Provide default values for all optional fields
 module "user_data_1" {
   source = "../../../modules/user_data"
   config = {
-    ssm_parameter_arn = "arn:aws:ssm:__TEST_REGION__:__TEST_ACCOUNT__:parameter/__TEST_PARAMETER__"
+    region               = "TEST_REGION"
+    ssm_parameter_name   = "__TEST_PARAMETER__"
+    cloudwatch_log_group = ""
 
     cloud_init_packages    = []
     cloud_init_runcmds     = []
@@ -18,10 +21,13 @@ module "user_data_1" {
   }
 }
 
+# Provide test values for all optional fields
 module "user_data_2" {
   source = "../../../modules/user_data"
   config = {
-    ssm_parameter_arn = "arn:aws:ssm:__TEST_REGION__:__TEST_ACCOUNT__:parameter/__TEST_PARAMETER__"
+    region               = "TEST_REGION"
+    ssm_parameter_name   = "__TEST_PARAMETER__"
+    cloudwatch_log_group = "_TEST_CLOUDWATCH_LOG_GROUP_"
 
     cloud_init_packages    = ["some_package1", "some_package2"]
     cloud_init_runcmds     = ["some_cmd_1", "some_cmd_2"]

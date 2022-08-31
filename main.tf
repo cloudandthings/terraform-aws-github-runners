@@ -1,16 +1,32 @@
+locals {
+  iam_policy_statements_cloudwatch = (
+    length(var.cloudwatch_log_group) > 0
+    ? [{
+      Effect = "Allow"
+      Action = [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents",
+        "logs:DescribeLogStreams"
+      ]
+      Resource = "*"
+    }]
+  : [])
+}
+
 resource "aws_iam_policy" "this" {
   count = length(var.iam_instance_profile_arn) == 0 ? 1 : 0
   name  = var.naming_prefix
 
   policy = jsonencode({
     Version = "2012-10-17"
-    Statement = [
+    Statement = concat([
       {
         Action   = ["ssm:GetParameter*"]
         Effect   = "Allow"
         Resource = data.aws_ssm_parameter.this.arn
-      },
-    ]
+      }],
+    local.iam_policy_statements_cloudwatch)
   })
 }
 
@@ -76,6 +92,10 @@ locals {
     ? var.security_groups
     : flatten(aws_security_group.this[*].id)
   )
+  cloudwatch_log_group = (
+    var.cloudwatch_enabled
+    ? coalesce(var.cloudwatch_log_group, var.naming_prefix)
+  : "")
 }
 
 module "software_packs" {
@@ -87,6 +107,8 @@ module "software_packs" {
 module "user_data" {
   source = "./modules/user_data"
   config = {
+    region                   = var.region
+    cloudwatch_log_group     = local.cloudwatch_log_group
     github_url               = var.github_url
     github_organisation_name = var.github_organisation_name
 
@@ -111,7 +133,7 @@ module "user_data" {
     runner_group  = var.github_runner_group
     runner_labels = var.github_runner_labels
 
-    ssm_parameter_arn = data.aws_ssm_parameter.this.arn
+    ssm_parameter_name = var.ssm_parameter_name
   }
 }
 
