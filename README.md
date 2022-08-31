@@ -6,8 +6,13 @@ Simple, self-hosted GitHub runners.
 
 ---
 
-[![](https://img.shields.io/badge/CI-passing-green)]()
-
+[![Maintenance](https://img.shields.io/badge/Maintained-yes-green.svg)](https://github.com/cloudandthings/terraform-aws-github-runners/graphs/commit-activity)
+[![CI Status](https://github.com/cloudandthings/terraform-aws-github-runners/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/cloudandthings/terraform-aws-github-runners/actions/workflows/main.yml)
+[![Latest Release](https://img.shields.io/github/release/cloudandthings/terraform-aws-github-runners)](https://github.com/cloudandthings/terraform-aws-github-runners/releases/latest)
+[![GitHub tag (latest SemVer)](https://img.shields.io/github/tag/cloudandthings/terraform-aws-github-runners?label=latest)](https://github.com/cloudandthings/terraform-aws-github-runners/releases/latest)
+![Terraform Version](https://img.shields.io/badge/tf-%3E%3D0.13.0-blue)
+[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
+[![Github All Releases](https://img.shields.io/github/downloads/cloudandthings/terraform-aws-github-runners/total)](https://github.com/cloudandthings/terraform-aws-github-runners/releases)
 
 ## Features
 
