@@ -10,6 +10,8 @@ Deploy one instance and verify cloud init log and conn to GitHub
 [06:25, 24/08/2022] Bjorn: Documentation
 
 Diagram
+Move cost estimate
+Tips and tricks
 
 Separate test and dev requirements
 
