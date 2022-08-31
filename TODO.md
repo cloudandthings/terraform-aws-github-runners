@@ -12,6 +12,7 @@ Deploy one instance and verify cloud init log and conn to GitHub
 Diagram
 Move cost estimate
 Tips and tricks
+Add contrib guide / dev guide
 
 Separate test and dev requirements
 
