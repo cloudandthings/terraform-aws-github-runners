@@ -126,10 +126,12 @@ def connection():
     # Configure SSH connection
     host = public_ip
     user = "ubuntu"
-    connect_kwargs = {"key_filename": "test-rsa.pem", "passphrase": private_key_pass}
-    return Connection(
-        host=host, user=user, connect_timeout=10, connect_kwargs=connect_kwargs
-    )
+    connect_kwargs = {
+        "key_filename": "test-rsa.pem",
+        "passphrase": private_key_pass,
+        "timeout": 5,
+    }
+    return Connection(host=host, user=user, connect_kwargs=connect_kwargs)
 
 
 @mark.slow
@@ -153,7 +155,7 @@ def test_3_ec2_connection(main):
         if connected or attempt_count > 6 * 10 or error_count > 5:
             break
         logging.info(f"{attempt_count=} {error_count=}")
-        time.sleep(10)
+        time.sleep(5)
 
     logging.info(f"{result=}")
     assert connected
@@ -182,7 +184,7 @@ def test_4_ec2_completed(main):
         if completed or attempt_count > 6 * 10 or error_count > 5:
             break
         logging.info(f"{attempt_count=} {error_count=}")
-        time.sleep(10)
+        time.sleep(5)
 
     logging.info(f"{result=}")
     assert completed
