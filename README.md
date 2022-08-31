@@ -6,10 +6,26 @@ Simple self-hosted github runners deployed via Terraform.
 
 ## Features
 
-- Simple to use. There are examples and pre-defined software packs for easy install.
-- Runs on EC2. By default, one runner process per vCPU.
+- Simple to use. See examples below.
 - Cost-effective (Using Spot pricing with AutoScaling).
 - Customisable using [cloudinit](https://cloudinit.readthedocs.io/).
+
+By default one runner process and 20GB storage is provided per vCPU based on your instance type.
+
+## Why?
+
+Deploying a self-hosted github runner should be simple.
+It shouldn't need a long setup process or a lot of infrastructure. 
+
+This module additionally does not require public inbound traffic, and can be easily customised if needed.
+
+### Known limitations
+
+Parallel runners are ephemeral and their work environment is destroyed after each job is done.
+However they still run on the same underlying EC2 instance. 
+This means they can make changes which impact each other, for example if the EBS storage gets full.
+
+A possible workaround could be to [run jobs in a container](https://docs.github.com/en/actions/using-jobs/running-jobs-in-a-container) on these runners.
 
 ## How to use
 
@@ -177,6 +193,7 @@ module "github_runner" {
 | <a name="input_cloud_init_extra_runcmds"></a> [cloud\_init\_extra\_runcmds](#input\_cloud\_init\_extra\_runcmds) | A list of strings to append beneath the `runcmd:` section of the `cloudinit` script.<br>https://cloudinit.readthedocs.io/en/latest/topics/modules.html#runcmd | `list(string)` | `[]` | no |
 | <a name="input_cloud_init_extra_write_files"></a> [cloud\_init\_extra\_write\_files](#input\_cloud\_init\_extra\_write\_files) | A list of strings to append beneath the `write_files:` section of the `cloudinit` script.<br>https://cloudinit.readthedocs.io/en/latest/topics/modules.html#write-files | `list(string)` | `[]` | no |
 | <a name="input_ec2_associate_public_ip_address"></a> [ec2\_associate\_public\_ip\_address](#input\_ec2\_associate\_public\_ip\_address) | Whether to associate a public IP address with EC2 instances in a VPC. | `bool` | `false` | no |
+| <a name="input_ec2_ebs_volume_size"></a> [ec2\_ebs\_volume\_size](#input\_ec2\_ebs\_volume\_size) | Size in GB of instance-attached EBS storage. By default this is set equal to the number of vCPUs per instance * 20 GB. | `number` | `-1` | no |
 | <a name="input_ec2_instance_type"></a> [ec2\_instance\_type](#input\_ec2\_instance\_type) | Instance type for EC2 instances. | `string` | n/a | yes |
 | <a name="input_ec2_key_pair_name"></a> [ec2\_key\_pair\_name](#input\_ec2\_key\_pair\_name) | EC2 Key Pair name to allow SSH to EC2 instances. | `string` | `""` | no |
 | <a name="input_github_organisation_name"></a> [github\_organisation\_name](#input\_github\_organisation\_name) | GitHub orgnisation name. Derived from `github_url` by default. | `string` | `""` | no |
@@ -185,6 +202,7 @@ module "github_runner" {
 | <a name="input_github_url"></a> [github\_url](#input\_github\_url) | GitHub url, for example: "https://github.com/cloudandthings/". | `string` | n/a | yes |
 | <a name="input_iam_instance_profile_arn"></a> [iam\_instance\_profile\_arn](#input\_iam\_instance\_profile\_arn) | IAM Instance Profile to launch EC2 instances with. Must allow permissions to read the SSM Parameter. Will be created by default. | `string` | `""` | no |
 | <a name="input_naming_prefix"></a> [naming\_prefix](#input\_naming\_prefix) | Created resources will be prefixed with this. | `string` | `"github-runner"` | no |
+| <a name="input_per_instance_runner_count"></a> [per\_instance\_runner\_count](#input\_per\_instance\_runner\_count) | Number of runners per instance. By default this is set equal to the number of vCPUs per instance. May be set to 0 to never create runners. | `number` | `-1` | no |
 | <a name="input_scaling_mode"></a> [scaling\_mode](#input\_scaling\_mode) | How instances are managed. <br> Can be either "autoscaling-group" (default) or "single-instance". | `string` | `"autoscaling-group"` | no |
 | <a name="input_security_groups"></a> [security\_groups](#input\_security\_groups) | A list of security groups to assign to EC2 instances.<br>Note: If none are provided, a new security group will be used which will deny inbound traffic **including SSH**. | `list(string)` | `[]` | no |
 | <a name="input_software_packs"></a> [software\_packs](#input\_software\_packs) | A list of pre-defined software packs to install.<br>Valid options are: `"ALL"` (default), `"docker-engine"`, `"node"`, `"python3"`, `"terraform"`, `"terraform-docs"`, `"tflint"`.<br>An empty list will mean none are installed. | `list(string)` | <pre>[<br>  "ALL"<br>]</pre> | no |
@@ -238,6 +256,7 @@ module "github_runner" {
 | [aws_launch_template.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/launch_template) | resource |
 | [aws_security_group.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
 | [aws_ami.ami](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami) | data source |
+| [aws_ec2_instance_type.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ec2_instance_type) | data source |
 | [aws_ssm_parameter.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ssm_parameter) | data source |
 ----
 ```

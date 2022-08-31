@@ -122,10 +122,22 @@ variable "ec2_instance_type" {
   type        = string
 }
 
+variable "ec2_ebs_volume_size" {
+  description = "Size in GB of instance-attached EBS storage. By default this is set equal to the number of vCPUs per instance * 20 GB."
+  type        = number
+  default     = -1
+}
+
 variable "ec2_key_pair_name" {
   description = "EC2 Key Pair name to allow SSH to EC2 instances."
   type        = string
   default     = ""
+}
+
+variable "per_instance_runner_count" {
+  description = "Number of runners per instance. By default this is set equal to the number of vCPUs per instance. May be set to 0 to never create runners."
+  type        = number
+  default     = -1
 }
 
 variable "github_organisation_name" {

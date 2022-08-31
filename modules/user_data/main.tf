@@ -27,6 +27,7 @@ locals {
           var.config.github_url)[4]
         )[1]
       )
+      PARALLEL_RUNNER_COUNT = var.config.per_instance_runner_count
 
       ARG_RUNNERGROUP = length(var.config.runner_group) > 0 ? "--runnergroup '${var.config.runner_group}'" : ""
       ARG_LABELS      = length(local.runner_labels) > 0 ? "--labels '${local.runner_labels}'" : ""

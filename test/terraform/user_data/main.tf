@@ -8,9 +8,10 @@ module "user_data_1" {
     cloud_init_write_files = []
     cloud_init_other       = ""
 
-    runner_name   = ""
-    runner_group  = ""
-    runner_labels = []
+    per_instance_runner_count = 0
+    runner_name               = ""
+    runner_group              = ""
+    runner_labels             = []
 
     github_url               = "__TEST_GITHUB_URL__"
     github_organisation_name = "__TEST_GITHUB_ORG_NAME__"
@@ -29,9 +30,10 @@ module "user_data_2" {
       some_section = { some_key = "some_value" }
     })
 
-    runner_name   = "my_runner"
-    runner_group  = "my_group"
-    runner_labels = ["label1", "label2"]
+    per_instance_runner_count = 0
+    runner_name               = "my_runner"
+    runner_group              = "my_group"
+    runner_labels             = ["label1", "label2"]
 
     github_url               = "__TEST_GITHUB_URL__"
     github_organisation_name = "__TEST_GITHUB_ORG_NAME__"

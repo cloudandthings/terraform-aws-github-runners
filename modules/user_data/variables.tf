@@ -7,6 +7,8 @@ variable "config" {
     cloud_init_write_files = list(string)
     cloud_init_other       = string
 
+    per_instance_runner_count = number
+
     runner_group  = string
     runner_labels = list(string)
 
