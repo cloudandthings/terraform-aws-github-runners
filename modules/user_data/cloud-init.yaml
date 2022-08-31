@@ -64,7 +64,7 @@ runcmd:
 - >
   TOKEN_RESPONSE=`curl -X POST -H "Accept: application/vnd.github+json" -H "Authorization: token $PERSONAL_ACCESS_TOKEN" https://api.github.com/orgs/${GITHUB_ORGANISATION_NAME}/actions/runners/registration-token`
 - TOKEN=`echo $TOKEN_RESPONSE | jq -r '.token'`
-- su ubuntu -c "/home/ubuntu/actions-runner/config.sh --url '${GITHUB_URL}' --unattended --token $TOKEN ${ARG_NAME} ${ARG_RUNNERGROUP} ${ARG_LABELS}"
+- su ubuntu -c "/home/ubuntu/actions-runner/config.sh --url '${GITHUB_URL}' --unattended --token $TOKEN ${ARG_RUNNERGROUP} ${ARG_LABELS}"
 # Install as service
 - cd /home/ubuntu/actions-runner/ && bash ./svc.sh install ubuntu
 - echo ==== ACTIONS-RUNNER DONE ====

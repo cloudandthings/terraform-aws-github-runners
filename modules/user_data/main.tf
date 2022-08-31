@@ -7,7 +7,7 @@ locals {
   ssm_parameter_name = local.ssm_match[1]
 
   user_data = templatefile(
-    "${path.module}/cloud-init-parallel.yaml", {
+    "${path.module}/cloud-init-ephemeral.yaml", {
       SSM_REGION         = local.ssm_region
       SSM_PARAMETER_NAME = local.ssm_parameter_name
 
@@ -28,7 +28,6 @@ locals {
         )[1]
       )
 
-      ARG_NAME        = length(var.config.runner_name) > 0 ? "--name '${var.config.runner_name}'" : ""
       ARG_RUNNERGROUP = length(var.config.runner_group) > 0 ? "--runnergroup '${var.config.runner_group}'" : ""
       ARG_LABELS      = length(local.runner_labels) > 0 ? "--labels '${local.runner_labels}'" : ""
   })

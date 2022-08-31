@@ -103,7 +103,6 @@ module "user_data" {
     cloud_init_write_files = var.cloud_init_extra_write_files
     cloud_init_other       = var.cloud_init_extra_other
 
-    runner_name   = var.github_runner_name
     runner_group  = var.github_runner_group
     runner_labels = var.github_runner_labels
 

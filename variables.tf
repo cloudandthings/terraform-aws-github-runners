@@ -146,12 +146,6 @@ variable "github_runner_labels" {
   default     = []
 }
 
-variable "github_runner_name" {
-  description = "Custom GitHub runner name."
-  type        = string
-  default     = ""
-}
-
 variable "iam_instance_profile_arn" {
   description = "IAM Instance Profile to launch EC2 instances with. Must allow permissions to read the SSM Parameter. Will be created by default."
   type        = string

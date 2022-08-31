@@ -1,8 +1,59 @@
+# terraform-aws-github-runers
+
+![alt text](docs/icon.gif "Title" )
+
+Simple, self-hosted github runners deployed via Terraform.
+
+## Features
+
+- Simple to use. There are examples and pre-defined software packs for easy install.
+- Runs on EC2. By default, one runner process per vCPU.
+- Cost-effective (Using Spot pricing with AutoScaling).
+- Customisable using [cloudinit](https://cloudinit.readthedocs.io/).
+
+## How to use
+
+### 1. Store your GitHub token
+Add your GitHub personal access token to AWS SSM Parameter Store.
+
+### 2. Configure module
+Configure and deploy the module. Examples below.
+
+## Cost Estimate
+
+Assumptions: 
+- A single `t3.micro` instance type, which has 2 vCPUs.
+- Region is `af-south-1` 
+- Autoscaling scehduling is configured as `9 hours` from Mon-Fri (`195.54` instance hours per month)
+- EBS Storage: Type is `gp2`, `10GB`, No snapshots
+
+**EC2 monthly cost**
+
+- t3.micro On-Demand hourly cost: `$0.0136`
+- Historical average discount for `t3.micro`: 70%
+- `195.54` On-Demand instances hours x `0.0136 USD` = `2.66 USD`
+- Less 70% Spot discount: `2.66 USD - (2.66 USD x 0.7) = 0.797786 USD`
+
+EC2 monthly subtotal = `0.80 USD`
+
+**EBS monthly cost**
+
+- `195.54 total EC2 hours / 730 hours in a month = 0.27 instance months`
+- `10 GB x 0.27 instance months x 0.1309 USD = 0.35 USD (EBS Storage Cost)`
+
+EBS monthly subotal = `0.35 USD`
+
+**Total monthly cost**
+ - EC2 monthly subtotal + EBS monthly subtotal
+ - `0.80 USD + 0.35 USD = 1.15 USD`
+
+Total monthly cost = `1.15 USD`
+
 <!-- BEGIN_TF_DOCS -->
 ## Module Docs
 
 ### Examples
-
+#### Basic Usage
 ```hcl
 module "github_runner" {
   source = "../../"
@@ -11,28 +62,98 @@ module "github_runner" {
   ############################
   github_url = "https://github.com/my-org"
 
+  # Naming for all created resources
   naming_prefix = "test-github-runner"
 
+  ssm_parameter_name = "/github/runner/token"
+
+  # 2 cores, so 2 ephemeral runners will start in parallel.
   ec2_instance_type = "t3.micro"
 
   vpc_id     = "vpc-0ffaabbcc1122"
   subnet_ids = ["subnet-0123", "subnet-0456"]
+}
+```
+#### Advanced Usage
+```hcl
+locals {
+  naming_prefix = "test-github-runner"
+  vpc_id        = "vpc-0ffaabbcc1122"
+}
+
+# Create a custom security-group to allow SSH to all EC2 instances
+resource "aws_security_group" "this" {
+  name = "${local.naming_prefix}-sg"
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  vpc_id = local.vpc_id
+}
+
+data "http" "myip" {
+  url = "http://ipv4.icanhazip.com"
+}
+
+resource "aws_security_group_rule" "ssh_ingress" {
+  description       = "Allow SSH ingress to EC2 instance"
+  type              = "ingress"
+  from_port         = 22
+  to_port           = 22
+  protocol          = "tcp"
+  cidr_blocks       = ["${chomp(data.http.myip.body)}/32"]
+  security_group_id = aws_security_group.this.id
+}
+
+module "github_runner" {
+  source = "../../"
+
+  # Required parameters
+  ############################
+  github_url = "https://github.com/my-org"
+
+  naming_prefix = local.naming_prefix
+
+  ssm_parameter_name = "/github/runner/token"
+
+  ec2_instance_type = "t3.micro"
+
+  vpc_id     = local.vpc_id
+  subnet_ids = ["subnet-0123", "subnet-0456"]
 
   # Optional parameters
   ################################
-  iam_instance_profile_arn = "arn:aws:iam::112233445566:role/terraform-aws-github-runners"
 
+  # If for some reason you dont want to install everything.
   software_packs = [
     "docker-engine",
     "node",
     "python3",
   ]
 
-  ssm_parameter_name = "my/parameter"
+  ec2_associate_public_ip_address = true
+  ec2_key_pair_name               = "my_key_pair"
+  security_groups                 = [aws_security_group.this.id]
 
-  autoscaling_schedule_time_zone       = "Africa/Johannesburg"
-  autoscaling_schedule_off_recurrences = ["0 20 * * *"]
-  autoscaling_schedule_on_recurrences  = ["0 6 * * *"]
+  autoscaling_schedule_time_zone = "Africa/Johannesburg"
+
+  autoscaling_max_instance_lifetime = 86400
+  autoscaling_min_size              = 2
+  autoscaling_desired_size          = 2
+  autoscaling_max_size              = 5
+  # Scale up to desired capacity during work hours
+  autoscaling_schedule_on_recurrences = ["0 08 * 1-5 *"]
+  # Scale down to zero after hours
+  autoscaling_schedule_off_recurrences = ["0 18 * * *"]
+
+  cloud_init_extra_packages = ["neofetch"]
+  cloud_init_extra_runcmds = [
+    "echo \"hello world\" > ~/test_file"
+  ]
 }
 ```
 ----
@@ -58,7 +179,6 @@ module "github_runner" {
 | <a name="input_github_organisation_name"></a> [github\_organisation\_name](#input\_github\_organisation\_name) | GitHub orgnisation name. Derived from `github_url` by default. | `string` | `""` | no |
 | <a name="input_github_runner_group"></a> [github\_runner\_group](#input\_github\_runner\_group) | Custom GitHub runner group. | `string` | `""` | no |
 | <a name="input_github_runner_labels"></a> [github\_runner\_labels](#input\_github\_runner\_labels) | Custom GitHub runner labels, for example: "gpu,x64,linux". | `list(string)` | `[]` | no |
-| <a name="input_github_runner_name"></a> [github\_runner\_name](#input\_github\_runner\_name) | Custom GitHub runner name. | `string` | `""` | no |
 | <a name="input_github_url"></a> [github\_url](#input\_github\_url) | GitHub url, for example: "https://github.com/cloudandthings/". | `string` | n/a | yes |
 | <a name="input_iam_instance_profile_arn"></a> [iam\_instance\_profile\_arn](#input\_iam\_instance\_profile\_arn) | IAM Instance Profile to launch EC2 instances with. Must allow permissions to read the SSM Parameter. Will be created by default. | `string` | `""` | no |
 | <a name="input_naming_prefix"></a> [naming\_prefix](#input\_naming\_prefix) | Created resources will be prefixed with this. | `string` | `"github-runner"` | no |
