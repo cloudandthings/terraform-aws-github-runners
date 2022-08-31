@@ -18,9 +18,13 @@ content: |-
   ## Module Docs
 
   ### Examples
-
+  #### Basic Usage
   ```hcl
   {{ include "examples/basic/main.tf" }}
+  ```  
+  #### Advanced Usage
+  ```hcl
+  {{ include "examples/advanced/main.tf" }}
   ```  
   ----
   {{ .Inputs }}   

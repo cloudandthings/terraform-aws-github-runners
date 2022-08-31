@@ -17,7 +17,7 @@ variable "ssm_parameter_name" {
 
 variable "subnet_ids" {
   type        = list(string)
-  description = "The list of Subnet IDs to launch EC2 instances in. If `scaling_mode=single-instance` then the first Subnet ID from this list will be used."
+  description = "The list of Subnet IDs to launch EC2 instances in. <br> If `scaling_mode=single-instance` then the first Subnet ID from this list will be used."
 }
 
 variable "vpc_id" {
@@ -27,13 +27,13 @@ variable "vpc_id" {
 
 # Optional variables
 variable "ami_name" {
-  description = "AWS AMI name filter for launching instances. GitHub supports specific operating systems and architectures, including Ubuntu 22.04 amd64 which is the default. The included software packs are not tested with other AMIs."
+  description = "AWS AMI name filter for launching instances. <br> GitHub supports specific operating systems and architectures, including Ubuntu 22.04 amd64 which is the default. <br> Note: The included software packs are not tested with other AMIs."
   type        = string
   default     = "ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-20220609"
 }
 
 variable "scaling_mode" {
-  description = "TODO. How instances should be created and scaled."
+  description = "How instances are managed. <br> Can be either \"autoscaling-group\" (default) or \"single-instance\"."
   type        = string
   default     = "autoscaling-group"
 
@@ -46,67 +46,67 @@ variable "scaling_mode" {
 }
 
 variable "autoscaling_min_size" {
-  description = "The minimum size of the Auto Scaling Group (when `scaling_mode=autoscaling-group`)."
+  description = "The minimum size of the Auto Scaling Group <br> (when `scaling_mode=autoscaling-group`)."
   type        = number
   default     = 1
 }
 
 variable "autoscaling_desired_size" {
-  description = "The number of Amazon EC2 instances that should be running (when `scaling_mode=autoscaling-group`)."
+  description = "The number of Amazon EC2 instances that should be running <br> (when `scaling_mode=autoscaling-group`)."
   type        = number
   default     = 1
 }
 
 variable "autoscaling_max_size" {
-  description = "The maximum size of the Auto Scaling Group (when `scaling_mode=autoscaling-group`)."
+  description = "The maximum size of the Auto Scaling Group <br> (when `scaling_mode=autoscaling-group`)."
   type        = number
   default     = 3
 }
 
 variable "autoscaling_max_instance_lifetime" {
-  description = "The maximum amount of time, in seconds, that an instance can be in service. Values must be either equal to 0 or between 86400 and 31536000 seconds (when `scaling_mode=autoscaling-group`)."
+  description = "The maximum amount of time, in seconds, that an instance can be in service. <br> Values must be either equal to 0 or between 86400 and 31536000 seconds <br> (when `scaling_mode=autoscaling-group`)."
   type        = string
   default     = 0
 }
 
 variable "autoscaling_schedule_on_recurrences" {
-  description = "A list of schedule cron expressions, specifying when the Auto Scaling Group will launch instances. Example: [\"0 6 * * *\"] (when `scaling_mode=autoscaling-group`)."
+  description = "A list of schedule cron expressions, specifying when the Auto Scaling Group will launch instances. <br> Example: [\"0 6 * * *\"] <br> (when `scaling_mode=autoscaling-group`)"
   type        = list(string)
   default     = []
 }
 
 variable "autoscaling_schedule_off_recurrences" {
-  description = "A list of schedule cron expressions, specifying when the Auto Scaling Group will terminate all instances. Example: [\"0 20 * * *\"] (when `scaling_mode=autoscaling-group`)."
+  description = "A list of schedule cron expressions, specifying when the Auto Scaling Group will terminate all instances. <br> Example: [\"0 20 * * *\"] <br> (when `scaling_mode=autoscaling-group`)"
   type        = list(string)
   default     = []
 }
 
 variable "autoscaling_schedule_time_zone" {
-  description = "The timezone for schedule cron expressions. See https://www.joda.org/joda-time/timezones.html (when `scaling_mode=autoscaling-group`)."
+  description = "The timezone for schedule cron expressions. See https://www.joda.org/joda-time/timezones.html . <br> (when `scaling_mode=autoscaling-group`)"
   type        = string
   default     = ""
 }
 
 variable "cloud_init_extra_packages" {
-  description = "A list of strings to append beneath the `packages:` section of the cloudinit script. See https://cloudinit.readthedocs.io/en/latest/topics/modules.html#package-update-upgrade-install ."
+  description = "A list of strings to append beneath the `packages:` section of the `cloudinit` script. <br> See https://cloudinit.readthedocs.io/en/latest/topics/modules.html#package-update-upgrade-install ."
   type        = list(string)
   default     = []
 }
 
 variable "cloud_init_extra_runcmds" {
-  description = "A list of strings to append beneath the `runcmd:` section of the cloudinit script. See https://cloudinit.readthedocs.io/en/latest/topics/modules.html#runcmd ."
+  description = "A list of strings to append beneath the `runcmd:` section of the `cloudinit` script. <br> See https://cloudinit.readthedocs.io/en/latest/topics/modules.html#runcmd ."
   type        = list(string)
   default     = []
 }
 
 variable "cloud_init_extra_write_files" {
-  description = "A list of strings to append beneath the `write_files:` section of the cloudinit script. See https://cloudinit.readthedocs.io/en/latest/topics/modules.html#write-files ."
+  description = "A list of strings to append beneath the `write_files:` section of the `cloudinit` script. <br> See https://cloudinit.readthedocs.io/en/latest/topics/modules.html#write-files ."
   type        = list(string)
   default     = []
 }
 
 variable "cloud_init_extra_other" {
-  description = "Any other text to append to the cloudinit script."
+  description = "Arbitrary text to append to the `cloudinit` script."
   type        = string
   default     = ""
 }
@@ -141,15 +141,9 @@ variable "github_runner_group" {
 }
 
 variable "github_runner_labels" {
-  description = "Custom GitHub runner labels, for example: \"gpu,x64,linux\"."
+  description = "Custom GitHub runner labels. Example: \"gpu,x64,linux\"."
   type        = list(string)
   default     = []
-}
-
-variable "github_runner_name" {
-  description = "Custom GitHub runner name."
-  type        = string
-  default     = ""
 }
 
 variable "iam_instance_profile_arn" {
@@ -159,14 +153,14 @@ variable "iam_instance_profile_arn" {
 }
 
 variable "security_groups" {
-  description = "A list of security groups to assign to EC2 instances. If none are provided, a new security group will be used, which will deny inbound traffic (including SSH)."
+  description = "A list of security groups to assign to EC2 instances. <br> Note: If none are provided, a new security group will be used which will deny inbound traffic (including SSH)."
   type        = list(string)
   default     = []
 }
 
 variable "software_packs" {
   type        = list(string)
-  description = "A list of pre-defined software packs to install. Valid options are: [\"ALL\", \"docker-engine\", \"node\", \"python3\", \"terraform\", \"terraform-docs\", \"tflint\"]. An empty list will mean none are installed."
+  description = "A list of pre-defined software packs to install. <br> Valid options are: [\"ALL\" (default), \"docker-engine\", \"node\", \"python3\", \"terraform\", \"terraform-docs\", \"tflint\"]. An empty list will mean none are installed."
   default     = ["ALL"]
 
   validation {

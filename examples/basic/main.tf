@@ -5,26 +5,14 @@ module "github_runner" {
   ############################
   github_url = "https://github.com/my-org"
 
+  # Naming for all created resources
   naming_prefix = "test-github-runner"
 
+  ssm_parameter_name = "/github/runner/token"
+
+  # 2 cores, so 2 ephemeral runners will start in parallel.
   ec2_instance_type = "t3.micro"
 
   vpc_id     = "vpc-0ffaabbcc1122"
   subnet_ids = ["subnet-0123", "subnet-0456"]
-
-  # Optional parameters
-  ################################
-  iam_instance_profile_arn = "arn:aws:iam::112233445566:role/terraform-aws-github-runners"
-
-  software_packs = [
-    "docker-engine",
-    "node",
-    "python3",
-  ]
-
-  ssm_parameter_name = "my/parameter"
-
-  autoscaling_schedule_time_zone       = "Africa/Johannesburg"
-  autoscaling_schedule_off_recurrences = ["0 20 * * *"]
-  autoscaling_schedule_on_recurrences  = ["0 6 * * *"]
 }
