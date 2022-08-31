@@ -11,7 +11,9 @@ from pytest import mark
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives import serialization
 from fabric.connection import Connection
+
 from paramiko.ssh_exception import NoValidConnectionsError
+from invoke.exceptions import UnexpectedExit
 
 
 from pytest_terraform import terraform
@@ -66,7 +68,7 @@ instance_id = None
 
 @mark.slow
 @terraform("main", scope="session", replay=False)
-def test_terraform(main):
+def test_1_terraform(main):
     logging.info(main.outputs)
     global instance_id
     instance_id = main.outputs["instance_id"]["value"]
@@ -81,7 +83,7 @@ def test_terraform(main):
 
 @mark.slow
 @terraform("main", scope="session", replay=False)
-def test_ec2_starts(main):
+def test_2_ec2_starts(main):
     if instance_id is None:
         raise Exception
     # Wait for instance to be running...
@@ -132,22 +134,24 @@ def connection():
 @mark.slow
 @patch("sys.stdin", new=open("/dev/null"))
 @terraform("main", scope="session", replay=False)
-def test_ec2_connection(main):
+def test_3_ec2_connection(main):
     connected = False
     attempt_count = 1
     result = None
+    error_count = 0
     while not connected:
         try:
             with connection() as c:
                 result = c.run("uname -a")
                 if result.ok:
                     connected = True
-        except TimeoutError:
+        except (TimeoutError, NoValidConnectionsError, UnexpectedExit):
+            error_count = error_count + 1
             pass
         attempt_count = attempt_count + 1
-        if connected or attempt_count > 6 * 10:
+        if connected or attempt_count > 6 * 10 or error_count > 5:
             break
-        logging.info(f"{attempt_count=}")
+        logging.info(f"{attempt_count=} {error_count=}")
         time.sleep(10)
 
     logging.info(f"{result=}")
@@ -157,10 +161,11 @@ def test_ec2_connection(main):
 @mark.slow
 @patch("sys.stdin", new=open("/dev/null"))
 @terraform("main", scope="session", replay=False)
-def test_ec2_completed(main):
+def test_4_ec2_completed(main):
     completed = False
     attempt_count = 1
     result = None
+    error_count = 0
     while not completed:
         try:
             with connection() as c:
@@ -169,12 +174,13 @@ def test_ec2_completed(main):
                     logging.info(f"stdout={result.stdout=} {result.stderr=}")
                     if "status:" in result.stdout and "done" in result.stdout:
                         completed = True
-        except (TimeoutError, NoValidConnectionsError):
+        except (TimeoutError, NoValidConnectionsError, UnexpectedExit):
+            error_count = error_count + 1
             pass
         attempt_count = attempt_count + 1
-        if completed or attempt_count > 6 * 10:
+        if completed or attempt_count > 6 * 10 or error_count > 5:
             break
-        logging.info(f"{attempt_count=}")
+        logging.info(f"{attempt_count=} {error_count=}")
         time.sleep(10)
 
     logging.info(f"{result=}")
@@ -184,7 +190,7 @@ def test_ec2_completed(main):
 @mark.slow
 @patch("sys.stdin", new=open("/dev/null"))
 @terraform("main", scope="session", replay=False)
-def test_installed_software(main):
+def test_5_installed_software(main):
     software_packs = main.outputs["software_packs"]["value"]
     with connection() as c:
         for software_pack in software_packs:
@@ -200,7 +206,7 @@ def test_installed_software(main):
 @mark.slow
 @patch("sys.stdin", new=open("/dev/null"))
 @terraform("main", scope="session", replay=False)
-def test_cloud_init_get_logs(main):
+def test_6_cloud_init_get_logs(main):
     with connection() as c:
         assert c.run("cloud-init collect-logs").ok
         c.get("cloud-init.tar.gz")

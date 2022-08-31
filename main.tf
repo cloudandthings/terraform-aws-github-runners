@@ -103,12 +103,18 @@ module "user_data" {
     cloud_init_write_files = var.cloud_init_extra_write_files
     cloud_init_other       = var.cloud_init_extra_other
 
+    per_instance_runner_count = (
+      var.per_instance_runner_count == -1
+      ? data.aws_ec2_instance_type.this.default_vcpus
+      : var.per_instance_runner_count
+    )
     runner_group  = var.github_runner_group
     runner_labels = var.github_runner_labels
 
     ssm_parameter_arn = data.aws_ssm_parameter.this.arn
   }
 }
+
 
 resource "aws_launch_template" "this" {
   name = var.naming_prefix
@@ -118,6 +124,11 @@ resource "aws_launch_template" "this" {
     ebs {
       encrypted             = true
       delete_on_termination = true
+      volume_size = (
+        var.ec2_ebs_volume_size == -1
+        ? data.aws_ec2_instance_type.this.default_vcpus * 20
+        : var.ec2_ebs_volume_size
+      )
     }
   }
 

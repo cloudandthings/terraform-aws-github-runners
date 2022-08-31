@@ -48,6 +48,7 @@ module "this" {
   ec2_instance_type               = "t3.micro"
   ec2_associate_public_ip_address = true
   scaling_mode                    = "single-instance"
+  per_instance_runner_count       = 0
 
   ssm_parameter_name = "/github/runner/token"
 

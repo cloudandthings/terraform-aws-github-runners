@@ -44,9 +44,15 @@ write_files:
   permissions: '700'
   content: |
     #!/bin/bash
-    NPROC=`nproc`
-    echo NPROC=$NPROC
-    seq 99999 | parallel -j $NPROC -a - 'su ubuntu -c "/home/ubuntu/ephemeral_runner.sh {}" ; rm -rf /home/ubuntu/actions-runner-{} ; sleep 1'
+    # Cleanup leftovers if instance was rebooted
+    rm -rf /home/ubuntu/actions-runner-*
+%{~ if PARALLEL_RUNNER_COUNT == -1 }
+    JOBS=`nproc`
+    echo JOBS=$JOBS
+%{~ else}
+    JOBS=${PARALLEL_RUNNER_COUNT}
+%{~ endif }
+    seq 99999 | parallel -j $JOBS -a - 'su ubuntu -c "/home/ubuntu/ephemeral_runner.sh {}" ; rm -rf /home/ubuntu/actions-runner-{} ; sleep 1'
 - path: /etc/systemd/system/this.service
   content: |
     [Unit]
