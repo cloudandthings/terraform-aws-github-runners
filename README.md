@@ -2,15 +2,19 @@
 
 ![terraform-aws-github-runners](docs/icon.gif "terraform-aws-github-runners" )
 
-Simple self-hosted github runners deployed via Terraform.
+Simple, self-hosted GitHub runners.
+
+---
+
+[![](https://img.shields.io/badge/CI-passing-green)]()
+
 
 ## Features
 
-- Simple to use. See examples below.
-- Cost-effective (Using Spot pricing with AutoScaling).
+- Simple! See examples below.
+- Cost-effective - using EC2 Spot pricing and AutoScaling.
 - Customisable using [cloudinit](https://cloudinit.readthedocs.io/).
-
-By default one runner process and 20GB storage is provided per vCPU based on your instance type.
+- Scalable. By default one runner process and 20GB storage is provided per vCPU per EC2 instance.
 
 ## Why?
 
@@ -27,7 +31,7 @@ This means they can make changes which impact each other, for example if the EBS
 
 A possible workaround could be to [run jobs in a container](https://docs.github.com/en/actions/using-jobs/running-jobs-in-a-container) on these runners.
 
-## How to use
+## How?
 
 ### 1. Store your GitHub token
 Add your GitHub personal access token to AWS SSM Parameter Store.
@@ -35,38 +39,10 @@ Add your GitHub personal access token to AWS SSM Parameter Store.
 ### 2. Configure module
 Configure and deploy the module. Examples below.
 
-## Cost Estimate
+## More?
 
-Assumptions: 
-- A single `t3.micro` instance type.
-- Region is `af-south-1`.
-- The instance will run for 9 hours from Mon-Fri (`195.54` instance hours per month).
-- EBS Storage is configured as `10GB`.
-
-As the `t3.micro` has 2 vCPU, this would provide 2 concurrent runners by default.
-
-**EC2 monthly cost**
-
-- On-Demand hourly cost for `t3.micro`: `$0.0136`
-- Historical average discount for `t3.micro`: 70%
-- `195.54` On-Demand instances hours x `0.0136 USD`: `2.66 USD`
-- Less 70% Spot discount: `2.66 USD - (2.66 USD x 0.7)` : `0.797786 USD`
-
-EC2 monthly subtotal = `0.80 USD`
-
-**EBS monthly cost**
-
-- `195.54 total EC2 hours / 730 hours in a month` : `0.27 instance months`
-- `10 GB x 0.27 instance months x 0.1309 USD` : `0.35 USD (EBS Storage Cost)`
-
-EBS monthly subotal = `0.35 USD`
-
-**Total monthly cost**
- - EC2 monthly subtotal + EBS monthly subtotal
- - `0.80 USD + 0.35 USD` : `1.15 USD`
-
-Total monthly cost
-`1.15 USD` 💸🚫
+- Found an issue? Want to help? [Contribute](.github/contribute.md).
+- Review a [cost estimate](docs/cost_estimate.md).
 
 <!-- BEGIN_TF_DOCS -->
 ## Module Docs
