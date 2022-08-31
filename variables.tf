@@ -46,61 +46,61 @@ variable "scaling_mode" {
 }
 
 variable "autoscaling_min_size" {
-  description = "The minimum size of the Auto Scaling Group <br> (when `scaling_mode=autoscaling-group`)."
+  description = "The minimum size of the Auto Scaling Group.<br>*When `scaling_mode=autoscaling-group`*"
   type        = number
   default     = 1
 }
 
 variable "autoscaling_desired_size" {
-  description = "The number of Amazon EC2 instances that should be running <br> (when `scaling_mode=autoscaling-group`)."
+  description = "The number of Amazon EC2 instances that should be running.<br>*When `scaling_mode=autoscaling-group`*"
   type        = number
   default     = 1
 }
 
 variable "autoscaling_max_size" {
-  description = "The maximum size of the Auto Scaling Group <br> (when `scaling_mode=autoscaling-group`)."
+  description = "The maximum size of the Auto Scaling Group.<br>*When `scaling_mode=autoscaling-group`*"
   type        = number
   default     = 3
 }
 
 variable "autoscaling_max_instance_lifetime" {
-  description = "The maximum amount of time, in seconds, that an instance can be in service. <br> Values must be either equal to 0 or between 86400 and 31536000 seconds <br> (when `scaling_mode=autoscaling-group`)."
+  description = "The maximum amount of time, in seconds, that an instance can be in service. Values must be either equal to `0` or between `86400` and `31536000` seconds.<br>*When `scaling_mode=autoscaling-group`*"
   type        = string
   default     = 0
 }
 
 variable "autoscaling_schedule_on_recurrences" {
-  description = "A list of schedule cron expressions, specifying when the Auto Scaling Group will launch instances. <br> Example: [\"0 6 * * *\"] <br> (when `scaling_mode=autoscaling-group`)"
+  description = "A list of schedule cron expressions, specifying when the Auto Scaling Group will launch instances.<br>Example: `[\"0 6 * * *\"]`<br>*When `scaling_mode=autoscaling-group`*"
   type        = list(string)
   default     = []
 }
 
 variable "autoscaling_schedule_off_recurrences" {
-  description = "A list of schedule cron expressions, specifying when the Auto Scaling Group will terminate all instances. <br> Example: [\"0 20 * * *\"] <br> (when `scaling_mode=autoscaling-group`)"
+  description = "A list of schedule cron expressions, specifying when the Auto Scaling Group will terminate all instances.<br>Example: `[\"0 20 * * *\"]`<br>*When `scaling_mode=autoscaling-group`*"
   type        = list(string)
   default     = []
 }
 
 variable "autoscaling_schedule_time_zone" {
-  description = "The timezone for schedule cron expressions. See https://www.joda.org/joda-time/timezones.html . <br> (when `scaling_mode=autoscaling-group`)"
+  description = "The timezone for schedule cron expressions.<br>https://www.joda.org/joda-time/timezones.html<br>*When `scaling_mode=autoscaling-group`*"
   type        = string
   default     = ""
 }
 
 variable "cloud_init_extra_packages" {
-  description = "A list of strings to append beneath the `packages:` section of the `cloudinit` script. <br> See https://cloudinit.readthedocs.io/en/latest/topics/modules.html#package-update-upgrade-install ."
+  description = "A list of strings to append beneath the `packages:` section of the `cloudinit` script.<br>https://cloudinit.readthedocs.io/en/latest/topics/modules.html#package-update-upgrade-install"
   type        = list(string)
   default     = []
 }
 
 variable "cloud_init_extra_runcmds" {
-  description = "A list of strings to append beneath the `runcmd:` section of the `cloudinit` script. <br> See https://cloudinit.readthedocs.io/en/latest/topics/modules.html#runcmd ."
+  description = "A list of strings to append beneath the `runcmd:` section of the `cloudinit` script.<br>https://cloudinit.readthedocs.io/en/latest/topics/modules.html#runcmd"
   type        = list(string)
   default     = []
 }
 
 variable "cloud_init_extra_write_files" {
-  description = "A list of strings to append beneath the `write_files:` section of the `cloudinit` script. <br> See https://cloudinit.readthedocs.io/en/latest/topics/modules.html#write-files ."
+  description = "A list of strings to append beneath the `write_files:` section of the `cloudinit` script.<br>https://cloudinit.readthedocs.io/en/latest/topics/modules.html#write-files"
   type        = list(string)
   default     = []
 }
@@ -153,14 +153,14 @@ variable "iam_instance_profile_arn" {
 }
 
 variable "security_groups" {
-  description = "A list of security groups to assign to EC2 instances. <br> Note: If none are provided, a new security group will be used which will deny inbound traffic (including SSH)."
+  description = "A list of security groups to assign to EC2 instances.<br>Note: If none are provided, a new security group will be used which will deny inbound traffic **including SSH**."
   type        = list(string)
   default     = []
 }
 
 variable "software_packs" {
   type        = list(string)
-  description = "A list of pre-defined software packs to install. <br> Valid options are: [\"ALL\" (default), \"docker-engine\", \"node\", \"python3\", \"terraform\", \"terraform-docs\", \"tflint\"]. An empty list will mean none are installed."
+  description = "A list of pre-defined software packs to install.<br>Valid options are: `\"ALL\"` (default), `\"docker-engine\"`, `\"node\"`, `\"python3\"`, `\"terraform\"`, `\"terraform-docs\"`, `\"tflint\"`.<br>An empty list will mean none are installed."
   default     = ["ALL"]
 
   validation {
