@@ -40,6 +40,7 @@ resource "aws_security_group_rule" "ingress" {
 module "this" {
   source = "../../../"
 
+  region        = var.region
   naming_prefix = local.naming_prefix
 
   github_url = var.github_url
