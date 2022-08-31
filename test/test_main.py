@@ -136,18 +136,20 @@ def test_ec2_connection(main):
     connected = False
     attempt_count = 1
     result = None
+    error_count = 0
     while not connected:
         try:
             with connection() as c:
                 result = c.run("uname -a")
                 if result.ok:
                     connected = True
-        except TimeoutError:
+        except (TimeoutError, NoValidConnectionsError):
+            error_count = error_count + 1
             pass
         attempt_count = attempt_count + 1
-        if connected or attempt_count > 6 * 10:
+        if connected or attempt_count > 6 * 10 or error_count > 5:
             break
-        logging.info(f"{attempt_count=}")
+        logging.info(f"{attempt_count=} {error_count=}")
         time.sleep(10)
 
     logging.info(f"{result=}")
@@ -161,6 +163,7 @@ def test_ec2_completed(main):
     completed = False
     attempt_count = 1
     result = None
+    error_count = 0
     while not completed:
         try:
             with connection() as c:
@@ -170,11 +173,12 @@ def test_ec2_completed(main):
                     if "status:" in result.stdout and "done" in result.stdout:
                         completed = True
         except (TimeoutError, NoValidConnectionsError):
+            error_count = error_count + 1
             pass
         attempt_count = attempt_count + 1
-        if completed or attempt_count > 6 * 10:
+        if completed or attempt_count > 6 * 10 or error_count > 5:
             break
-        logging.info(f"{attempt_count=}")
+        logging.info(f"{attempt_count=} {error_count=}")
         time.sleep(10)
 
     logging.info(f"{result=}")
