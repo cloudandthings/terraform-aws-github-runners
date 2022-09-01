@@ -1,6 +1,16 @@
 # Required variables
+variable "ssm_parameter_name" {
+  description = "SSM parameter name for the GitHub Runner token.<br>Example: \"/github/runner/token\"."
+  type        = string
+}
+
+variable "region" {
+  description = "AWS region."
+  type        = string
+}
+
 variable "github_url" {
-  description = "GitHub url, for example: \"https://github.com/cloudandthings/\"."
+  description = "GitHub organisation URL.<br>Example: \"https://github.com/cloudandthings/\"."
   type        = string
 }
 
@@ -8,16 +18,15 @@ variable "naming_prefix" {
   description = "Created resources will be prefixed with this."
   type        = string
   default     = "github-runner"
-}
-
-variable "ssm_parameter_name" {
-  description = "SSM Parameter name for the GitHub Runner token."
-  type        = string
+  validation {
+    condition     = length(var.naming_prefix) > 0
+    error_message = "The naming_prefix value cannot be an empty string."
+  }
 }
 
 variable "subnet_ids" {
   type        = list(string)
-  description = "The list of Subnet IDs to launch EC2 instances in. <br> If `scaling_mode=single-instance` then the first Subnet ID from this list will be used."
+  description = "The list of Subnet IDs to launch EC2 instances in. <br> If `scaling_mode=\"single-instance\"` then the first Subnet ID from this list will be used."
 }
 
 variable "vpc_id" {
@@ -33,7 +42,7 @@ variable "ami_name" {
 }
 
 variable "scaling_mode" {
-  description = "How instances are managed. <br> Can be either \"autoscaling-group\" (default) or \"single-instance\"."
+  description = "How instances are managed. <br> Can be either `\"autoscaling-group\"` or `\"single-instance\"`."
   type        = string
   default     = "autoscaling-group"
 
@@ -45,44 +54,56 @@ variable "scaling_mode" {
   }
 }
 
+variable "cloudwatch_enabled" {
+  description = "Whether or not to write logs to CloudWatch. Note that the `python2` software pack is required."
+  type        = bool
+  default     = true
+}
+
+variable "cloudwatch_log_group" {
+  description = "CloudWatch log group name. If left unspecified then the value of `naming_prefix` is used."
+  type        = string
+  default     = ""
+}
+
 variable "autoscaling_min_size" {
-  description = "The minimum size of the Auto Scaling Group.<br>*When `scaling_mode=autoscaling-group`*"
+  description = "The minimum size of the Auto Scaling Group.<br>*When `scaling_mode=\"autoscaling-group\"`*"
   type        = number
   default     = 1
 }
 
 variable "autoscaling_desired_size" {
-  description = "The number of Amazon EC2 instances that should be running.<br>*When `scaling_mode=autoscaling-group`*"
+  description = "The number of Amazon EC2 instances that should be running.<br>*When `scaling_mode=\"autoscaling-group\"`*"
   type        = number
   default     = 1
 }
 
 variable "autoscaling_max_size" {
-  description = "The maximum size of the Auto Scaling Group.<br>*When `scaling_mode=autoscaling-group`*"
+  description = "The maximum size of the Auto Scaling Group.<br>*When `scaling_mode=\"autoscaling-group\"`*"
   type        = number
   default     = 3
 }
 
 variable "autoscaling_max_instance_lifetime" {
-  description = "The maximum amount of time, in seconds, that an instance can be in service. Values must be either equal to `0` or between `86400` and `31536000` seconds.<br>*When `scaling_mode=autoscaling-group`*"
+  description = "The maximum amount of time, in seconds, that an instance can be in service. Values must be either equal to `0` or between `86400` and `31536000` seconds.<br>*When `scaling_mode=\"autoscaling-group\"`*"
   type        = string
   default     = 0
 }
 
 variable "autoscaling_schedule_on_recurrences" {
-  description = "A list of schedule cron expressions, specifying when the Auto Scaling Group will launch instances.<br>Example: `[\"0 6 * * *\"]`<br>*When `scaling_mode=autoscaling-group`*"
+  description = "A list of schedule cron expressions, specifying when the Auto Scaling Group will launch instances.<br>Example: `[\"0 6 * * *\"]`<br>*When `scaling_mode=\"autoscaling-group\"`*"
   type        = list(string)
   default     = []
 }
 
 variable "autoscaling_schedule_off_recurrences" {
-  description = "A list of schedule cron expressions, specifying when the Auto Scaling Group will terminate all instances.<br>Example: `[\"0 20 * * *\"]`<br>*When `scaling_mode=autoscaling-group`*"
+  description = "A list of schedule cron expressions, specifying when the Auto Scaling Group will terminate all instances.<br>Example: `[\"0 20 * * *\"]`<br>*When `scaling_mode=\"autoscaling-group\"`*"
   type        = list(string)
   default     = []
 }
 
 variable "autoscaling_schedule_time_zone" {
-  description = "The timezone for schedule cron expressions.<br>https://www.joda.org/joda-time/timezones.html<br>*When `scaling_mode=autoscaling-group`*"
+  description = "The timezone for schedule cron expressions.<br>https://www.joda.org/joda-time/timezones.html<br>*When `scaling_mode=\"autoscaling-group\"`*"
   type        = string
   default     = ""
 }
@@ -123,7 +144,7 @@ variable "ec2_instance_type" {
 }
 
 variable "ec2_ebs_volume_size" {
-  description = "Size in GB of instance-attached EBS storage. By default this is set equal to the number of vCPUs per instance * 20 GB."
+  description = "Size in GB of instance-attached EBS storage. By default this is set to number of vCPUs per instance * 20 GB."
   type        = number
   default     = -1
 }
@@ -153,7 +174,7 @@ variable "github_runner_group" {
 }
 
 variable "github_runner_labels" {
-  description = "Custom GitHub runner labels. Example: \"gpu,x64,linux\"."
+  description = "Custom GitHub runner labels. <br>Example: `\"gpu,x64,linux\"`."
   type        = list(string)
   default     = []
 }
@@ -172,18 +193,15 @@ variable "security_groups" {
 
 variable "software_packs" {
   type        = list(string)
-  description = "A list of pre-defined software packs to install.<br>Valid options are: `\"ALL\"` (default), `\"docker-engine\"`, `\"node\"`, `\"python3\"`, `\"terraform\"`, `\"terraform-docs\"`, `\"tflint\"`.<br>An empty list will mean none are installed."
+  description = "A list of pre-defined software packs to install.<br>Valid options are: `\"ALL\"`, `\"docker-engine\"`, `\"node\"`, `\"python2\"`, `\"python3\"`, `\"terraform\"`, `\"terraform-docs\"`, `\"tflint\"`.<br>An empty list will mean none are installed."
   default     = ["ALL"]
 
   validation {
     condition = alltrue(
-      concat(
-        [for x in var.software_packs : contains([
-          "ALL", "docker-engine", "node", "python3", "terraform", "terraform-docs", "tflint"
-        ], x)],
-        [anytrue([(length(var.software_packs) != 1), contains(var.software_packs, "ALL")])]
-      )
+      [for x in var.software_packs : contains([
+        "ALL", "docker-engine", "node", "python2", "python3", "terraform", "terraform-docs", "tflint"
+      ], x)]
     )
-    error_message = "Software packs must be a list of: [\"ALL\", \"docker-engine\", \"node\", \"python3\", \"terraform\", \"terraform-docs\", \"tflint\"]."
+    error_message = "Software packs must be a list of: [\"ALL\", \"docker-engine\", \"node\", \"python2\", \"python3\", \"terraform\", \"terraform-docs\", \"tflint\"]."
   }
 }

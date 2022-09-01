@@ -2,15 +2,24 @@
 
 ![terraform-aws-github-runners](docs/icon.gif "terraform-aws-github-runners" )
 
-Simple self-hosted github runners deployed via Terraform.
+Simple, self-hosted GitHub runners.
+
+---
+
+[![Maintenance](https://img.shields.io/badge/Maintained-yes-green.svg)](https://github.com/cloudandthings/terraform-aws-github-runners/graphs/commit-activity)
+[![CI Status](https://github.com/cloudandthings/terraform-aws-github-runners/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/cloudandthings/terraform-aws-github-runners/actions/workflows/main.yml)
+[![Latest Release](https://img.shields.io/github/release/cloudandthings/terraform-aws-github-runners)](https://github.com/cloudandthings/terraform-aws-github-runners/releases/latest)
+[![GitHub tag (latest SemVer)](https://img.shields.io/github/tag/cloudandthings/terraform-aws-github-runners?label=latest)](https://github.com/cloudandthings/terraform-aws-github-runners/releases/latest)
+![Terraform Version](https://img.shields.io/badge/tf-%3E%3D0.13.0-blue)
+[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
+[![Github All Releases](https://img.shields.io/github/downloads/cloudandthings/terraform-aws-github-runners/total)](https://github.com/cloudandthings/terraform-aws-github-runners/releases)
 
 ## Features
 
-- Simple to use. See examples below.
-- Cost-effective (Using Spot pricing with AutoScaling).
+- Simple! See examples below.
+- Cost-effective - using EC2 Spot pricing and AutoScaling.
 - Customisable using [cloudinit](https://cloudinit.readthedocs.io/).
-
-By default one runner process and 20GB storage is provided per vCPU based on your instance type.
+- Scalable. By default one runner process and 20GB storage is provided per vCPU per EC2 instance.
 
 ## Why?
 
@@ -27,7 +36,7 @@ This means they can make changes which impact each other, for example if the EBS
 
 A possible workaround could be to [run jobs in a container](https://docs.github.com/en/actions/using-jobs/running-jobs-in-a-container) on these runners.
 
-## How to use
+## How?
 
 ### 1. Store your GitHub token
 Add your GitHub personal access token to AWS SSM Parameter Store.
@@ -35,38 +44,10 @@ Add your GitHub personal access token to AWS SSM Parameter Store.
 ### 2. Configure module
 Configure and deploy the module. Examples below.
 
-## Cost Estimate
+## More?
 
-Assumptions: 
-- A single `t3.micro` instance type.
-- Region is `af-south-1`.
-- The instance will run for 9 hours from Mon-Fri (`195.54` instance hours per month).
-- EBS Storage is configured as `10GB`.
-
-As the `t3.micro` has 2 vCPU, this would provide 2 concurrent runners by default.
-
-**EC2 monthly cost**
-
-- On-Demand hourly cost for `t3.micro`: `$0.0136`
-- Historical average discount for `t3.micro`: 70%
-- `195.54` On-Demand instances hours x `0.0136 USD`: `2.66 USD`
-- Less 70% Spot discount: `2.66 USD - (2.66 USD x 0.7)` : `0.797786 USD`
-
-EC2 monthly subtotal = `0.80 USD`
-
-**EBS monthly cost**
-
-- `195.54 total EC2 hours / 730 hours in a month` : `0.27 instance months`
-- `10 GB x 0.27 instance months x 0.1309 USD` : `0.35 USD (EBS Storage Cost)`
-
-EBS monthly subotal = `0.35 USD`
-
-**Total monthly cost**
- - EC2 monthly subtotal + EBS monthly subtotal
- - `0.80 USD + 0.35 USD` : `1.15 USD`
-
-Total monthly cost
-`1.15 USD` 💸🚫
+- Found an issue? Want to help? [Contribute](.github/contribute.md).
+- Review a [cost estimate](docs/cost_estimate.md).
 
 <!-- BEGIN_TF_DOCS -->
 ## Module Docs
@@ -79,6 +60,7 @@ module "github_runner" {
 
   # Required parameters
   ############################
+  region     = "af-south-1"
   github_url = "https://github.com/my-org"
 
   # Naming for all created resources
@@ -133,6 +115,7 @@ module "github_runner" {
 
   # Required parameters
   ############################
+  region     = "af-south-1"
   github_url = "https://github.com/my-org"
 
   naming_prefix = local.naming_prefix
@@ -151,19 +134,19 @@ module "github_runner" {
   software_packs = [
     "docker-engine",
     "node",
-    "python3",
+    "python2" # Required for cloudwatch logging
   ]
 
   ec2_associate_public_ip_address = true
   ec2_key_pair_name               = "my_key_pair"
   security_groups                 = [aws_security_group.this.id]
 
-  autoscaling_schedule_time_zone = "Africa/Johannesburg"
-
   autoscaling_max_instance_lifetime = 86400
   autoscaling_min_size              = 2
   autoscaling_desired_size          = 2
   autoscaling_max_size              = 5
+
+  autoscaling_schedule_time_zone = "Africa/Johannesburg"
   # Scale up to desired capacity during work hours
   autoscaling_schedule_on_recurrences = ["0 08 * 1-5 *"]
   # Scale down to zero after hours
@@ -173,6 +156,8 @@ module "github_runner" {
   cloud_init_extra_runcmds = [
     "echo \"hello world\" > ~/test_file"
   ]
+
+  cloudwatch_log_group = "/some/log/group"
 }
 ```
 ----
@@ -181,33 +166,36 @@ module "github_runner" {
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_ami_name"></a> [ami\_name](#input\_ami\_name) | AWS AMI name filter for launching instances. <br> GitHub supports specific operating systems and architectures, including Ubuntu 22.04 amd64 which is the default. <br> Note: The included software packs are not tested with other AMIs. | `string` | `"ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-20220609"` | no |
-| <a name="input_autoscaling_desired_size"></a> [autoscaling\_desired\_size](#input\_autoscaling\_desired\_size) | The number of Amazon EC2 instances that should be running.<br>*When `scaling_mode=autoscaling-group`* | `number` | `1` | no |
-| <a name="input_autoscaling_max_instance_lifetime"></a> [autoscaling\_max\_instance\_lifetime](#input\_autoscaling\_max\_instance\_lifetime) | The maximum amount of time, in seconds, that an instance can be in service. Values must be either equal to `0` or between `86400` and `31536000` seconds.<br>*When `scaling_mode=autoscaling-group`* | `string` | `0` | no |
-| <a name="input_autoscaling_max_size"></a> [autoscaling\_max\_size](#input\_autoscaling\_max\_size) | The maximum size of the Auto Scaling Group.<br>*When `scaling_mode=autoscaling-group`* | `number` | `3` | no |
-| <a name="input_autoscaling_min_size"></a> [autoscaling\_min\_size](#input\_autoscaling\_min\_size) | The minimum size of the Auto Scaling Group.<br>*When `scaling_mode=autoscaling-group`* | `number` | `1` | no |
-| <a name="input_autoscaling_schedule_off_recurrences"></a> [autoscaling\_schedule\_off\_recurrences](#input\_autoscaling\_schedule\_off\_recurrences) | A list of schedule cron expressions, specifying when the Auto Scaling Group will terminate all instances.<br>Example: `["0 20 * * *"]`<br>*When `scaling_mode=autoscaling-group`* | `list(string)` | `[]` | no |
-| <a name="input_autoscaling_schedule_on_recurrences"></a> [autoscaling\_schedule\_on\_recurrences](#input\_autoscaling\_schedule\_on\_recurrences) | A list of schedule cron expressions, specifying when the Auto Scaling Group will launch instances.<br>Example: `["0 6 * * *"]`<br>*When `scaling_mode=autoscaling-group`* | `list(string)` | `[]` | no |
-| <a name="input_autoscaling_schedule_time_zone"></a> [autoscaling\_schedule\_time\_zone](#input\_autoscaling\_schedule\_time\_zone) | The timezone for schedule cron expressions.<br>https://www.joda.org/joda-time/timezones.html<br>*When `scaling_mode=autoscaling-group`* | `string` | `""` | no |
+| <a name="input_autoscaling_desired_size"></a> [autoscaling\_desired\_size](#input\_autoscaling\_desired\_size) | The number of Amazon EC2 instances that should be running.<br>*When `scaling_mode="autoscaling-group"`* | `number` | `1` | no |
+| <a name="input_autoscaling_max_instance_lifetime"></a> [autoscaling\_max\_instance\_lifetime](#input\_autoscaling\_max\_instance\_lifetime) | The maximum amount of time, in seconds, that an instance can be in service. Values must be either equal to `0` or between `86400` and `31536000` seconds.<br>*When `scaling_mode="autoscaling-group"`* | `string` | `0` | no |
+| <a name="input_autoscaling_max_size"></a> [autoscaling\_max\_size](#input\_autoscaling\_max\_size) | The maximum size of the Auto Scaling Group.<br>*When `scaling_mode="autoscaling-group"`* | `number` | `3` | no |
+| <a name="input_autoscaling_min_size"></a> [autoscaling\_min\_size](#input\_autoscaling\_min\_size) | The minimum size of the Auto Scaling Group.<br>*When `scaling_mode="autoscaling-group"`* | `number` | `1` | no |
+| <a name="input_autoscaling_schedule_off_recurrences"></a> [autoscaling\_schedule\_off\_recurrences](#input\_autoscaling\_schedule\_off\_recurrences) | A list of schedule cron expressions, specifying when the Auto Scaling Group will terminate all instances.<br>Example: `["0 20 * * *"]`<br>*When `scaling_mode="autoscaling-group"`* | `list(string)` | `[]` | no |
+| <a name="input_autoscaling_schedule_on_recurrences"></a> [autoscaling\_schedule\_on\_recurrences](#input\_autoscaling\_schedule\_on\_recurrences) | A list of schedule cron expressions, specifying when the Auto Scaling Group will launch instances.<br>Example: `["0 6 * * *"]`<br>*When `scaling_mode="autoscaling-group"`* | `list(string)` | `[]` | no |
+| <a name="input_autoscaling_schedule_time_zone"></a> [autoscaling\_schedule\_time\_zone](#input\_autoscaling\_schedule\_time\_zone) | The timezone for schedule cron expressions.<br>https://www.joda.org/joda-time/timezones.html<br>*When `scaling_mode="autoscaling-group"`* | `string` | `""` | no |
 | <a name="input_cloud_init_extra_other"></a> [cloud\_init\_extra\_other](#input\_cloud\_init\_extra\_other) | Arbitrary text to append to the `cloudinit` script. | `string` | `""` | no |
 | <a name="input_cloud_init_extra_packages"></a> [cloud\_init\_extra\_packages](#input\_cloud\_init\_extra\_packages) | A list of strings to append beneath the `packages:` section of the `cloudinit` script.<br>https://cloudinit.readthedocs.io/en/latest/topics/modules.html#package-update-upgrade-install | `list(string)` | `[]` | no |
 | <a name="input_cloud_init_extra_runcmds"></a> [cloud\_init\_extra\_runcmds](#input\_cloud\_init\_extra\_runcmds) | A list of strings to append beneath the `runcmd:` section of the `cloudinit` script.<br>https://cloudinit.readthedocs.io/en/latest/topics/modules.html#runcmd | `list(string)` | `[]` | no |
 | <a name="input_cloud_init_extra_write_files"></a> [cloud\_init\_extra\_write\_files](#input\_cloud\_init\_extra\_write\_files) | A list of strings to append beneath the `write_files:` section of the `cloudinit` script.<br>https://cloudinit.readthedocs.io/en/latest/topics/modules.html#write-files | `list(string)` | `[]` | no |
+| <a name="input_cloudwatch_enabled"></a> [cloudwatch\_enabled](#input\_cloudwatch\_enabled) | Whether or not to write logs to CloudWatch. Note that the `python2` software pack is required. | `bool` | `true` | no |
+| <a name="input_cloudwatch_log_group"></a> [cloudwatch\_log\_group](#input\_cloudwatch\_log\_group) | CloudWatch log group name. If left unspecified then the value of `naming_prefix` is used. | `string` | `""` | no |
 | <a name="input_ec2_associate_public_ip_address"></a> [ec2\_associate\_public\_ip\_address](#input\_ec2\_associate\_public\_ip\_address) | Whether to associate a public IP address with EC2 instances in a VPC. | `bool` | `false` | no |
-| <a name="input_ec2_ebs_volume_size"></a> [ec2\_ebs\_volume\_size](#input\_ec2\_ebs\_volume\_size) | Size in GB of instance-attached EBS storage. By default this is set equal to the number of vCPUs per instance * 20 GB. | `number` | `-1` | no |
+| <a name="input_ec2_ebs_volume_size"></a> [ec2\_ebs\_volume\_size](#input\_ec2\_ebs\_volume\_size) | Size in GB of instance-attached EBS storage. By default this is set to number of vCPUs per instance * 20 GB. | `number` | `-1` | no |
 | <a name="input_ec2_instance_type"></a> [ec2\_instance\_type](#input\_ec2\_instance\_type) | Instance type for EC2 instances. | `string` | n/a | yes |
 | <a name="input_ec2_key_pair_name"></a> [ec2\_key\_pair\_name](#input\_ec2\_key\_pair\_name) | EC2 Key Pair name to allow SSH to EC2 instances. | `string` | `""` | no |
 | <a name="input_github_organisation_name"></a> [github\_organisation\_name](#input\_github\_organisation\_name) | GitHub orgnisation name. Derived from `github_url` by default. | `string` | `""` | no |
 | <a name="input_github_runner_group"></a> [github\_runner\_group](#input\_github\_runner\_group) | Custom GitHub runner group. | `string` | `""` | no |
-| <a name="input_github_runner_labels"></a> [github\_runner\_labels](#input\_github\_runner\_labels) | Custom GitHub runner labels. Example: "gpu,x64,linux". | `list(string)` | `[]` | no |
-| <a name="input_github_url"></a> [github\_url](#input\_github\_url) | GitHub url, for example: "https://github.com/cloudandthings/". | `string` | n/a | yes |
+| <a name="input_github_runner_labels"></a> [github\_runner\_labels](#input\_github\_runner\_labels) | Custom GitHub runner labels. <br>Example: `"gpu,x64,linux"`. | `list(string)` | `[]` | no |
+| <a name="input_github_url"></a> [github\_url](#input\_github\_url) | GitHub organisation URL.<br>Example: "https://github.com/cloudandthings/". | `string` | n/a | yes |
 | <a name="input_iam_instance_profile_arn"></a> [iam\_instance\_profile\_arn](#input\_iam\_instance\_profile\_arn) | IAM Instance Profile to launch EC2 instances with. Must allow permissions to read the SSM Parameter. Will be created by default. | `string` | `""` | no |
 | <a name="input_naming_prefix"></a> [naming\_prefix](#input\_naming\_prefix) | Created resources will be prefixed with this. | `string` | `"github-runner"` | no |
 | <a name="input_per_instance_runner_count"></a> [per\_instance\_runner\_count](#input\_per\_instance\_runner\_count) | Number of runners per instance. By default this is set equal to the number of vCPUs per instance. May be set to 0 to never create runners. | `number` | `-1` | no |
-| <a name="input_scaling_mode"></a> [scaling\_mode](#input\_scaling\_mode) | How instances are managed. <br> Can be either "autoscaling-group" (default) or "single-instance". | `string` | `"autoscaling-group"` | no |
+| <a name="input_region"></a> [region](#input\_region) | AWS region. | `string` | n/a | yes |
+| <a name="input_scaling_mode"></a> [scaling\_mode](#input\_scaling\_mode) | How instances are managed. <br> Can be either `"autoscaling-group"` or `"single-instance"`. | `string` | `"autoscaling-group"` | no |
 | <a name="input_security_groups"></a> [security\_groups](#input\_security\_groups) | A list of security groups to assign to EC2 instances.<br>Note: If none are provided, a new security group will be used which will deny inbound traffic **including SSH**. | `list(string)` | `[]` | no |
-| <a name="input_software_packs"></a> [software\_packs](#input\_software\_packs) | A list of pre-defined software packs to install.<br>Valid options are: `"ALL"` (default), `"docker-engine"`, `"node"`, `"python3"`, `"terraform"`, `"terraform-docs"`, `"tflint"`.<br>An empty list will mean none are installed. | `list(string)` | <pre>[<br>  "ALL"<br>]</pre> | no |
-| <a name="input_ssm_parameter_name"></a> [ssm\_parameter\_name](#input\_ssm\_parameter\_name) | SSM Parameter name for the GitHub Runner token. | `string` | n/a | yes |
-| <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | The list of Subnet IDs to launch EC2 instances in. <br> If `scaling_mode=single-instance` then the first Subnet ID from this list will be used. | `list(string)` | n/a | yes |
+| <a name="input_software_packs"></a> [software\_packs](#input\_software\_packs) | A list of pre-defined software packs to install.<br>Valid options are: `"ALL"`, `"docker-engine"`, `"node"`, `"python2"`, `"python3"`, `"terraform"`, `"terraform-docs"`, `"tflint"`.<br>An empty list will mean none are installed. | `list(string)` | <pre>[<br>  "ALL"<br>]</pre> | no |
+| <a name="input_ssm_parameter_name"></a> [ssm\_parameter\_name](#input\_ssm\_parameter\_name) | SSM parameter name for the GitHub Runner token.<br>Example: "/github/runner/token". | `string` | n/a | yes |
+| <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | The list of Subnet IDs to launch EC2 instances in. <br> If `scaling_mode="single-instance"` then the first Subnet ID from this list will be used. | `list(string)` | n/a | yes |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | The VPC ID to launch instances in. | `string` | n/a | yes |
 ----
 ### Modules

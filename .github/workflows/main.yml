@@ -58,12 +58,11 @@ jobs:
           source .venv/bin/activate
           pip install -r requirements.txt
           pre-commit install
-          echo "run_id = \"${{ github.run_id }}\"" >> ./test/terraform/main/terraform.tfvars
       - name: Execute tests
         run: |
           source .venv/bin/activate
           pre-commit run
-          pytest
+          pytest --run-id ${{ github.run_id }}
         env:
           PYTEST_ADDOPTS: "--color=yes"
-        timeout-minutes: 20
+        timeout-minutes: 30

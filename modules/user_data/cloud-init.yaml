@@ -26,6 +26,7 @@ package_reboot_if_required: true
 packages:
 - awscli
 - jq
+- cloud-utils
 # ##########################################
 # Extra packages
 %{~ for X in PACKAGES }
@@ -33,8 +34,21 @@ packages:
 %{~ endfor }
 # ##########################################
 # ##########################################
-%{~ if length(WRITE_FILES) > 0 }
+%{~ if length(WRITE_FILES) > 0 or length(CLOUDWATCH_LOG_GROUP) > 0 }
 write_files:
+%{~ endif }
+%{~ if length(CLOUDWATCH_LOG_GROUP) > 0 }
+- path: awslogs.conf
+  content: |
+    [general]
+    state_file = /var/awslogs/state/agent-state
+    [/var/log/syslog]
+    datetime_format = %Y-%m-%d %H:%M:%S
+    file = /var/log/syslog
+    buffer_duration = 5000
+    log_stream_name = {instance_id}
+    initial_position = start_of_file
+    log_group_name = ${CLOUDWATCH_LOG_GROUP}/var/log/syslog
 %{~ endif }
 %{~ for X in WRITE_FILES }
 - ${X}
@@ -46,6 +60,10 @@ runcmd:
 %{~ for X in RUNCMDS }
 - ${X}
 %{~ endfor }
+%{~ if length(CLOUDWATCH_LOG_GROUP) > 0 }
+- curl https://s3.amazonaws.com/aws-cloudwatch/downloads/latest/awslogs-agent-setup.py -O
+- python2 ./awslogs-agent-setup.py -r ${REGION} -n -c awslogs.conf
+%{~ endif }
 # ##########################################
 # ########################################## 
 - echo ==== ACTIONS-RUNNER ====
@@ -60,7 +78,7 @@ runcmd:
 - chown -R ubuntu:ubuntu /home/ubuntu
 
 # configure actions-runner
-- PERSONAL_ACCESS_TOKEN=`aws ssm get-parameter --with-decryption --name ${SSM_PARAMETER_NAME} --region ${SSM_REGION} | jq -r '.Parameter.Value'`
+- PERSONAL_ACCESS_TOKEN=`aws ssm get-parameter --with-decryption --name ${SSM_PARAMETER_NAME} --region ${REGION} | jq -r '.Parameter.Value'`
 - >
   TOKEN_RESPONSE=`curl -X POST -H "Accept: application/vnd.github+json" -H "Authorization: token $PERSONAL_ACCESS_TOKEN" https://api.github.com/orgs/${GITHUB_ORGANISATION_NAME}/actions/runners/registration-token`
 - TOKEN=`echo $TOKEN_RESPONSE | jq -r '.token'`
@@ -68,7 +86,8 @@ runcmd:
 # Install as service
 - cd /home/ubuntu/actions-runner/ && bash ./svc.sh install ubuntu
 - echo ==== ACTIONS-RUNNER DONE ====
-
+- INSTANCE_ID=`ec2metadata --instance-id`
+- aws ec2 create-tags --region ${REGION} --resources $INSTANCE_ID --tags Key=terraform-aws-github-runner:setup,Value=done
 power_state:
   mode: reboot
 
