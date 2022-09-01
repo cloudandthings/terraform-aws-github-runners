@@ -125,16 +125,17 @@ def test_3_ec2_tagged(main):
     attempt_count = 0
     while not done:
         response = ec2.describe_instances(InstanceIds=[instance_id])
-        instances = response["Instances"]
-        if len(instances) == 0:
+        logging.info(f"{response=}")
+        reservations = response["Reservations"]
+        if len(reservations) != 1:
+            raise Exception("Reservation for instance not found")
+        instances = reservations[0]["Instances"]
+        if len(instances) != 1:
             raise Exception("Instance not found")
-        if len(instances) == 1:
-            tags = instances[0]["Tags"]
-            for tag in tags:
-                if tag["Key"] == "terraform-aws-github-runner:setup":
-                    done = True
-        else:
-            raise Exception("Found more than one instance")
+        tags = instances[0]["Tags"]
+        for tag in tags:
+            if tag["Key"] == "terraform-aws-github-runner:setup":
+                done = True
         attempt_count = attempt_count + 1
         if done or attempt_count > 6 * 20:
             break
