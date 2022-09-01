@@ -107,6 +107,12 @@ locals {
     var.cloudwatch_enabled
     ? coalesce(var.cloudwatch_log_group, var.naming_prefix)
   : "")
+
+  per_instance_runner_count = (
+    var.per_instance_runner_count == -1
+    ? data.aws_ec2_instance_type.this.default_vcpus
+    : var.per_instance_runner_count
+  )
 }
 
 module "software_packs" {
@@ -136,11 +142,8 @@ module "user_data" {
     cloud_init_write_files = var.cloud_init_extra_write_files
     cloud_init_other       = var.cloud_init_extra_other
 
-    per_instance_runner_count = (
-      var.per_instance_runner_count == -1
-      ? data.aws_ec2_instance_type.this.default_vcpus
-      : var.per_instance_runner_count
-    )
+    per_instance_runner_count = local.per_instance_runner_count
+
     runner_group  = var.github_runner_group
     runner_labels = var.github_runner_labels
 

@@ -29,3 +29,8 @@ output "aws_instance_public_ip" {
   description = "Instance public IP (when `scaled_mode=single-instance`)"
   value       = concat([for x in aws_instance.this : x.public_ip], [""])[0]
 }
+
+output "per_instance_runner_count" {
+  description = "Effective per instance runner count."
+  value       = local.per_instance_runner_count
+}
