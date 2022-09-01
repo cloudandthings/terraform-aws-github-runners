@@ -13,6 +13,7 @@ packages:
 - awscli
 - jq
 - parallel
+- cloud-utils
 # ##########################################
 # Extra packages
 %{~ for X in PACKAGES }
@@ -46,6 +47,8 @@ write_files:
     #!/bin/bash
     # Cleanup leftovers if instance was rebooted
     rm -rf /home/ubuntu/actions-runner-*
+    INSTANCE_ID=`ec2metadata --instance-id`
+    aws ec2 create-tags --region ${REGION} --resources $INSTANCE_ID --tags Key=terraform-aws-github-runner:setup,Value=done
 %{~ if PARALLEL_RUNNER_COUNT == -1 }
     JOBS=`nproc`
     echo JOBS=$JOBS

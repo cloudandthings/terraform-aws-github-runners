@@ -51,6 +51,7 @@ module "this" {
   scaling_mode                    = "single-instance"
   per_instance_runner_count       = 0
 
+  software_packs     = []
   ssm_parameter_name = "/github/runner/token"
 
   cloud_init_extra_other = <<-EOT

@@ -25,7 +25,18 @@ resource "aws_iam_policy" "this" {
         Action   = ["ssm:GetParameter*"]
         Effect   = "Allow"
         Resource = data.aws_ssm_parameter.this.arn
-      }],
+      },
+      {
+        Action   = ["ec2:CreateTags"]
+        Effect   = "Allow"
+        Resource = "*"
+        Condition = {
+          StringEquals = {
+            "aws:ResourceTag/Name" = var.naming_prefix
+          }
+        }
+      }
+      ],
     local.iam_policy_statements_cloudwatch)
   })
 }

@@ -66,4 +66,4 @@ jobs:
           pytest
         env:
           PYTEST_ADDOPTS: "--color=yes"
-        timeout-minutes: 20
+        timeout-minutes: 30
