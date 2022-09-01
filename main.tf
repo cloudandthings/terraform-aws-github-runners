@@ -107,6 +107,12 @@ locals {
     var.cloudwatch_enabled
     ? coalesce(var.cloudwatch_log_group, var.naming_prefix)
   : "")
+
+  per_instance_runner_count = (
+    var.per_instance_runner_count == -1
+    ? data.aws_ec2_instance_type.this.default_vcpus
+    : var.per_instance_runner_count
+  )
 }
 
 module "software_packs" {
@@ -136,11 +142,8 @@ module "user_data" {
     cloud_init_write_files = var.cloud_init_extra_write_files
     cloud_init_other       = var.cloud_init_extra_other
 
-    per_instance_runner_count = (
-      var.per_instance_runner_count == -1
-      ? data.aws_ec2_instance_type.this.default_vcpus
-      : var.per_instance_runner_count
-    )
+    per_instance_runner_count = local.per_instance_runner_count
+
     runner_group  = var.github_runner_group
     runner_labels = var.github_runner_labels
 
@@ -239,6 +242,9 @@ resource "aws_autoscaling_schedule" "on" {
   recurrence             = var.autoscaling_schedule_on_recurrences[count.index]
   time_zone              = var.autoscaling_schedule_time_zone
   autoscaling_group_name = local.autoscaling_group_name
+  depends_on = [
+    aws_autoscaling_group.this
+  ]
 }
 
 resource "aws_autoscaling_schedule" "off" {
@@ -253,6 +259,9 @@ resource "aws_autoscaling_schedule" "off" {
   recurrence             = var.autoscaling_schedule_off_recurrences[count.index]
   time_zone              = var.autoscaling_schedule_time_zone
   autoscaling_group_name = local.autoscaling_group_name
+  depends_on = [
+    aws_autoscaling_group.this
+  ]
 }
 
 resource "aws_autoscaling_policy" "scale_down" {
@@ -280,6 +289,9 @@ resource "aws_cloudwatch_metric_alarm" "scale_down" {
   dimensions = {
     AutoScalingGroupName = local.autoscaling_group_name
   }
+  depends_on = [
+    aws_autoscaling_group.this
+  ]
 }
 
 resource "aws_instance" "this" {

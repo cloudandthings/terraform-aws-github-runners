@@ -7,7 +7,7 @@ Simple, self-hosted GitHub runners.
 ---
 
 [![Maintenance](https://img.shields.io/badge/Maintained-yes-green.svg)](https://github.com/cloudandthings/terraform-aws-github-runners/graphs/commit-activity)
-[![CI Status](https://github.com/cloudandthings/terraform-aws-github-runners/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/cloudandthings/terraform-aws-github-runners/actions/workflows/main.yml)
+[![Test Status](https://github.com/cloudandthings/terraform-aws-github-runners/actions/workflows/main.yml/badge.svg)](https://github.com/cloudandthings/terraform-aws-github-runners/actions/workflows/main.yml)
 [![Latest Release](https://img.shields.io/github/release/cloudandthings/terraform-aws-github-runners)](https://github.com/cloudandthings/terraform-aws-github-runners/releases/latest)
 [![GitHub tag (latest SemVer)](https://img.shields.io/github/tag/cloudandthings/terraform-aws-github-runners?label=latest)](https://github.com/cloudandthings/terraform-aws-github-runners/releases/latest)
 ![Terraform Version](https://img.shields.io/badge/tf-%3E%3D0.13.0-blue)
@@ -211,6 +211,7 @@ module "github_runner" {
 |------|-------------|
 | <a name="output_aws_instance_id"></a> [aws\_instance\_id](#output\_aws\_instance\_id) | Instance ID (when `scaled_mode=single-instance`) |
 | <a name="output_aws_instance_public_ip"></a> [aws\_instance\_public\_ip](#output\_aws\_instance\_public\_ip) | Instance public IP (when `scaled_mode=single-instance`) |
+| <a name="output_per_instance_runner_count"></a> [per\_instance\_runner\_count](#output\_per\_instance\_runner\_count) | Effective per instance runner count. |
 | <a name="output_software_packs"></a> [software\_packs](#output\_software\_packs) | List of software packs that were installed. |
 ----
 ### Providers
