@@ -239,6 +239,9 @@ resource "aws_autoscaling_schedule" "on" {
   recurrence             = var.autoscaling_schedule_on_recurrences[count.index]
   time_zone              = var.autoscaling_schedule_time_zone
   autoscaling_group_name = local.autoscaling_group_name
+  depends_on = [
+    aws_autoscaling_group.this
+  ]
 }
 
 resource "aws_autoscaling_schedule" "off" {
@@ -253,6 +256,9 @@ resource "aws_autoscaling_schedule" "off" {
   recurrence             = var.autoscaling_schedule_off_recurrences[count.index]
   time_zone              = var.autoscaling_schedule_time_zone
   autoscaling_group_name = local.autoscaling_group_name
+  depends_on = [
+    aws_autoscaling_group.this
+  ]
 }
 
 resource "aws_autoscaling_policy" "scale_down" {
@@ -280,6 +286,9 @@ resource "aws_cloudwatch_metric_alarm" "scale_down" {
   dimensions = {
     AutoScalingGroupName = local.autoscaling_group_name
   }
+  depends_on = [
+    aws_autoscaling_group.this
+  ]
 }
 
 resource "aws_instance" "this" {
