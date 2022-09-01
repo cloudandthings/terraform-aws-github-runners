@@ -198,12 +198,9 @@ variable "software_packs" {
 
   validation {
     condition = alltrue(
-      concat(
-        [for x in var.software_packs : contains([
-          "ALL", "docker-engine", "node", "python2", "python3", "terraform", "terraform-docs", "tflint"
-        ], x)],
-        [anytrue([(length(var.software_packs) != 1), contains(var.software_packs, "ALL")])]
-      )
+      [for x in var.software_packs : contains([
+        "ALL", "docker-engine", "node", "python2", "python3", "terraform", "terraform-docs", "tflint"
+      ], x)]
     )
     error_message = "Software packs must be a list of: [\"ALL\", \"docker-engine\", \"node\", \"python2\", \"python3\", \"terraform\", \"terraform-docs\", \"tflint\"]."
   }

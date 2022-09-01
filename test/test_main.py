@@ -52,18 +52,27 @@ public_key_file = open("test-rsa.pub", "w")
 public_key_file.write(pem_public_key.decode())
 public_key_file.close()
 
-os.environ["TF_VAR_public_key"] = pem_public_key.decode()
-os.environ["TF_VAR_region"] = REGION
+# Hack: Resorting to global vars and test dependencies
+# because pytest_terraform doesn't play nice with Classes.
+
+
+@mark.slow
+def test_0_variables(inputs):
+    os.environ["TF_VAR_run_id"] = inputs["run_id"]
+    os.environ["TF_VAR_ec2_key_pair_name"] = inputs["ec2_key_pair_name"]
+    os.environ["TF_VAR_public_key"] = pem_public_key.decode()
+    os.environ["TF_VAR_region"] = REGION
+
 
 config = Config(region_name=REGION)
 ec2 = boto3.client("ec2", config=config)
 
-# Resorting to global vars because pytest_terraform doesn't play nice with Classes.
 public_ip = None
 instance_id = None
 
 
 @mark.slow
+@pytest.mark.depends(on=["test_0_variables"])
 @terraform("main", scope="session", replay=False)
 def test_1_terraform(main):
     logging.info(main.outputs)
@@ -111,6 +120,7 @@ def test_2_ec2_starts(main):
             still_starting = False
         attempt_count = attempt_count + 1
         logging.info(f"{attempt_count=}")
+        # Wait up to 5min
         if not still_starting or attempt_count >= 6 * 5:
             break
         time.sleep(10)
@@ -137,7 +147,8 @@ def test_3_ec2_tagged(main):
             if tag["Key"] == "terraform-aws-github-runner:setup":
                 done = True
         attempt_count = attempt_count + 1
-        if done or attempt_count > 6 * 20:
+        # Wait up to 15 min
+        if done or attempt_count > 6 * 15:
             break
         time.sleep(10)
     assert done
@@ -152,7 +163,7 @@ def connection():
     connect_kwargs = {
         "key_filename": "test-rsa.pem",
         "passphrase": private_key_pass,
-        "timeout": 30,
+        "timeout": 20,
     }
     return Connection(host=host, user=user, connect_kwargs=connect_kwargs)
 
@@ -171,7 +182,8 @@ def test_4_ec2_connection(main):
             if result.ok:
                 connected = True
         attempt_count = attempt_count + 1
-        if connected or attempt_count > 5:
+        # Wait up to 2 min
+        if connected or attempt_count > 4:
             break
         logging.info(f"{attempt_count=}")
         time.sleep(1)
@@ -196,7 +208,8 @@ def test_5_ec2_completed(main):
                 if "status:" in result.stdout and "done" in result.stdout:
                     completed = True
         attempt_count = attempt_count + 1
-        if completed or attempt_count > 6:
+        # Wait up to 2 min
+        if completed or attempt_count > 4:
             break
         logging.info(f"{attempt_count=}")
         time.sleep(1)

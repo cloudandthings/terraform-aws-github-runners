@@ -51,11 +51,13 @@ write_files:
     aws ec2 create-tags --region ${REGION} --resources $INSTANCE_ID --tags Key=terraform-aws-github-runner:setup,Value=done
 %{~ if PARALLEL_RUNNER_COUNT == -1 }
     JOBS=`nproc`
-    echo JOBS=$JOBS
 %{~ else}
     JOBS=${PARALLEL_RUNNER_COUNT}
 %{~ endif }
-    seq 99999 | parallel -j $JOBS -a - 'su ubuntu -c "/home/ubuntu/ephemeral_runner.sh {}" ; rm -rf /home/ubuntu/actions-runner-{} ; sleep 1'
+    echo JOBS=$JOBS
+    if [ $JOBS -ge 1 ]; then
+      seq 99999 | parallel -j $JOBS -a - 'su ubuntu -c "/home/ubuntu/ephemeral_runner.sh {}" ; rm -rf /home/ubuntu/actions-runner-{} ; sleep 1'
+    fi
 - path: /etc/systemd/system/this.service
   content: |
     [Unit]
@@ -91,8 +93,8 @@ runcmd:
 - ${X}
 %{~ endfor }
 %{~ if length(CLOUDWATCH_LOG_GROUP) > 0 }
-- curl https://s3.amazonaws.com/aws-cloudwatch/downloads/latest/awslogs-agent-setup.py -O
-- python2 ./awslogs-agent-setup.py -r ${REGION} -n
+- curl -s https://s3.amazonaws.com/aws-cloudwatch/downloads/latest/awslogs-agent-setup.py -O
+- python2 ./awslogs-agent-setup.py -r ${REGION} -n -c awslogs.conf
 %{~ endif }
 # ##########################################
 # ########################################## 
@@ -101,7 +103,7 @@ runcmd:
 - mkdir actions-runner && cd actions-runner
 - curl -s https://github.com/actions/runner/releases | grep -o -E "https://github.*actions-runner-linux-x64-[0-9\.]+.tar.gz" | sort | uniq > versions.txt
 - RUNNER_FILE_LINK=`cat versions.txt | tail -n1`
-- curl -o actions-runner-linux-x64.tar.gz -L $RUNNER_FILE_LINK
+- curl -s -o actions-runner-linux-x64.tar.gz -L $RUNNER_FILE_LINK
 - tar xzf ./actions-runner-linux-x64.tar.gz
 - cd ..
 - mv actions-runner /home/ubuntu/actions-runner

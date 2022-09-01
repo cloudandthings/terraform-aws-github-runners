@@ -43,16 +43,20 @@ module "this" {
   region        = var.region
   naming_prefix = local.naming_prefix
 
+  ssm_parameter_name = "/github/runner/token"
+
   github_url = var.github_url
 
-  security_groups                 = [aws_security_group.this.id]
+  iam_instance_profile_arn = var.iam_instance_profile_arn
+
   ec2_instance_type               = "t3.micro"
   ec2_associate_public_ip_address = true
-  scaling_mode                    = "single-instance"
-  per_instance_runner_count       = 0
+  ec2_key_pair_name               = var.ec2_key_pair_name
 
-  software_packs     = []
-  ssm_parameter_name = "/github/runner/token"
+  scaling_mode              = "single-instance"
+  per_instance_runner_count = 0
+
+  software_packs = ["python2"]
 
   cloud_init_extra_other = <<-EOT
         users:
@@ -62,7 +66,7 @@ module "this" {
               - ${var.public_key}
     EOT
 
-  iam_instance_profile_arn = var.iam_instance_profile_arn
+  security_groups = [aws_security_group.this.id]
 
   subnet_ids = var.subnet_ids
   vpc_id     = var.vpc_id

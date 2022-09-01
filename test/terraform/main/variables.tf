@@ -18,6 +18,12 @@ variable "run_id" {
   description = "TODO"
 }
 
+variable "ec2_key_pair_name" {
+  type        = string
+  description = "TODO"
+  default     = ""
+}
+
 variable "aws_account_id" {
   type        = string
   description = "TODO"
