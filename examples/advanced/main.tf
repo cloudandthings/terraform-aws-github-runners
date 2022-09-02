@@ -69,7 +69,7 @@ module "github_runner" {
 
   autoscaling_schedule_time_zone = "Africa/Johannesburg"
   # Scale up to desired capacity during work hours
-  autoscaling_schedule_on_recurrences = ["0 08 * 1-5 *"]
+  autoscaling_schedule_on_recurrences = ["0 07 * * MON-FRI"]
   # Scale down to zero after hours
   autoscaling_schedule_off_recurrences = ["0 18 * * *"]
 

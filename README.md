@@ -148,7 +148,7 @@ module "github_runner" {
 
   autoscaling_schedule_time_zone = "Africa/Johannesburg"
   # Scale up to desired capacity during work hours
-  autoscaling_schedule_on_recurrences = ["0 08 * 1-5 *"]
+  autoscaling_schedule_on_recurrences = ["0 07 * * MON-FRI"]
   # Scale down to zero after hours
   autoscaling_schedule_off_recurrences = ["0 18 * * *"]
 
@@ -170,8 +170,8 @@ module "github_runner" {
 | <a name="input_autoscaling_max_instance_lifetime"></a> [autoscaling\_max\_instance\_lifetime](#input\_autoscaling\_max\_instance\_lifetime) | The maximum amount of time, in seconds, that an instance can be in service. Values must be either equal to `0` or between `86400` and `31536000` seconds.<br>*When `scaling_mode="autoscaling-group"`* | `string` | `0` | no |
 | <a name="input_autoscaling_max_size"></a> [autoscaling\_max\_size](#input\_autoscaling\_max\_size) | The maximum size of the Auto Scaling Group.<br>*When `scaling_mode="autoscaling-group"`* | `number` | `3` | no |
 | <a name="input_autoscaling_min_size"></a> [autoscaling\_min\_size](#input\_autoscaling\_min\_size) | The minimum size of the Auto Scaling Group.<br>*When `scaling_mode="autoscaling-group"`* | `number` | `1` | no |
-| <a name="input_autoscaling_schedule_off_recurrences"></a> [autoscaling\_schedule\_off\_recurrences](#input\_autoscaling\_schedule\_off\_recurrences) | A list of schedule cron expressions, specifying when the Auto Scaling Group will terminate all instances.<br>Example: `["0 20 * * *"]`<br>*When `scaling_mode="autoscaling-group"`* | `list(string)` | `[]` | no |
-| <a name="input_autoscaling_schedule_on_recurrences"></a> [autoscaling\_schedule\_on\_recurrences](#input\_autoscaling\_schedule\_on\_recurrences) | A list of schedule cron expressions, specifying when the Auto Scaling Group will launch instances.<br>Example: `["0 6 * * *"]`<br>*When `scaling_mode="autoscaling-group"`* | `list(string)` | `[]` | no |
+| <a name="input_autoscaling_schedule_off_recurrences"></a> [autoscaling\_schedule\_off\_recurrences](#input\_autoscaling\_schedule\_off\_recurrences) | A list of schedule cron expressions, specifying when the Auto Scaling Group will terminate all instances.<br>Example: `["0 18 * * *"]`<br>*When `scaling_mode="autoscaling-group"`* | `list(string)` | `[]` | no |
+| <a name="input_autoscaling_schedule_on_recurrences"></a> [autoscaling\_schedule\_on\_recurrences](#input\_autoscaling\_schedule\_on\_recurrences) | A list of schedule cron expressions, specifying when the Auto Scaling Group will launch instances.<br>Example: `["0 07 * * MON-FRI"]`<br>*When `scaling_mode="autoscaling-group"`* | `list(string)` | `[]` | no |
 | <a name="input_autoscaling_schedule_time_zone"></a> [autoscaling\_schedule\_time\_zone](#input\_autoscaling\_schedule\_time\_zone) | The timezone for schedule cron expressions.<br>https://www.joda.org/joda-time/timezones.html<br>*When `scaling_mode="autoscaling-group"`* | `string` | `""` | no |
 | <a name="input_cloud_init_extra_other"></a> [cloud\_init\_extra\_other](#input\_cloud\_init\_extra\_other) | Arbitrary text to append to the `cloudinit` script. | `string` | `""` | no |
 | <a name="input_cloud_init_extra_packages"></a> [cloud\_init\_extra\_packages](#input\_cloud\_init\_extra\_packages) | A list of strings to append beneath the `packages:` section of the `cloudinit` script.<br>https://cloudinit.readthedocs.io/en/latest/topics/modules.html#package-update-upgrade-install | `list(string)` | `[]` | no |
