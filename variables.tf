@@ -91,13 +91,13 @@ variable "autoscaling_max_instance_lifetime" {
 }
 
 variable "autoscaling_schedule_on_recurrences" {
-  description = "A list of schedule cron expressions, specifying when the Auto Scaling Group will launch instances.<br>Example: `[\"0 6 * * *\"]`<br>*When `scaling_mode=\"autoscaling-group\"`*"
+  description = "A list of schedule cron expressions, specifying when the Auto Scaling Group will launch instances.<br>Example: `[\"0 07 * * MON-FRI\"]`<br>*When `scaling_mode=\"autoscaling-group\"`*"
   type        = list(string)
   default     = []
 }
 
 variable "autoscaling_schedule_off_recurrences" {
-  description = "A list of schedule cron expressions, specifying when the Auto Scaling Group will terminate all instances.<br>Example: `[\"0 20 * * *\"]`<br>*When `scaling_mode=\"autoscaling-group\"`*"
+  description = "A list of schedule cron expressions, specifying when the Auto Scaling Group will terminate all instances.<br>Example: `[\"0 18 * * *\"]`<br>*When `scaling_mode=\"autoscaling-group\"`*"
   type        = list(string)
   default     = []
 }
