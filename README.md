@@ -1,6 +1,6 @@
 # terraform-aws-github-runners
 
-![terraform-aws-github-runners](docs/icon.gif "terraform-aws-github-runners" )
+![terraform-aws-github-runners](docs/images/icon.gif "terraform-aws-github-runners" )
 
 Simple, self-hosted GitHub runners.
 
@@ -8,11 +8,8 @@ Simple, self-hosted GitHub runners.
 
 [![Maintenance](https://img.shields.io/badge/Maintained-yes-green.svg)](https://github.com/cloudandthings/terraform-aws-github-runners/graphs/commit-activity)
 [![Test Status](https://github.com/cloudandthings/terraform-aws-github-runners/actions/workflows/main.yml/badge.svg)](https://github.com/cloudandthings/terraform-aws-github-runners/actions/workflows/main.yml)
-[![Latest Release](https://img.shields.io/github/release/cloudandthings/terraform-aws-github-runners)](https://github.com/cloudandthings/terraform-aws-github-runners/releases/latest)
-[![GitHub tag (latest SemVer)](https://img.shields.io/github/tag/cloudandthings/terraform-aws-github-runners?label=latest)](https://github.com/cloudandthings/terraform-aws-github-runners/releases/latest)
 ![Terraform Version](https://img.shields.io/badge/tf-%3E%3D0.13.0-blue)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
-[![Github All Releases](https://img.shields.io/github/downloads/cloudandthings/terraform-aws-github-runners/total)](https://github.com/cloudandthings/terraform-aws-github-runners/releases)
 
 ## Features
 
@@ -36,15 +33,35 @@ This means they can make changes which impact each other, for example if the EBS
 
 A possible workaround could be to [run jobs in a container](https://docs.github.com/en/actions/using-jobs/running-jobs-in-a-container) on these runners.
 
-## How?
+## How it works
+
+![infrastructure](docs/images/runner.svg "infrastructure" )
+
+An AutoScaling group is created to spin up Spot EC2 instances on a schedule. The instances retrieve a pre-configured GitHub access token from AWS SSM Parameter Store, and start one (or more) ephemeral actions runner processes. These authenticate with GitHub and wait for work. 
+
+Steps execute arbitrary commands, defined by your repo workflows. 
+
+For example:
+ - Perform a linting check.
+ - Connect to another AWS Account using an IAM credential and operate on some EC2 or RDS infrastructure.
+ - Anything else...
+
+
+A full list of created resources is shown below.
+
+## How to use it
 
 ### 1. Store your GitHub token
-Add your GitHub personal access token to AWS SSM Parameter Store.
+Create a [GitHub personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token).
+Add it to AWS Systems Manager Parameter Store with the `SecureString` type.
+
+![ssm](docs/images/ssm.png "ssm" )
+
 
 ### 2. Configure module
-Configure and deploy the module. Examples below.
+Configure and deploy the module using Terraform. See examples below.
 
-## More?
+## More info
 
 - Found an issue? Want to help? [Contribute](.github/contribute.md).
 - Review a [cost estimate](docs/cost_estimate.md).

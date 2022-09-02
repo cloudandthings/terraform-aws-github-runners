@@ -1,14 +1,4 @@
 locals {
-  all = [
-    "docker-engine",
-    "node",
-    "pre-commit",
-    "python2",
-    "python3",
-    "terraform",
-    "terraform-docs",
-    "tflint",
-  ]
 
   packages = {
     "docker-engine" = ["ca-certificates", "curl", "gnupg", "lsb-release"]

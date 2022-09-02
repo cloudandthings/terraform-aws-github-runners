@@ -246,12 +246,3 @@ def test_7_cloud_init_get_logs(main):
         c.get("cloud-init.tar.gz")
         # TODO Add sudo get for user data....
 """
-
-# TODO stack overflow
-# env.hosts = [public_ip_address]
-# env.user = 'ubuntu'
-# env.key_filename = 'test-rsa.pem'
-
-# Use an invalid token...
-
-# Parse cloud-init log for errors
