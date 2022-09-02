@@ -17,14 +17,17 @@ sections:
 content: |-
   ## Module Docs
 
-  ### Examples
-  #### Basic Usage
+  ### Basic Example
   ```hcl
   {{ include "examples/basic/main.tf" }}
   ```  
-  #### Advanced Usage
+  ### Advanced Example
   ```hcl
   {{ include "examples/advanced/main.tf" }}
+  ```  
+  ### Software packs
+  ```hcl
+  {{ include "modules/software/software_packs.tf" }}
   ```  
   ----
   {{ .Inputs }}   

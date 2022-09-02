@@ -1,50 +1,50 @@
 variable "region" {
   type        = string
-  description = "TODO"
+  description = "region"
 }
 
 variable "public_key" {
   type        = string
-  description = "TODO"
+  description = "public_key"
 }
 
 variable "naming_prefix" {
   type        = string
-  description = "TODO"
+  description = "naming_prefix"
 }
 
 variable "run_id" {
   type        = string
-  description = "TODO"
+  description = "run_id"
 }
 
 variable "ec2_key_pair_name" {
   type        = string
-  description = "TODO"
+  description = "ec2_key_pair_name"
   default     = ""
 }
 
 variable "aws_account_id" {
   type        = string
-  description = "TODO"
+  description = "aws_account_id"
 }
 
 variable "subnet_ids" {
   type        = list(string)
-  description = "TODO"
+  description = "subnet_ids"
 }
 
 variable "vpc_id" {
   type        = string
-  description = "TODO"
+  description = "vpc_id"
 }
 
 variable "github_url" {
   type        = string
-  description = "TODO"
+  description = "github_url"
 }
 
 variable "iam_instance_profile_arn" {
   type        = string
-  description = "TODO"
+  description = "iam_instance_profile_arn"
 }
