@@ -103,10 +103,6 @@ locals {
     ? var.security_groups
     : flatten(aws_security_group.this[*].id)
   )
-  cloudwatch_log_group = (
-    var.cloudwatch_enabled
-    ? coalesce(var.cloudwatch_log_group, var.naming_prefix)
-  : "")
 
   per_instance_runner_count = (
     var.per_instance_runner_count == -1
@@ -125,7 +121,7 @@ module "user_data" {
   source = "./modules/user_data"
   config = {
     region                   = var.region
-    cloudwatch_log_group     = local.cloudwatch_log_group
+    cloudwatch_log_group     = var.cloudwatch_log_group
     github_url               = var.github_url
     github_organisation_name = var.github_organisation_name
 

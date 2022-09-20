@@ -69,8 +69,7 @@ Configure and deploy the module using Terraform. See examples below.
 <!-- BEGIN_TF_DOCS -->
 ## Module Docs
 
-### Examples
-#### Basic Usage
+### Basic Example
 ```hcl
 module "github_runner" {
   source = "../../"
@@ -92,7 +91,7 @@ module "github_runner" {
   subnet_ids = ["subnet-0123", "subnet-0456"]
 }
 ```
-#### Advanced Usage
+### Advanced Example
 ```hcl
 locals {
   naming_prefix = "test-github-runner"
@@ -177,6 +176,22 @@ module "github_runner" {
   cloudwatch_log_group = "/some/log/group"
 }
 ```
+### Software packs
+```hcl
+locals {
+  # All available software packs
+  all = [
+    "docker-engine",
+    "node",
+    "pre-commit",
+    "python2",
+    "python3",
+    "terraform",
+    "terraform-docs",
+    "tflint",
+  ]
+}
+```
 ----
 ### Inputs
 
@@ -194,8 +209,7 @@ module "github_runner" {
 | <a name="input_cloud_init_extra_packages"></a> [cloud\_init\_extra\_packages](#input\_cloud\_init\_extra\_packages) | A list of strings to append beneath the `packages:` section of the `cloudinit` script.<br>https://cloudinit.readthedocs.io/en/latest/topics/modules.html#package-update-upgrade-install | `list(string)` | `[]` | no |
 | <a name="input_cloud_init_extra_runcmds"></a> [cloud\_init\_extra\_runcmds](#input\_cloud\_init\_extra\_runcmds) | A list of strings to append beneath the `runcmd:` section of the `cloudinit` script.<br>https://cloudinit.readthedocs.io/en/latest/topics/modules.html#runcmd | `list(string)` | `[]` | no |
 | <a name="input_cloud_init_extra_write_files"></a> [cloud\_init\_extra\_write\_files](#input\_cloud\_init\_extra\_write\_files) | A list of strings to append beneath the `write_files:` section of the `cloudinit` script.<br>https://cloudinit.readthedocs.io/en/latest/topics/modules.html#write-files | `list(string)` | `[]` | no |
-| <a name="input_cloudwatch_enabled"></a> [cloudwatch\_enabled](#input\_cloudwatch\_enabled) | Whether or not to write logs to CloudWatch. Note that the `python2` software pack is required. | `bool` | `true` | no |
-| <a name="input_cloudwatch_log_group"></a> [cloudwatch\_log\_group](#input\_cloudwatch\_log\_group) | CloudWatch log group name. If left unspecified then the value of `naming_prefix` is used. | `string` | `""` | no |
+| <a name="input_cloudwatch_log_group"></a> [cloudwatch\_log\_group](#input\_cloudwatch\_log\_group) | CloudWatch log group name prefix. Runner logs from /var/log/syslog are sent here. <br>Example: `github_runner`, with this value logs will be written to `github_runner/var/log/syslog/<instance_id>`.<br>If left unspecified then logging is disabled. | `string` | `""` | no |
 | <a name="input_ec2_associate_public_ip_address"></a> [ec2\_associate\_public\_ip\_address](#input\_ec2\_associate\_public\_ip\_address) | Whether to associate a public IP address with EC2 instances in a VPC. | `bool` | `false` | no |
 | <a name="input_ec2_ebs_volume_size"></a> [ec2\_ebs\_volume\_size](#input\_ec2\_ebs\_volume\_size) | Size in GB of instance-attached EBS storage. By default this is set to number of vCPUs per instance * 20 GB. | `number` | `-1` | no |
 | <a name="input_ec2_instance_type"></a> [ec2\_instance\_type](#input\_ec2\_instance\_type) | Instance type for EC2 instances. | `string` | n/a | yes |

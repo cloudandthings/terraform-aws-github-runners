@@ -54,14 +54,8 @@ variable "scaling_mode" {
   }
 }
 
-variable "cloudwatch_enabled" {
-  description = "Whether or not to write logs to CloudWatch. Note that the `python2` software pack is required."
-  type        = bool
-  default     = true
-}
-
 variable "cloudwatch_log_group" {
-  description = "CloudWatch log group name. If left unspecified then the value of `naming_prefix` is used."
+  description = "CloudWatch log group name prefix. Runner logs from /var/log/syslog are sent here. <br>Example: `github_runner`, with this value logs will be written to `github_runner/var/log/syslog/<instance_id>`.<br>If left unspecified then logging is disabled."
   type        = string
   default     = ""
 }
