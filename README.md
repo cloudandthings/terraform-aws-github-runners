@@ -1,8 +1,8 @@
 # terraform-aws-github-runners
 
-![terraform-aws-github-runners](https://github.com/cloudandthings/terraform-aws-github-runners/blob/main/docs/images/icon.gif "terraform-aws-github-runners" )
-
 Simple, self-hosted GitHub runners.
+
+[![link-to-repo](https://github.com/cloudandthings/terraform-aws-github-runners/blob/main/docs/images/icon.gif )](https://github.com/cloudandthings/terraform-aws-github-runners)
 
 ---
 
@@ -35,7 +35,7 @@ A possible workaround could be to [run jobs in a container](https://docs.github.
 
 ## How it works
 
-![infrastructure](https://github.com/cloudandthings/terraform-aws-github-runners/blob/main/docs/images/runner.svg "infrastructure" )
+[![infrastructure](https://github.com/cloudandthings/terraform-aws-github-runners/blob/main/docs/images/runner.svg)](https://github.com/cloudandthings/terraform-aws-github-runners/blob/main/docs/images/runner.svg)
 
 An AutoScaling group is created to spin up Spot EC2 instances on a schedule. The instances retrieve a pre-configured GitHub access token from AWS SSM Parameter Store, and start one (or more) ephemeral actions runner processes. These authenticate with GitHub and wait for work. 
 
@@ -55,7 +55,7 @@ A full list of created resources is shown below.
 Create a [GitHub personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token).
 Add it to AWS Systems Manager Parameter Store with the `SecureString` type.
 
-![ssm](https://github.com/cloudandthings/terraform-aws-github-runners/blob/main/docs/images/ssm.png "ssm" )
+[![ssm](https://github.com/cloudandthings/terraform-aws-github-runners/blob/main/docs/images/ssm.png)](https://github.com/cloudandthings/terraform-aws-github-runners/blob/main/docs/images/ssm.png )
 
 
 ### 2. Configure module
