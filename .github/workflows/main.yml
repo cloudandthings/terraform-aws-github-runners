@@ -13,7 +13,7 @@ permissions:
 jobs:
   python_lint:
     name: 🐍 Python file formatting
-    runs-on: ubunut-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
@@ -26,7 +26,7 @@ jobs:
 
   terraform_lint:
     name: 🏗 Terraform file format
-    runs-on: ubunut-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: hashicorp/setup-terraform@v2
       - uses: dflook/terraform-fmt-check@v1
@@ -36,7 +36,7 @@ jobs:
   testing:
     needs: [python_lint, terraform_lint]
     name: ✅ Testing
-    runs-on: ubunut-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: aws-actions/configure-aws-credentials@v1
