@@ -17,7 +17,7 @@ on:
 jobs:
   release:
     name: Release
-    runs-on: self-hosted
+    runs-on: ubunut-latest
     # Skip running release workflow on forks
     if: github.repository_owner == 'cloudandthings'
     steps:
