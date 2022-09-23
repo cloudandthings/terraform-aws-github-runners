@@ -1,16 +1,11 @@
 name: 'Validate PR title'
 
-on:
-  pull_request_target:
-    types:
-      - opened
-      - edited
-      - synchronize
+on: [workflow_dispatch, pull_request]
 
 jobs:
   main:
     name: Validate PR title
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       # Please look up the latest version from
       # https://github.com/amannn/action-semantic-pull-request/releases
