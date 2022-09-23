@@ -1,8 +1,8 @@
 # terraform-aws-github-runners
 
-Simple, self-hosted GitHub runners.
+Simple to use, self-hosted GitHub Action runners. Uses EC2 spot instances with configurable AutoScaling.
 
-[![link-to-repo](https://github.com/cloudandthings/terraform-aws-github-runners/blob/main/docs/images/icon.gif )](https://github.com/cloudandthings/terraform-aws-github-runners)
+[![GitHub repo link](https://github.com/cloudandthings/terraform-aws-github-runners/blob/main/docs/images/icon.gif )](https://github.com/cloudandthings/terraform-aws-github-runners)
 
 ---
 
@@ -13,8 +13,8 @@ Simple, self-hosted GitHub runners.
 
 ## Features
 
-- Simple! See examples below.
-- Cost-effective - using EC2 Spot pricing and AutoScaling.
+- Simple! See the provided examples for a quick-start.
+- Cost-effective. Uses EC2 Spot pricing and AutoScaling to keep costs low. Runs multiple runners per EC2 instance depending on the number of vCPU available.
 - Customisable using [cloudinit](https://cloudinit.readthedocs.io/).
 - Scalable. By default one runner process and 20GB storage is provided per vCPU per EC2 instance.
 
@@ -27,15 +27,21 @@ This module additionally does not require public inbound traffic, and can be eas
 
 ### Known limitations
 
-Parallel runners are ephemeral and their work environment is destroyed after each job is done.
-However they still run on the same underlying EC2 instance. 
-This means they can make changes which impact each other, for example if the EBS storage gets full.
+1. Needs a VPC.
 
-A possible workaround could be to [run jobs in a container](https://docs.github.com/en/actions/using-jobs/running-jobs-in-a-container) on these runners.
+Currently this module requires a VPC and Subnets for deployment. In future a non-VPC deployment could perhaps be added.
+
+2. Changes may affect the shared EC2 environment.
+
+Parallel runners are ephemeral and their work environment is destroyed after each job is done.
+However, they still run on the same underlying EC2 instance. 
+This means they can make changes which impact each other, for example if the EBS storage gets full. 
+
+A possible workaround could be to [run jobs in a container](https://docs.github.com/en/actions/using-jobs/running-jobs-in-a-container).
 
 ## How it works
 
-[![infrastructure](https://github.com/cloudandthings/terraform-aws-github-runners/blob/main/docs/images/runner.svg)](https://github.com/cloudandthings/terraform-aws-github-runners/blob/main/docs/images/runner.svg)
+[![Infrastructure diagram](https://github.com/cloudandthings/terraform-aws-github-runners/blob/main/docs/images/runner.svg)](https://github.com/cloudandthings/terraform-aws-github-runners/blob/main/docs/images/runner.svg)
 
 An AutoScaling group is created to spin up Spot EC2 instances on a schedule. The instances retrieve a pre-configured GitHub access token from AWS SSM Parameter Store, and start one (or more) ephemeral actions runner processes. These authenticate with GitHub and wait for work. 
 
@@ -55,7 +61,7 @@ A full list of created resources is shown below.
 Create a [GitHub personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token).
 Add it to AWS Systems Manager Parameter Store with the `SecureString` type.
 
-[![ssm](https://github.com/cloudandthings/terraform-aws-github-runners/blob/main/docs/images/ssm.png)](https://github.com/cloudandthings/terraform-aws-github-runners/blob/main/docs/images/ssm.png )
+[![Parameter Store configuration](https://github.com/cloudandthings/terraform-aws-github-runners/blob/main/docs/images/ssm.png)](https://github.com/cloudandthings/terraform-aws-github-runners/blob/main/docs/images/ssm.png )
 
 
 ### 2. Configure module
