@@ -10,7 +10,7 @@ users:
 - default
 %{~ if length(SSH_AUTHORIZED_KEYS) > 0 }
 - name: ubuntu
-  ssh_authorized_keys: 
+  ssh_authorized_keys:
   %{~ for X in SSH_AUTHORIZED_KEYS }
   - ${X}
   %{~ endfor }
@@ -65,7 +65,7 @@ runcmd:
 - python2 ./awslogs-agent-setup.py -r ${REGION} -n -c awslogs.conf
 %{~ endif }
 # ##########################################
-# ########################################## 
+# ##########################################
 - echo ==== ACTIONS-RUNNER ====
 # install actions-runner
 - mkdir actions-runner && cd actions-runner

@@ -5,6 +5,7 @@ flake8
 mock
 pre-commit
 pytest
-pytest-depends
-pytest_terraform
+pytest-dependency
+pytest-error-for-skips
 PyYAML
+tftest==1.7.4

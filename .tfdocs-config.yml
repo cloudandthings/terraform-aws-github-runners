@@ -16,41 +16,41 @@ sections:
 
 content: |-
   ## Module Docs
-  
+
   ### Basic Example
   ```hcl
   {{ include "examples/basic/main.tf" }}
-  ```  
+  ```
   ### Advanced Example
   ```hcl
   {{ include "examples/advanced/main.tf" }}
-  ```  
+  ```
   ### Software packs
   ```hcl
   {{ include "modules/software/software_packs.tf" }}
   ```
-  
+
   ----
   {{ .Inputs }}
-  
+
   ----
   {{ .Modules }}
-  
+
   ----
   {{ .Outputs }}
-  
+
   ----
   {{ .Providers }}
-  
+
   ----
   {{ .Requirements }}
-  
+
   ----
   {{ .Resources }}
-  
+
   ----
-  
-  ``` 
+
+  ```
 
 
 output:
@@ -60,7 +60,7 @@ output:
     <!-- BEGIN_TF_DOCS -->
     {{ .Content }}
     <!-- END_TF_DOCS -->
-    
+
 
 output-values:
   enabled: false

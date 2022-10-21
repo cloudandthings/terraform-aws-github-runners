@@ -34,12 +34,14 @@ override.tf.json
 
 # Python
 __pycache__
+.venv
 
 # Testing artefacts
 tf_resources.json
 test-rsa.*
 .out
 *.tar.gz
+test.auto.tfvars.json
 
 # VSCode
 *.code-workspace

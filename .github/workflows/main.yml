@@ -33,8 +33,33 @@ jobs:
         with:
           path: .
 
-  testing:
+  pre_commit:
+    name: 💍 pre-commit
     needs: [python_lint, terraform_lint]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - uses: hashicorp/setup-terraform@v2
+      - name: Install binaries
+        run: |
+          mkdir -p .binaries && cd .binaries
+          curl -sSLo ./terraform-docs.tar.gz https://terraform-docs.io/dl/v0.16.0/terraform-docs-v0.16.0-$(uname)-amd64.tar.gz
+          tar -xzf terraform-docs.tar.gz
+          chmod +x terraform-docs
+          mv terraform-docs /usr/local/bin/terraform-docs
+          curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
+          cd ..
+      - name: Run
+        run: |
+          python -m venv .venv
+          source .venv/bin/activate
+          pip install -r requirements.txt
+          pre-commit install
+          pre-commit run --all-files --show-diff-on-failure
+
+  testing:
+    # needs: [python_lint, terraform_lint, pre_commit]
     name: ✅ Testing
     runs-on: ubuntu-latest
     steps:
@@ -53,12 +78,18 @@ jobs:
           python -m venv .venv
           source .venv/bin/activate
           pip install -r requirements.txt
-          pre-commit install
       - name: Execute tests
         run: |
+          pwd
+          echo WOOT
+          ls
           source .venv/bin/activate
-          pre-commit run
-          pytest --run-id ${{ github.run_id }}
+          cat <<- EOF > .pytest_config.yaml
+            variables:
+              run_id: ${{ github.run_id }}
+          EOF
+          echo "::echo::off"
+          pytest --error-for-skips
         env:
           PYTEST_ADDOPTS: "--color=yes"
         timeout-minutes: 30

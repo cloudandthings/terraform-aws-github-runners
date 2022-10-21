@@ -1,4 +1,3 @@
-import os
 import string
 import random
 import time
@@ -7,14 +6,25 @@ from mock import patch
 import logging
 from botocore.config import Config
 import boto3
-from pytest import mark
 
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives import serialization
 from fabric.connection import Connection
-from pytest_terraform import terraform
+
+from tests.conftest import terraform_apply_and_output
+
 
 REGION = "eu-west-1"
+
+
+@pytest.fixture(scope="session")
+def output(terraform_config):
+    variables = {"public_key": pem_public_key.decode(), "region": REGION}
+    yield from terraform_apply_and_output(
+        __name__, terraform_config, variables=variables
+    )
+
+
 SOFTWARE_PACK_TEST_CMDS = {
     "docker-engine": "docker version",
     "node": "node --version",
@@ -53,18 +63,6 @@ public_key_file = open("test-rsa.pub", "w")
 public_key_file.write(pem_public_key.decode())
 public_key_file.close()
 
-# Hack: Resorting to global vars and test dependencies
-# because pytest_terraform doesn't play nice with Classes.
-
-
-@mark.slow
-def test_0_variables(inputs):
-    os.environ["TF_VAR_run_id"] = inputs["run_id"]
-    os.environ["TF_VAR_ec2_key_pair_name"] = inputs["ec2_key_pair_name"]
-    os.environ["TF_VAR_public_key"] = pem_public_key.decode()
-    os.environ["TF_VAR_region"] = REGION
-
-
 config = Config(region_name=REGION)
 ec2 = boto3.client("ec2", config=config)
 
@@ -72,26 +70,24 @@ public_ip = None
 instance_id = None
 
 
-@mark.slow
-@pytest.mark.depends(on=["test_0_variables"])
-@terraform("main", scope="session", replay=False)
-def test_1_terraform(main):
-    logging.info(main.outputs)
+@pytest.mark.slow
+@pytest.mark.dependency()
+def test_1_terraform(output):
+    logging.info(output)
     global instance_id
-    instance_id = main.outputs["instance_id"]["value"]
+    instance_id = output["instance_id"]
     if len(instance_id) == 0:
         raise Exception("instance_id is invalid")
 
     global public_ip
-    public_ip = main.outputs["public_ip"]["value"]
+    public_ip = output["public_ip"]
     if len(public_ip) == 0:
         raise Exception("public_ip is invalid")
 
 
-@mark.slow
-@pytest.mark.depends(on=["test_1_terraform"])
-@terraform("main", scope="session", replay=False)
-def test_2_ec2_starts(main):
+@pytest.mark.slow
+@pytest.mark.dependency(depends=["test_1_terraform"])
+def test_2_ec2_starts(output):
     if instance_id is None:
         raise Exception
     # Wait for instance to be running...
@@ -128,10 +124,9 @@ def test_2_ec2_starts(main):
     assert not still_starting
 
 
-@mark.slow
-@pytest.mark.depends(on=["test_2_ec2_starts"])
-@terraform("main", scope="session", replay=False)
-def test_3_ec2_tagged(main):
+@pytest.mark.slow
+@pytest.mark.dependency(depends=["test_2_ec2_starts"])
+def test_3_ec2_tagged(output):
     done = False
     attempt_count = 0
     while not done:
@@ -169,11 +164,10 @@ def connection():
     return Connection(host=host, user=user, connect_kwargs=connect_kwargs)
 
 
-@mark.slow
+@pytest.mark.slow
 @patch("sys.stdin", new=open("/dev/null"))
-@pytest.mark.depends(on=["test_3_ec2_starts"])
-@terraform("main", scope="session", replay=False)
-def test_4_ec2_connection(main):
+@pytest.mark.dependency(depends=["test_3_ec2_tagged"])
+def test_4_ec2_connection(output):
     connected = False
     attempt_count = 1
     result = None
@@ -193,11 +187,10 @@ def test_4_ec2_connection(main):
     assert connected
 
 
-@mark.slow
-@pytest.mark.depends(on=["test_4_ec2_connection"])
+@pytest.mark.slow
+@pytest.mark.dependency(depends=["test_4_ec2_connection"])
 @patch("sys.stdin", new=open("/dev/null"))
-@terraform("main", scope="session", replay=False)
-def test_5_ec2_completed(main):
+def test_5_ec2_completed(output):
     completed = False
     attempt_count = 1
     result = None
@@ -219,12 +212,11 @@ def test_5_ec2_completed(main):
     assert completed
 
 
-@mark.slow
-@pytest.mark.depends(on=["test_5_ec2_completed"])
+@pytest.mark.slow
+@pytest.mark.dependency(depends=["test_5_ec2_completed"])
 @patch("sys.stdin", new=open("/dev/null"))
-@terraform("main", scope="session", replay=False)
-def test_6_installed_software(main):
-    software_packs = main.outputs["software_packs"]["value"]
+def test_6_installed_software(output):
+    software_packs = output["software_packs"]
     with connection() as c:
         for software_pack in software_packs:
             logging.info(f"Testing {software_pack=}")
@@ -237,10 +229,9 @@ def test_6_installed_software(main):
 # Download cloud-init logs.
 # Useful for local debugging.
 @mark.slow
-@pytest.mark.depends(on=['test_6_installed_software'])
+@pytest.mark.dependency(depends=['test_6_installed_software'])
 @patch("sys.stdin", new=open("/dev/null"))
-@terraform("main", scope="session", replay=False)
-def test_7_cloud_init_get_logs(main):
+def test_7_cloud_init_get_logs(output):
     with connection() as c:
         assert c.run("cloud-init collect-logs").ok
         c.get("cloud-init.tar.gz")

@@ -18,7 +18,7 @@ Please note we have a code of conduct, please follow it in all your interactions
 
 - [ ] Add [semantics prefix](#semantic-pull-requests) to your PR or Commits (at least one of your commit groups)
 - [ ] CI tests are passing
-- [ ] README.md has been updated after any changes to variables and outputs. 
+- [ ] README.md has been updated after any changes to variables and outputs.
 - [ ] Run pre-commit hooks `pre-commit run -a`
 
 ## Semantic Pull Requests

@@ -1,5 +1,4 @@
 import subprocess
-from pytest import mark
 
 
 def test_cloud_init():
@@ -9,6 +8,5 @@ def test_cloud_init():
     assert result.returncode == 0
 
 
-@mark.slow
-def test_inputs(inputs):
-    assert inputs["run_id"] is not None
+def test_variables(terraform_default_variables):
+    assert terraform_default_variables["run_id"] is not None
