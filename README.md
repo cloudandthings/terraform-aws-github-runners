@@ -21,7 +21,7 @@ Simple to use, self-hosted GitHub Action runners. Uses EC2 spot instances with c
 ## Why?
 
 Deploying a self-hosted github runner should be simple.
-It shouldn't need a long setup process or a lot of infrastructure. 
+It shouldn't need a long setup process or a lot of infrastructure.
 
 This module additionally does not require public inbound traffic, and can be easily customised if needed.
 
@@ -34,8 +34,8 @@ Currently this module requires a VPC and Subnets for deployment. In future a non
 2. Changes may affect the shared EC2 environment.
 
 Parallel runners are ephemeral and their work environment is destroyed after each job is done.
-However, they still run on the same underlying EC2 instance. 
-This means they can make changes which impact each other, for example if the EBS storage gets full. 
+However, they still run on the same underlying EC2 instance.
+This means they can make changes which impact each other, for example if the EBS storage gets full.
 
 A possible workaround could be to [run jobs in a container](https://docs.github.com/en/actions/using-jobs/running-jobs-in-a-container).
 
@@ -43,9 +43,9 @@ A possible workaround could be to [run jobs in a container](https://docs.github.
 
 [![Infrastructure diagram](https://github.com/cloudandthings/terraform-aws-github-runners/blob/main/docs/images/runner.svg)](https://github.com/cloudandthings/terraform-aws-github-runners/blob/main/docs/images/runner.svg)
 
-An AutoScaling group is created to spin up Spot EC2 instances on a schedule. The instances retrieve a pre-configured GitHub access token from AWS SSM Parameter Store, and start one (or more) ephemeral actions runner processes. These authenticate with GitHub and wait for work. 
+An AutoScaling group is created to spin up Spot EC2 instances on a schedule. The instances retrieve a pre-configured GitHub access token from AWS SSM Parameter Store, and start one (or more) ephemeral actions runner processes. These authenticate with GitHub and wait for work.
 
-Steps execute arbitrary commands, defined by your repo workflows. 
+Steps execute arbitrary commands, defined by your repo workflows.
 
 For example:
  - Perform a linting check.
@@ -259,7 +259,7 @@ locals {
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 4.27.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 4.38.0 |
 
 ----
 ### Requirements

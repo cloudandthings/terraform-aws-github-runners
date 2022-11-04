@@ -97,7 +97,7 @@ runcmd:
 - python2 ./awslogs-agent-setup.py -r ${REGION} -n -c awslogs.conf
 %{~ endif }
 # ##########################################
-# ########################################## 
+# ##########################################
 - echo ==== ACTIONS-RUNNER ====
 # download actions-runner
 - mkdir actions-runner && cd actions-runner

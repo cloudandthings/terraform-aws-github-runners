@@ -1,8 +1,8 @@
 ## Cost Estimate
 
-As per https://calculator.aws/#/  
+As per https://calculator.aws/#/
 
-Assumptions: 
+Assumptions:
 - A single `t3.medium` instance type.
 - Region is `af-south-1`.
 - The instance will run for 9 hours from Mon-Fri (`195.54` instance hours per month).
