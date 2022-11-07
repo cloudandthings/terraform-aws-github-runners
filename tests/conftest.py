@@ -42,7 +42,6 @@ def config(config_file) -> dict:
         return {}
     else:
         raise FileNotFoundError(config_file)
-    return config
 
 
 @pytest.fixture(scope="session")
@@ -51,13 +50,6 @@ def terraform_default_variables(request, config):
     variables = {}
     for name, value in config.get("variables", {}).items():
         variables[name] = value
-        """value = None
-        if variable_config.get("parameter", False):
-            value = request.config.getoption(variable_config["parameter"])
-        if variable_config.get("required", False):
-            if value is None:
-                raise Exception(f"Variable {variable} must be specified.")
-        variables[variable] = value"""
     return variables
 
 
@@ -148,5 +140,9 @@ def terraform_apply_and_output(test_name, terraform_config, variables=None):
     try:
         tf.apply()
         yield tf.output()
+    # Shorten the default exception message.
+    except tftest.TerraformTestError as e:
+        tf.destroy(**{"auto_approve": True})
+        raise tftest.TerraformTestError(e.cmd_error) from e
     finally:
         tf.destroy(**{"auto_approve": True})
