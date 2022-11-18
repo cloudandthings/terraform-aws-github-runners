@@ -259,7 +259,7 @@ locals {
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 4.39.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 4.9, <5 |
 
 ----
 ### Requirements
@@ -267,7 +267,7 @@ locals {
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.13.1 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4.9 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4.9, <5 |
 | <a name="requirement_http"></a> [http](#requirement\_http) | 3.0.1 |
 
 ----
