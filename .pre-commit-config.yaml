@@ -9,12 +9,12 @@ repos:
   - repo: https://github.com/antonbabenko/pre-commit-terraform
     rev: v1.74.1
     hooks:
-      - id: terraform_fmt
-      - id: terraform_validate
       - id: terraform_docs
         args:
-          - '--args=--lockfile=false'
+          - --args=--lockfile=false
           - --args=--config=.tfdocs-config.yml
+      - id: terraform_fmt
+      - id: terraform_validate
       - id: terraform_tflint
         args:
           - '--args=--only=terraform_deprecated_interpolation'
