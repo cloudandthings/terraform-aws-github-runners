@@ -8,5 +8,6 @@ locals {
     "terraform",
     "terraform-docs",
     "tflint",
+    "tfsec"
   ]
 }

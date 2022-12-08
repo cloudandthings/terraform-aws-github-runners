@@ -42,6 +42,14 @@ locals {
       "sudo curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash"
     ]
 
+    "tfsec" = [
+      "echo ==== TFSEC ====",
+      "sudo curl -sSLo ./tfsec.tar.gz https://github.com/aquasecurity/tfsec/releases/download/v1.28.0/tfsec_1.28.0_linux_amd64.tar.gz",
+      "tar -xzf tfsec.tar.gz",
+      "chmod +x tfsec",
+      "mv tfsec /usr/local/bin/tfsec"
+    ]
+
     "__TEST_ORDER__" = [
       "z1", "y2", "x3", "w4", "v5"
     ]

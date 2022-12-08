@@ -195,6 +195,7 @@ locals {
     "terraform",
     "terraform-docs",
     "tflint",
+    "tfsec"
   ]
 }
 ```
@@ -231,7 +232,7 @@ locals {
 | <a name="input_region"></a> [region](#input\_region) | AWS region. | `string` | n/a | yes |
 | <a name="input_scaling_mode"></a> [scaling\_mode](#input\_scaling\_mode) | How instances are managed. <br> Can be either `"autoscaling-group"` or `"single-instance"`. | `string` | `"autoscaling-group"` | no |
 | <a name="input_security_groups"></a> [security\_groups](#input\_security\_groups) | A list of security groups to assign to EC2 instances.<br>Note: If none are provided, a new security group will be used which will deny inbound traffic **including SSH**. | `list(string)` | `[]` | no |
-| <a name="input_software_packs"></a> [software\_packs](#input\_software\_packs) | A list of pre-defined software packs to install.<br>Valid options are: `"ALL"`, `"docker-engine"`, `"node"`, `"python2"`, `"python3"`, `"terraform"`, `"terraform-docs"`, `"tflint"`.<br>An empty list will mean none are installed. | `list(string)` | <pre>[<br>  "ALL"<br>]</pre> | no |
+| <a name="input_software_packs"></a> [software\_packs](#input\_software\_packs) | A list of pre-defined software packs to install.<br>Valid options are: `"ALL"`, `"docker-engine"`, `"node"`, `"python2"`, `"python3"`, `"terraform"`, `"terraform-docs"`, `"tflint"`, `"tfsec"`.<br>An empty list will mean none are installed. | `list(string)` | <pre>[<br>  "ALL"<br>]</pre> | no |
 | <a name="input_ssm_parameter_name"></a> [ssm\_parameter\_name](#input\_ssm\_parameter\_name) | SSM parameter name for the GitHub Runner token.<br>Example: "/github/runner/token". | `string` | n/a | yes |
 | <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | The list of Subnet IDs to launch EC2 instances in. <br> If `scaling_mode="single-instance"` then the first Subnet ID from this list will be used. | `list(string)` | n/a | yes |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | The VPC ID to launch instances in. | `string` | n/a | yes |
