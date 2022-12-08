@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.0](https://github.com/cloudandthings/terraform-aws-github-runners/compare/v1.0.1...v1.1.0) (2022-12-08)
+
+
+### Features
+
+* **software:** Added tfsec ([#33](https://github.com/cloudandthings/terraform-aws-github-runners/issues/33)) ([1e73b96](https://github.com/cloudandthings/terraform-aws-github-runners/commit/1e73b964669e9ba41772e5e910811af6fb009958))
+
 ## 1.0.0 (2022-09-30)
 
 
