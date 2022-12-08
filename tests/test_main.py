@@ -35,6 +35,7 @@ SOFTWARE_PACK_TEST_CMDS = {
     "terraform": "terraform --version",
     "terraform-docs": "terraform-docs --version",
     "tflint": "tflint --version",
+    "tfsec": "tfsec --version",
 }
 
 letters = string.ascii_lowercase
