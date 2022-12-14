@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+### [1.1.1](https://github.com/cloudandthings/terraform-aws-github-runners/compare/v1.1.0...v1.1.1) (2022-12-14)
+
+
+### Bug Fixes
+
+* **python3:** Add python-dev-is-python3 package ([#34](https://github.com/cloudandthings/terraform-aws-github-runners/issues/34)) ([e74b64a](https://github.com/cloudandthings/terraform-aws-github-runners/commit/e74b64a983a0dca8455c2752fe0d7ffe949dbfcb))
+
 ## [1.1.0](https://github.com/cloudandthings/terraform-aws-github-runners/compare/v1.0.1...v1.1.0) (2022-12-08)
 
 
