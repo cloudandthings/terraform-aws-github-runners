@@ -15,7 +15,7 @@ locals {
 }
 
 resource "aws_iam_policy" "this" {
-  count = length(var.iam_instance_profile_arn) == 0 ? 1 : 0
+  count = var.create_instance_profile ? 1 : 0
   name  = var.naming_prefix
 
   policy = jsonencode({
@@ -42,7 +42,7 @@ resource "aws_iam_policy" "this" {
 }
 
 resource "aws_iam_role" "this" {
-  count = length(var.iam_instance_profile_arn) == 0 ? 1 : 0
+  count = var.create_instance_profile ? 1 : 0
   name  = var.naming_prefix
 
   assume_role_policy = jsonencode({
@@ -64,13 +64,13 @@ resource "aws_iam_role" "this" {
 }
 
 resource "aws_iam_role_policy_attachment" "this" {
-  count      = length(var.iam_instance_profile_arn) == 0 ? 1 : 0
+  count      = var.create_instance_profile ? 1 : 0
   role       = aws_iam_role.this[count.index].name
   policy_arn = aws_iam_policy.this[count.index].arn
 }
 
 resource "aws_iam_instance_profile" "this" {
-  count = length(var.iam_instance_profile_arn) == 0 ? 1 : 0
+  count = var.create_instance_profile ? 1 : 0
   name  = var.naming_prefix
   role  = aws_iam_role.this[count.index].name
 }
@@ -185,6 +185,11 @@ resource "aws_launch_template" "this" {
 
   user_data = base64gzip(module.user_data.user_data)
 
+  metadata_options {
+    http_endpoint = "enabled"
+    http_tokens   = "required"
+  }
+
   lifecycle {
     create_before_destroy = true
   }
@@ -267,6 +272,10 @@ resource "aws_autoscaling_policy" "scale_down" {
   adjustment_type        = "ChangeInCapacity"
   scaling_adjustment     = -1
   cooldown               = 120
+
+  depends_on = [
+    aws_autoscaling_group.this
+  ]
 }
 
 resource "aws_cloudwatch_metric_alarm" "scale_down" {
