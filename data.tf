@@ -8,15 +8,14 @@ data "aws_ec2_instance_type" "this" {
 
 data "aws_ami" "ami" {
   most_recent = true
-  owners      = ["099720109477"]
-
   filter {
     name   = "name"
     values = [var.ami_name]
   }
+}
 
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
+resource "null_resource" "validate_instance_profile" {
+  triggers = {
+    test = var.create_instance_profile == false && length(var.iam_instance_profile_arn) == 0 ? tonumber("No instance profile arn provided") : 1
   }
 }

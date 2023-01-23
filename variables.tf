@@ -173,6 +173,12 @@ variable "github_runner_labels" {
   default     = []
 }
 
+variable "create_instance_profile" {
+  description = "Should the module create the IAM resources needed. If set to false an \"iam_instance_profile_arn\" should be provided"
+  type        = bool
+  default     = true
+}
+
 variable "iam_instance_profile_arn" {
   description = "IAM Instance Profile to launch EC2 instances with. Must allow permissions to read the SSM Parameter. Will be created by default."
   type        = string
