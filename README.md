@@ -106,9 +106,12 @@ locals {
 
 # Create a custom security-group to allow SSH to all EC2 instances
 resource "aws_security_group" "this" {
-  name = "${local.naming_prefix}-sg"
+  name        = "${local.naming_prefix}-sg"
+  description = "GitHub runner ${local.naming_prefix}-sg"
 
+  # tfsec:ignore:aws-ec2-no-public-egress-sgr
   egress {
+    description = "egress"
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
@@ -116,6 +119,7 @@ resource "aws_security_group" "this" {
   }
 
   vpc_id = local.vpc_id
+  #checkov:skip=CKV2_AWS_5:The SG is attached by the module.
 }
 
 data "http" "myip" {
@@ -206,6 +210,7 @@ locals {
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_ami_name"></a> [ami\_name](#input\_ami\_name) | AWS AMI name filter for launching instances. <br> GitHub supports specific operating systems and architectures, including Ubuntu 22.04 amd64 which is the default. <br> Note: The included software packs are not tested with other AMIs. | `string` | `"ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-20220609"` | no |
+| <a name="input_ami_owners"></a> [ami\_owners](#input\_ami\_owners) | AWS AMI owners to limit AMI search. <br> Values may be an AWS Account ID, "self", or an AWS owner alias eg "amazon". | `list(string)` | <pre>[<br>  "amazon"<br>]</pre> | no |
 | <a name="input_autoscaling_desired_size"></a> [autoscaling\_desired\_size](#input\_autoscaling\_desired\_size) | The number of Amazon EC2 instances that should be running.<br>*When `scaling_mode="autoscaling-group"`* | `number` | `1` | no |
 | <a name="input_autoscaling_max_instance_lifetime"></a> [autoscaling\_max\_instance\_lifetime](#input\_autoscaling\_max\_instance\_lifetime) | The maximum amount of time, in seconds, that an instance can be in service. Values must be either equal to `0` or between `86400` and `31536000` seconds.<br>*When `scaling_mode="autoscaling-group"`* | `string` | `0` | no |
 | <a name="input_autoscaling_max_size"></a> [autoscaling\_max\_size](#input\_autoscaling\_max\_size) | The maximum size of the Auto Scaling Group.<br>*When `scaling_mode="autoscaling-group"`* | `number` | `3` | no |
@@ -218,7 +223,7 @@ locals {
 | <a name="input_cloud_init_extra_runcmds"></a> [cloud\_init\_extra\_runcmds](#input\_cloud\_init\_extra\_runcmds) | A list of strings to append beneath the `runcmd:` section of the `cloudinit` script.<br>https://cloudinit.readthedocs.io/en/latest/topics/modules.html#runcmd | `list(string)` | `[]` | no |
 | <a name="input_cloud_init_extra_write_files"></a> [cloud\_init\_extra\_write\_files](#input\_cloud\_init\_extra\_write\_files) | A list of strings to append beneath the `write_files:` section of the `cloudinit` script.<br>https://cloudinit.readthedocs.io/en/latest/topics/modules.html#write-files | `list(string)` | `[]` | no |
 | <a name="input_cloudwatch_log_group"></a> [cloudwatch\_log\_group](#input\_cloudwatch\_log\_group) | CloudWatch log group name prefix. Runner logs from /var/log/syslog are sent here. <br>Example: `github_runner`, with this value logs will be written to `github_runner/var/log/syslog/<instance_id>`.<br>If left unspecified then logging is disabled. | `string` | `""` | no |
-| <a name="input_create_instance_profile"></a> [create\_instance\_profile](#input\_create\_instance\_profile) | Should the module create the IAM resources needed. If set to false an "iam\_instance\_profile\_arn" should be provided | `bool` | `true` | no |
+| <a name="input_create_iam_resources"></a> [create\_iam\_resources](#input\_create\_iam\_resources) | Should the module create the IAM resources needed. If set to false then an "iam\_instance\_profile\_arn" must be provided. | `bool` | `true` | no |
 | <a name="input_ec2_associate_public_ip_address"></a> [ec2\_associate\_public\_ip\_address](#input\_ec2\_associate\_public\_ip\_address) | Whether to associate a public IP address with EC2 instances in a VPC. | `bool` | `false` | no |
 | <a name="input_ec2_ebs_volume_size"></a> [ec2\_ebs\_volume\_size](#input\_ec2\_ebs\_volume\_size) | Size in GB of instance-attached EBS storage. By default this is set to number of vCPUs per instance * 20 GB. | `number` | `-1` | no |
 | <a name="input_ec2_instance_type"></a> [ec2\_instance\_type](#input\_ec2\_instance\_type) | Instance type for EC2 instances. | `string` | n/a | yes |
@@ -293,6 +298,7 @@ locals {
 | [aws_security_group.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
 | [null_resource.validate_instance_profile](https://registry.terraform.io/providers/hashicorp/null/3.2.1/docs/resources/resource) | resource |
 | [aws_ami.ami](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami) | data source |
+| [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
 | [aws_ec2_instance_type.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ec2_instance_type) | data source |
 | [aws_ssm_parameter.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ssm_parameter) | data source |
 

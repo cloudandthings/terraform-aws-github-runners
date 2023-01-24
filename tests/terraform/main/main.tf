@@ -11,9 +11,12 @@ resource "null_resource" "tf_guard_provider_account_match" {
 }
 
 resource "aws_security_group" "this" {
-  name = local.naming_prefix
+  name        = local.naming_prefix
+  description = "GitHub runner ${local.naming_prefix}-sg"
 
+  # tfsec:ignore:aws-ec2-no-public-egress-sgr
   egress {
+    description = "egress"
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
@@ -21,6 +24,7 @@ resource "aws_security_group" "this" {
   }
 
   vpc_id = var.vpc_id
+  #checkov:skip=CKV2_AWS_5:The SG is attached by the module.
 }
 
 data "http" "myip" {
