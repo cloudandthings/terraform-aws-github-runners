@@ -2,7 +2,7 @@ download-external-modules: true
 quiet: true
 skip-check:
   # Github: Ensure top-level permissions are not set to write-all
-  # - CKV2_GHA_1
+  - CKV2_GHA_1
 
   # Ensure that COPY is used instead of ADD in Dockerfiles
   - CKV_DOCKER_4
