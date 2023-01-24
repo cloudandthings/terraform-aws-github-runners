@@ -41,6 +41,12 @@ variable "ami_name" {
   default     = "ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-20220609"
 }
 
+variable "ami_owners" {
+  description = "AWS AMI owners to limit AMI search. <br> Values may be an AWS Account ID, \"self\", or an AWS owner alias eg \"amazon\"."
+  type        = list(string)
+  default     = ["amazon"]
+}
+
 variable "scaling_mode" {
   description = "How instances are managed. <br> Can be either `\"autoscaling-group\"` or `\"single-instance\"`."
   type        = string
@@ -173,8 +179,8 @@ variable "github_runner_labels" {
   default     = []
 }
 
-variable "create_instance_profile" {
-  description = "Should the module create the IAM resources needed. If set to false an \"iam_instance_profile_arn\" should be provided"
+variable "create_iam_resources" {
+  description = "Should the module create the IAM resources needed. If set to false then an \"iam_instance_profile_arn\" must be provided."
   type        = bool
   default     = true
 }
