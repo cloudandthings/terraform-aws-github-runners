@@ -1,5 +1,6 @@
 black
 boto3
+checkov
 fabric
 flake8
 mock
