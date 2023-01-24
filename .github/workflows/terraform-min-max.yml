@@ -3,19 +3,12 @@ name: Terraform min-max
 on:
   pull_request:
 
-  # Called from https://github.com/cloudandthings/cat-docker-terraform-aws-github
-  workflow_call:
-    inputs:
-      container-image:
-        required: true
-        type: string
-
 jobs:
   collectDirectories:
     name: 🍱 collect directories
     # Outputs a list of all unique directories
     # that contain *.tf files and do not start with .
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     outputs:
       directories: ${{ steps.set-matrix.outputs.matrix }}
     steps:
@@ -32,8 +25,8 @@ jobs:
     needs: collectDirectories
     # For public repos use runs-on: ubuntu-latest
     # For private repos use runs-on: self-hosted
-    runs-on: self-hosted
-    container: ${{ inputs.container-image || 'bjorncloudandthings/terraform-aws-github:develop' }}
+    runs-on: ubuntu-latest
+    container: bjorncloudandthings/terraform-aws-github:latest
     strategy:
       matrix:
         directory: ${{ fromJson(needs.collectDirectories.outputs.directories) }}
