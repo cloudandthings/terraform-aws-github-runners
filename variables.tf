@@ -1,6 +1,6 @@
 # Required variables
 variable "ssm_parameter_name" {
-  description = "SSM parameter name for the GitHub Runner token.<br>Example: \"/github/runner/token\"."
+  description = "SSM parameter name for the GitHub Runner token.<br>Example: `\"/github/runner/token\"`."
   type        = string
 }
 
@@ -144,7 +144,7 @@ variable "ec2_instance_type" {
 }
 
 variable "ec2_ebs_volume_size" {
-  description = "Size in GB of instance-attached EBS storage. By default this is set to number of vCPUs per instance * 20 GB."
+  description = "Size in GB of instance-attached EBS storage. By default this is set to `per_instance_runner_count * 20 GB`."
   type        = number
   default     = -1
 }
@@ -156,7 +156,7 @@ variable "ec2_key_pair_name" {
 }
 
 variable "per_instance_runner_count" {
-  description = "Number of runners per instance. By default this is set equal to the number of vCPUs per instance. May be set to 0 to never create runners."
+  description = "Number of runners per instance. By default this is set to `num_vCPUs * num_cores * threads_per_core`. May be set to 0 to never create runners."
   type        = number
   default     = -1
 }

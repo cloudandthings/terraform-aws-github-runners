@@ -108,9 +108,15 @@ locals {
     : flatten(aws_security_group.this[*].id)
   )
 
+  default_per_instance_runner_count = (
+    data.aws_ec2_instance_type.this.default_vcpus
+    * data.aws_ec2_instance_type.this.default_cores
+    * data.aws_ec2_instance_type.this.default_threads_per_core
+  )
+
   per_instance_runner_count = (
     var.per_instance_runner_count == -1
-    ? data.aws_ec2_instance_type.this.default_vcpus
+    ? local.default_per_instance_runner_count
     : var.per_instance_runner_count
   )
 }
@@ -162,7 +168,7 @@ resource "aws_launch_template" "this" {
       delete_on_termination = true
       volume_size = (
         var.ec2_ebs_volume_size == -1
-        ? data.aws_ec2_instance_type.this.default_vcpus * 20
+        ? local.per_instance_runner_count * 20
         : var.ec2_ebs_volume_size
       )
     }
