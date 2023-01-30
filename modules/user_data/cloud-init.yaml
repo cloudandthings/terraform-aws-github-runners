@@ -34,9 +34,10 @@ packages:
 %{~ endfor }
 # ##########################################
 # ##########################################
-%{~ if length(WRITE_FILES) > 0 or length(CLOUDWATCH_LOG_GROUP) > 0 }
 write_files:
-%{~ endif }
+- path: /etc/crontab
+  content: |
+    */15 * * * * root docker system prune -f > var/log/docker_prune.log 2>&1
 %{~ if length(CLOUDWATCH_LOG_GROUP) > 0 }
 - path: awslogs.conf
   content: |

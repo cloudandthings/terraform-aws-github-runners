@@ -71,7 +71,7 @@ write_files:
     WantedBy=multi-user.target
 - path: /etc/crontab
   content: |
-    */15 * * * * docker system prune -f > var/log/docker_prune.log 2>&1
+    */15 * * * * root docker system prune -f > var/log/docker_prune.log 2>&1
   append: true
 %{~ if length(CLOUDWATCH_LOG_GROUP) > 0 }
 - path: awslogs.conf
