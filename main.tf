@@ -108,11 +108,15 @@ locals {
     : flatten(aws_security_group.this[*].id)
   )
 
-  instance_concurrency = data.aws_ec2_instance_type.this.default_vcpus * data.aws_ec2_instance_type.this.default_threads_per_core
+  default_per_instance_runner_count = (
+    data.aws_ec2_instance_type.this.default_vcpus
+    * data.aws_ec2_instance_type.this.default_cores
+    * data.aws_ec2_instance_type.this.default_threads_per_core
+  )
 
   per_instance_runner_count = (
     var.per_instance_runner_count == -1
-    ? local.instance_concurrency
+    ? local.default_per_instance_runner_count
     : var.per_instance_runner_count
   )
 }

@@ -156,7 +156,7 @@ variable "ec2_key_pair_name" {
 }
 
 variable "per_instance_runner_count" {
-  description = "Number of runners per instance. By default this is set to `number_of_vCPUs * threads_per_core`. May be set to 0 to never create runners."
+  description = "Number of runners per instance. By default this is set to `num_vCPUs * num_cores * threads_per_core`. May be set to 0 to never create runners."
   type        = number
   default     = -1
 }
