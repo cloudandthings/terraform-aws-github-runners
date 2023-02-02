@@ -191,6 +191,12 @@ variable "iam_instance_profile_arn" {
   default     = ""
 }
 
+variable "iam_policy_arns" {
+  description = "A list of existing IAM policy ARNs to attach to the runner IAM role."
+  type        = list(string)
+  default     = []
+}
+
 variable "security_groups" {
   description = "A list of security groups to assign to EC2 instances.<br>Note: If none are provided, a new security group will be used which will deny inbound traffic **including SSH**."
   type        = list(string)

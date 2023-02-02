@@ -66,14 +66,20 @@ resource "aws_iam_role" "this" {
 
 resource "aws_iam_role_policy_attachment" "this" {
   count      = var.create_iam_resources ? 1 : 0
-  role       = aws_iam_role.this[count.index].name
+  role       = var.naming_prefix
   policy_arn = aws_iam_policy.this[count.index].arn
+}
+
+resource "aws_iam_role_policy_attachment" "user_defined_policies" {
+  count      = length(var.iam_policy_arns)
+  role       = var.naming_prefix
+  policy_arn = var.iam_policy_arns[count.index]
 }
 
 resource "aws_iam_instance_profile" "this" {
   count = var.create_iam_resources ? 1 : 0
   name  = var.naming_prefix
-  role  = aws_iam_role.this[count.index].name
+  role  = var.naming_prefix
 }
 
 locals {
