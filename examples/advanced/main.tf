@@ -57,6 +57,7 @@ module "github_runner" {
 
   # If for some reason you dont want to install everything.
   software_packs = [
+    "BASE_PACKAGES", # Extra utility packages like curl, zip, etc
     "docker-engine",
     "node",
     "python2" # Required for cloudwatch logging

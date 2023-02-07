@@ -205,15 +205,15 @@ variable "security_groups" {
 
 variable "software_packs" {
   type        = list(string)
-  description = "A list of pre-defined software packs to install.<br>Valid options are: `\"ALL\"`, `\"docker-engine\"`, `\"node\"`, `\"python2\"`, `\"python3\"`, `\"terraform\"`, `\"terraform-docs\"`, `\"tflint\"`, `\"tfsec\"`.<br>An empty list will mean none are installed."
+  description = "A list of pre-defined software packs to install.<br>Valid options are: `\"ALL\"`, `\"BASE_PACKAGES\"`, `\"docker-engine\"`, `\"node\"`, `\"python2\"`, `\"python3\"`, `\"terraform\"`, `\"terraform-docs\"`, `\"tflint\"`, `\"tfsec\"`.<br>An empty list will mean none are installed."
   default     = ["ALL"]
 
   validation {
     condition = alltrue(
       [for x in var.software_packs : contains([
-        "ALL", "docker-engine", "node", "python2", "python3", "terraform", "terraform-docs", "tflint", "tfsec"
+        "ALL", "BASE_PACKAGES", "docker-engine", "node", "python2", "python3", "terraform", "terraform-docs", "tflint", "tfsec"
       ], x)]
     )
-    error_message = "Software packs must be a list of: [\"ALL\", \"docker-engine\", \"node\", \"python2\", \"python3\", \"terraform\", \"terraform-docs\", \"tflint\", \"tfsec\"]."
+    error_message = "Software packs must be a list of: [\"ALL\", \"BASE_PACKAGES\", \"docker-engine\", \"node\", \"python2\", \"python3\", \"terraform\", \"terraform-docs\", \"tflint\", \"tfsec\"]."
   }
 }
