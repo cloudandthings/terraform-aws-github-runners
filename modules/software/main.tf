@@ -1,6 +1,8 @@
 locals {
 
   packages = {
+    "BASE_PACKAGES" = ["curl", "zip", "unzip"]
+
     "docker-engine" = ["ca-certificates", "curl", "gnupg", "lsb-release"]
     "node"          = ["nodejs"]
     "pre-commit"    = ["pre-commit"]
