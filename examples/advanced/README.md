@@ -1,3 +1,7 @@
+<!-- BEGIN_TF_DOCS -->
+----
+## main.tf
+```hcl
 locals {
   naming_prefix = "test-github-runner"
   vpc_id        = "vpc-0ffaabbcc1122"
@@ -85,3 +89,53 @@ module "github_runner" {
 
   cloudwatch_log_group = "/some/log/group"
 }
+```
+----
+
+## Documentation
+
+----
+### Inputs
+
+No inputs.
+
+----
+### Modules
+
+| Name | Source | Version |
+|------|--------|---------|
+| <a name="module_github_runner"></a> [github\_runner](#module\_github\_runner) | ../../ | n/a |
+
+----
+### Outputs
+
+No outputs.
+
+----
+### Providers
+
+| Name | Version |
+|------|---------|
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 4.9 |
+| <a name="provider_http"></a> [http](#provider\_http) | 3.0.1 |
+
+----
+### Requirements
+
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.14.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4.9 |
+| <a name="requirement_http"></a> [http](#requirement\_http) | 3.0.1 |
+
+----
+### Resources
+
+| Name | Type |
+|------|------|
+| [aws_security_group.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
+| [aws_security_group_rule.ssh_ingress](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
+| [http_http.myip](https://registry.terraform.io/providers/hashicorp/http/3.0.1/docs/data-sources/http) | data source |
+
+----
+<!-- END_TF_DOCS -->

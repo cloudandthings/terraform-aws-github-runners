@@ -1,6 +1,6 @@
 # Required variables
 variable "ssm_parameter_name" {
-  description = "SSM parameter name for the GitHub Runner token.<br>Example: \"/github/runner/token\"."
+  description = "SSM parameter name for the GitHub Runner token.<br>Example: `\"/github/runner/token\"`."
   type        = string
 }
 
@@ -39,6 +39,12 @@ variable "ami_name" {
   description = "AWS AMI name filter for launching instances. <br> GitHub supports specific operating systems and architectures, including Ubuntu 22.04 amd64 which is the default. <br> Note: The included software packs are not tested with other AMIs."
   type        = string
   default     = "ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-20220609"
+}
+
+variable "ami_owners" {
+  description = "AWS AMI owners to limit AMI search. <br> Values may be an AWS Account ID, \"self\", or an AWS owner alias eg \"amazon\"."
+  type        = list(string)
+  default     = ["amazon"]
 }
 
 variable "scaling_mode" {
@@ -138,7 +144,7 @@ variable "ec2_instance_type" {
 }
 
 variable "ec2_ebs_volume_size" {
-  description = "Size in GB of instance-attached EBS storage. By default this is set to number of vCPUs per instance * 20 GB."
+  description = "Size in GB of instance-attached EBS storage. By default this is set to `per_instance_runner_count * 20 GB`."
   type        = number
   default     = -1
 }
@@ -150,7 +156,7 @@ variable "ec2_key_pair_name" {
 }
 
 variable "per_instance_runner_count" {
-  description = "Number of runners per instance. By default this is set equal to the number of vCPUs per instance. May be set to 0 to never create runners."
+  description = "Number of runners per instance. By default this is set to `num_vCPUs * num_cores * threads_per_core`. May be set to 0 to never create runners."
   type        = number
   default     = -1
 }
@@ -173,10 +179,22 @@ variable "github_runner_labels" {
   default     = []
 }
 
+variable "create_iam_resources" {
+  description = "Should the module create the IAM resources needed. If set to false then an \"iam_instance_profile_arn\" must be provided."
+  type        = bool
+  default     = true
+}
+
 variable "iam_instance_profile_arn" {
   description = "IAM Instance Profile to launch EC2 instances with. Must allow permissions to read the SSM Parameter. Will be created by default."
   type        = string
   default     = ""
+}
+
+variable "iam_policy_arns" {
+  description = "A list of existing IAM policy ARNs to attach to the runner IAM role."
+  type        = list(string)
+  default     = []
 }
 
 variable "security_groups" {
@@ -187,15 +205,15 @@ variable "security_groups" {
 
 variable "software_packs" {
   type        = list(string)
-  description = "A list of pre-defined software packs to install.<br>Valid options are: `\"ALL\"`, `\"docker-engine\"`, `\"node\"`, `\"python2\"`, `\"python3\"`, `\"terraform\"`, `\"terraform-docs\"`, `\"tflint\"`, `\"tfsec\"`.<br>An empty list will mean none are installed."
+  description = "A list of pre-defined software packs to install.<br>Valid options are: `\"ALL\"`, `\"BASE_PACKAGES\"`, `\"docker-engine\"`, `\"node\"`, `\"python2\"`, `\"python3\"`, `\"terraform\"`, `\"terraform-docs\"`, `\"tflint\"`, `\"tfsec\"`.<br>An empty list will mean none are installed."
   default     = ["ALL"]
 
   validation {
     condition = alltrue(
       [for x in var.software_packs : contains([
-        "ALL", "docker-engine", "node", "python2", "python3", "terraform", "terraform-docs", "tflint", "tfsec"
+        "ALL", "BASE_PACKAGES", "docker-engine", "node", "python2", "python3", "terraform", "terraform-docs", "tflint", "tfsec"
       ], x)]
     )
-    error_message = "Software packs must be a list of: [\"ALL\", \"docker-engine\", \"node\", \"python2\", \"python3\", \"terraform\", \"terraform-docs\", \"tflint\", \"tfsec\"]."
+    error_message = "Software packs must be a list of: [\"ALL\", \"BASE_PACKAGES\", \"docker-engine\", \"node\", \"python2\", \"python3\", \"terraform\", \"terraform-docs\", \"tflint\", \"tfsec\"]."
   }
 }

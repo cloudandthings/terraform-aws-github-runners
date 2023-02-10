@@ -15,7 +15,7 @@ locals {
 }
 
 resource "aws_iam_policy" "this" {
-  count = length(var.iam_instance_profile_arn) == 0 ? 1 : 0
+  count = var.create_iam_resources ? 1 : 0
   name  = var.naming_prefix
 
   policy = jsonencode({
@@ -29,10 +29,11 @@ resource "aws_iam_policy" "this" {
       {
         Action   = ["ec2:CreateTags"]
         Effect   = "Allow"
-        Resource = "*"
+        Resource = "arn:aws:ec2:${var.region}:${data.aws_caller_identity.current.account_id}:*/*"
         Condition = {
           StringEquals = {
             "aws:ResourceTag/Name" = var.naming_prefix
+            "ec2:CreateAction"     = "RunInstances"
           }
         }
       }
@@ -42,7 +43,7 @@ resource "aws_iam_policy" "this" {
 }
 
 resource "aws_iam_role" "this" {
-  count = length(var.iam_instance_profile_arn) == 0 ? 1 : 0
+  count = var.create_iam_resources ? 1 : 0
   name  = var.naming_prefix
 
   assume_role_policy = jsonencode({
@@ -64,15 +65,21 @@ resource "aws_iam_role" "this" {
 }
 
 resource "aws_iam_role_policy_attachment" "this" {
-  count      = length(var.iam_instance_profile_arn) == 0 ? 1 : 0
-  role       = aws_iam_role.this[count.index].name
+  count      = var.create_iam_resources ? 1 : 0
+  role       = var.naming_prefix
   policy_arn = aws_iam_policy.this[count.index].arn
 }
 
+resource "aws_iam_role_policy_attachment" "user_defined_policies" {
+  count      = length(var.iam_policy_arns)
+  role       = var.naming_prefix
+  policy_arn = var.iam_policy_arns[count.index]
+}
+
 resource "aws_iam_instance_profile" "this" {
-  count = length(var.iam_instance_profile_arn) == 0 ? 1 : 0
+  count = var.create_iam_resources ? 1 : 0
   name  = var.naming_prefix
-  role  = aws_iam_role.this[count.index].name
+  role  = var.naming_prefix
 }
 
 locals {
@@ -84,10 +91,13 @@ locals {
 }
 
 resource "aws_security_group" "this" {
-  count = length(var.security_groups) > 0 ? 0 : 1
-  name  = var.naming_prefix
+  count       = length(var.security_groups) > 0 ? 0 : 1
+  name        = var.naming_prefix
+  description = "GitHub runner instance ${var.naming_prefix}"
 
+  # tfsec:ignore:aws-ec2-no-public-egress-sgr
   egress {
+    description = "egress"
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
@@ -104,9 +114,15 @@ locals {
     : flatten(aws_security_group.this[*].id)
   )
 
+  default_per_instance_runner_count = (
+    data.aws_ec2_instance_type.this.default_vcpus
+    * data.aws_ec2_instance_type.this.default_cores
+    * data.aws_ec2_instance_type.this.default_threads_per_core
+  )
+
   per_instance_runner_count = (
     var.per_instance_runner_count == -1
-    ? data.aws_ec2_instance_type.this.default_vcpus
+    ? local.default_per_instance_runner_count
     : var.per_instance_runner_count
   )
 }
@@ -158,7 +174,7 @@ resource "aws_launch_template" "this" {
       delete_on_termination = true
       volume_size = (
         var.ec2_ebs_volume_size == -1
-        ? data.aws_ec2_instance_type.this.default_vcpus * 20
+        ? local.per_instance_runner_count * 20
         : var.ec2_ebs_volume_size
       )
     }
@@ -184,6 +200,11 @@ resource "aws_launch_template" "this" {
   }
 
   user_data = base64gzip(module.user_data.user_data)
+
+  metadata_options {
+    http_endpoint = "enabled"
+    http_tokens   = "required"
+  }
 
   lifecycle {
     create_before_destroy = true
@@ -267,6 +288,10 @@ resource "aws_autoscaling_policy" "scale_down" {
   adjustment_type        = "ChangeInCapacity"
   scaling_adjustment     = -1
   cooldown               = 120
+
+  depends_on = [
+    aws_autoscaling_group.this
+  ]
 }
 
 resource "aws_cloudwatch_metric_alarm" "scale_down" {
@@ -296,7 +321,17 @@ resource "aws_instance" "this" {
     id      = aws_launch_template.this.id
     version = aws_launch_template.this.latest_version
   }
+
+  root_block_device {
+    encrypted = true
+  }
+  metadata_options {
+    http_endpoint = "enabled"
+    http_tokens   = "required"
+  }
+
   subnet_id = var.subnet_ids[0]
+
   tags = {
     Name = var.naming_prefix
   }
