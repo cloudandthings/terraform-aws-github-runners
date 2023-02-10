@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.0](https://github.com/cloudandthings/terraform-aws-github-runners/compare/v1.1.1...v1.2.0) (2023-02-10)
+
+
+### Features
+
+* Add `create_instance_profile` ([#38](https://github.com/cloudandthings/terraform-aws-github-runners/issues/38)) ([b3c278d](https://github.com/cloudandthings/terraform-aws-github-runners/commit/b3c278d568ec5ad575e7e1a5ce659067bcedf9b1))
+* Add BASE_PACKAGES software pack ([6dbee94](https://github.com/cloudandthings/terraform-aws-github-runners/commit/6dbee94e533ec03517cf054b988bcbeed0a5b416))
+* Add iam_policy_arns variable ([9037423](https://github.com/cloudandthings/terraform-aws-github-runners/commit/9037423ad4bdfc4cd402c15abc8a2b0162686f17))
+
+
+### Bug Fixes
+
+* Improved default concurrency ([bc3821d](https://github.com/cloudandthings/terraform-aws-github-runners/commit/bc3821d66df152a07d0c89811e6e4258d6e32892))
+
 ### [1.1.1](https://github.com/cloudandthings/terraform-aws-github-runners/compare/v1.1.0...v1.1.1) (2022-12-14)
 
 
