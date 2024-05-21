@@ -213,58 +213,27 @@ locals {
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_ami_name"></a> [ami\_name](#input\_ami\_name) | AWS AMI name filter for launching instances. <br> GitHub supports specific operating systems and architectures, including Ubuntu 22.04 amd64 which is the default. <br> Note: The included software packs are not tested with other AMIs. | `string` | `"ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-20220609"` | no |
-| <a name="input_ami_owners"></a> [ami\_owners](#input\_ami\_owners) | AWS AMI owners to limit AMI search. <br> Values may be an AWS Account ID, "self", or an AWS owner alias eg "amazon". | `list(string)` | <pre>[<br>  "amazon"<br>]</pre> | no |
-| <a name="input_autoscaling_desired_size"></a> [autoscaling\_desired\_size](#input\_autoscaling\_desired\_size) | The number of Amazon EC2 instances that should be running.<br>*When `scaling_mode="autoscaling-group"`* | `number` | `1` | no |
-| <a name="input_autoscaling_max_instance_lifetime"></a> [autoscaling\_max\_instance\_lifetime](#input\_autoscaling\_max\_instance\_lifetime) | The maximum amount of time, in seconds, that an instance can be in service. Values must be either equal to `0` or between `86400` and `31536000` seconds.<br>*When `scaling_mode="autoscaling-group"`* | `string` | `0` | no |
-| <a name="input_autoscaling_max_size"></a> [autoscaling\_max\_size](#input\_autoscaling\_max\_size) | The maximum size of the Auto Scaling Group.<br>*When `scaling_mode="autoscaling-group"`* | `number` | `3` | no |
-| <a name="input_autoscaling_min_size"></a> [autoscaling\_min\_size](#input\_autoscaling\_min\_size) | The minimum size of the Auto Scaling Group.<br>*When `scaling_mode="autoscaling-group"`* | `number` | `1` | no |
-| <a name="input_autoscaling_schedule_off_recurrences"></a> [autoscaling\_schedule\_off\_recurrences](#input\_autoscaling\_schedule\_off\_recurrences) | A list of schedule cron expressions, specifying when the Auto Scaling Group will terminate all instances.<br>Example: `["0 18 * * *"]`<br>*When `scaling_mode="autoscaling-group"`* | `list(string)` | `[]` | no |
-| <a name="input_autoscaling_schedule_on_recurrences"></a> [autoscaling\_schedule\_on\_recurrences](#input\_autoscaling\_schedule\_on\_recurrences) | A list of schedule cron expressions, specifying when the Auto Scaling Group will launch instances.<br>Example: `["0 07 * * MON-FRI"]`<br>*When `scaling_mode="autoscaling-group"`* | `list(string)` | `[]` | no |
-| <a name="input_autoscaling_schedule_time_zone"></a> [autoscaling\_schedule\_time\_zone](#input\_autoscaling\_schedule\_time\_zone) | The timezone for schedule cron expressions.<br>https://www.joda.org/joda-time/timezones.html<br>*When `scaling_mode="autoscaling-group"`* | `string` | `""` | no |
-| <a name="input_cloud_init_extra_other"></a> [cloud\_init\_extra\_other](#input\_cloud\_init\_extra\_other) | Arbitrary text to append to the `cloudinit` script. | `string` | `""` | no |
-| <a name="input_cloud_init_extra_packages"></a> [cloud\_init\_extra\_packages](#input\_cloud\_init\_extra\_packages) | A list of strings to append beneath the `packages:` section of the `cloudinit` script.<br>https://cloudinit.readthedocs.io/en/latest/topics/modules.html#package-update-upgrade-install | `list(string)` | `[]` | no |
-| <a name="input_cloud_init_extra_runcmds"></a> [cloud\_init\_extra\_runcmds](#input\_cloud\_init\_extra\_runcmds) | A list of strings to append beneath the `runcmd:` section of the `cloudinit` script.<br>https://cloudinit.readthedocs.io/en/latest/topics/modules.html#runcmd | `list(string)` | `[]` | no |
-| <a name="input_cloud_init_extra_write_files"></a> [cloud\_init\_extra\_write\_files](#input\_cloud\_init\_extra\_write\_files) | A list of strings to append beneath the `write_files:` section of the `cloudinit` script.<br>https://cloudinit.readthedocs.io/en/latest/topics/modules.html#write-files | `list(string)` | `[]` | no |
-| <a name="input_cloudwatch_log_group"></a> [cloudwatch\_log\_group](#input\_cloudwatch\_log\_group) | CloudWatch log group name prefix. Runner logs from /var/log/syslog are sent here. <br>Example: `github_runner`, with this value logs will be written to `github_runner/var/log/syslog/<instance_id>`.<br>If left unspecified then logging is disabled. | `string` | `""` | no |
-| <a name="input_create_iam_resources"></a> [create\_iam\_resources](#input\_create\_iam\_resources) | Should the module create the IAM resources needed. If set to false then an "iam\_instance\_profile\_arn" must be provided. | `bool` | `true` | no |
-| <a name="input_ec2_associate_public_ip_address"></a> [ec2\_associate\_public\_ip\_address](#input\_ec2\_associate\_public\_ip\_address) | Whether to associate a public IP address with EC2 instances in a VPC. | `bool` | `false` | no |
-| <a name="input_ec2_ebs_volume_size"></a> [ec2\_ebs\_volume\_size](#input\_ec2\_ebs\_volume\_size) | Size in GB of instance-attached EBS storage. By default this is set to `per_instance_runner_count * 20 GB`. | `number` | `-1` | no |
-| <a name="input_ec2_instance_type"></a> [ec2\_instance\_type](#input\_ec2\_instance\_type) | Instance type for EC2 instances. | `string` | n/a | yes |
-| <a name="input_ec2_key_pair_name"></a> [ec2\_key\_pair\_name](#input\_ec2\_key\_pair\_name) | EC2 Key Pair name to allow SSH to EC2 instances. | `string` | `""` | no |
-| <a name="input_github_organisation_name"></a> [github\_organisation\_name](#input\_github\_organisation\_name) | GitHub orgnisation name. Derived from `github_url` by default. | `string` | `""` | no |
-| <a name="input_github_runner_group"></a> [github\_runner\_group](#input\_github\_runner\_group) | Custom GitHub runner group. | `string` | `""` | no |
-| <a name="input_github_runner_labels"></a> [github\_runner\_labels](#input\_github\_runner\_labels) | Custom GitHub runner labels. <br>Example: `"gpu,x64,linux"`. | `list(string)` | `[]` | no |
-| <a name="input_github_url"></a> [github\_url](#input\_github\_url) | GitHub organisation URL.<br>Example: "https://github.com/cloudandthings/". | `string` | n/a | yes |
-| <a name="input_iam_instance_profile_arn"></a> [iam\_instance\_profile\_arn](#input\_iam\_instance\_profile\_arn) | IAM Instance Profile to launch EC2 instances with. Must allow permissions to read the SSM Parameter. Will be created by default. | `string` | `""` | no |
-| <a name="input_iam_policy_arns"></a> [iam\_policy\_arns](#input\_iam\_policy\_arns) | A list of existing IAM policy ARNs to attach to the runner IAM role. | `list(string)` | `[]` | no |
-| <a name="input_naming_prefix"></a> [naming\_prefix](#input\_naming\_prefix) | Created resources will be prefixed with this. | `string` | `"github-runner"` | no |
-| <a name="input_per_instance_runner_count"></a> [per\_instance\_runner\_count](#input\_per\_instance\_runner\_count) | Number of runners per instance. By default this is set to `num_vCPUs * num_cores * threads_per_core`. May be set to 0 to never create runners. | `number` | `-1` | no |
-| <a name="input_region"></a> [region](#input\_region) | AWS region. | `string` | n/a | yes |
-| <a name="input_scaling_mode"></a> [scaling\_mode](#input\_scaling\_mode) | How instances are managed. <br> Can be either `"autoscaling-group"` or `"single-instance"`. | `string` | `"autoscaling-group"` | no |
-| <a name="input_security_groups"></a> [security\_groups](#input\_security\_groups) | A list of security groups to assign to EC2 instances.<br>Note: If none are provided, a new security group will be used which will deny inbound traffic **including SSH**. | `list(string)` | `[]` | no |
-| <a name="input_software_packs"></a> [software\_packs](#input\_software\_packs) | A list of pre-defined software packs to install.<br>Valid options are: `"ALL"`, `"BASE_PACKAGES"`, `"docker-engine"`, `"node"`, `"python2"`, `"python3"`, `"terraform"`, `"terraform-docs"`, `"tflint"`, `"tfsec"`.<br>An empty list will mean none are installed. | `list(string)` | <pre>[<br>  "ALL"<br>]</pre> | no |
-| <a name="input_ssm_parameter_name"></a> [ssm\_parameter\_name](#input\_ssm\_parameter\_name) | SSM parameter name for the GitHub Runner token.<br>Example: `"/github/runner/token"`. | `string` | n/a | yes |
-| <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | The list of Subnet IDs to launch EC2 instances in. <br> If `scaling_mode="single-instance"` then the first Subnet ID from this list will be used. | `list(string)` | n/a | yes |
-| <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | The VPC ID to launch instances in. | `string` | n/a | yes |
+| <a name="input_build_timeout"></a> [build\_timeout](#input\_build\_timeout) | ----------------------------------------------------- Optional variables ----------------------------------------------------- | `number` | `5` | no |
+| <a name="input_description"></a> [description](#input\_description) | n/a | `string` | `null` | no |
+| <a name="input_environment_compute_type"></a> [environment\_compute\_type](#input\_environment\_compute\_type) | n/a | `string` | `"BUILD_GENERAL1_SMALL"` | no |
+| <a name="input_environment_image"></a> [environment\_image](#input\_environment\_image) | n/a | `string` | `"aws/codebuild/amazonlinux2-x86_64-standard:5.0"` | no |
+| <a name="input_environment_type"></a> [environment\_type](#input\_environment\_type) | n/a | `string` | `"LINUX_CONTAINER"` | no |
+| <a name="input_logs_config"></a> [logs\_config](#input\_logs\_config) | n/a | <pre>object({<br>    cloudwatch_logs_group_name  = optional(string)<br>    cloudwatch_logs_stream_name = optional(string)<br>    s3_logs_location            = optional(string)<br>  })</pre> | `null` | no |
+| <a name="input_name"></a> [name](#input\_name) | Created resources will be named with this. | `string` | `"github-runner"` | no |
+| <a name="input_security_group_ids"></a> [security\_group\_ids](#input\_security\_group\_ids) | The list of Security Group IDs for AWS Codebuild to launch ephemeral EC2 instances in. | `list(string)` | `[]` | no |
+| <a name="input_source_config"></a> [source\_config](#input\_source\_config) | n/a | <pre>list(<br>    object({<br>      location = string<br>      type     = optional(string, "GITHUB")<br>    })<br>  )</pre> | n/a | yes |
+| <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | The list of Subnet IDs for AWS Codebuild to launch ephemeral EC2 instances in. | `list(string)` | `[]` | no |
+| <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | The VPC ID for AWS Codebuild to launch ephemeral instances in. | `string` | `null` | no |
 
 ----
 ### Modules
 
-| Name | Source | Version |
-|------|--------|---------|
-| <a name="module_software_packs"></a> [software\_packs](#module\_software\_packs) | ./modules/software | n/a |
-| <a name="module_user_data"></a> [user\_data](#module\_user\_data) | ./modules/user_data | n/a |
+No modules.
 
 ----
 ### Outputs
 
-| Name | Description |
-|------|-------------|
-| <a name="output_aws_instance_id"></a> [aws\_instance\_id](#output\_aws\_instance\_id) | Instance ID (when `scaled_mode=single-instance`) |
-| <a name="output_aws_instance_public_ip"></a> [aws\_instance\_public\_ip](#output\_aws\_instance\_public\_ip) | Instance public IP (when `scaled_mode=single-instance`) |
-| <a name="output_per_instance_runner_count"></a> [per\_instance\_runner\_count](#output\_per\_instance\_runner\_count) | Effective per instance runner count. |
-| <a name="output_software_packs"></a> [software\_packs](#output\_software\_packs) | List of software packs that were installed. |
+No outputs.
 
 ----
 ### Providers
@@ -272,7 +241,6 @@ locals {
 | Name | Version |
 |------|---------|
 | <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 4.9 |
-| <a name="provider_null"></a> [null](#provider\_null) | ~> 3.2 |
 
 ----
 ### Requirements
@@ -289,24 +257,9 @@ locals {
 
 | Name | Type |
 |------|------|
-| [aws_autoscaling_group.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/autoscaling_group) | resource |
-| [aws_autoscaling_policy.scale_down](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/autoscaling_policy) | resource |
-| [aws_autoscaling_schedule.off](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/autoscaling_schedule) | resource |
-| [aws_autoscaling_schedule.on](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/autoscaling_schedule) | resource |
-| [aws_cloudwatch_metric_alarm.scale_down](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
-| [aws_iam_instance_profile.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_instance_profile) | resource |
-| [aws_iam_policy.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
-| [aws_iam_role.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
-| [aws_iam_role_policy_attachment.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
-| [aws_iam_role_policy_attachment.user_defined_policies](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
-| [aws_instance.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/instance) | resource |
-| [aws_launch_template.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/launch_template) | resource |
-| [aws_security_group.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
-| [null_resource.validate_instance_profile](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
-| [aws_ami.ami](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami) | data source |
+| [aws_codebuild_project.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codebuild_project) | resource |
+| [aws_codebuild_webhook.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codebuild_webhook) | resource |
 | [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
-| [aws_ec2_instance_type.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ec2_instance_type) | data source |
-| [aws_ssm_parameter.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ssm_parameter) | data source |
 
 ----
 

@@ -1,36 +1,27 @@
-/*
-output "aws_autoscaling_group_arn" {
-  description = "The Auto Scaling Group ARN."
-  value       = flatten(aws_autoscaling_group.this[*].arn)
+output "codebuild_project" {
+  value = {
+    name = aws_codebuild_project.this.name
+    arn  = aws_codebuild_project.this.arn
+  }
+  description = "Name and ARN of codebuild project, to be used when running GitHub Actions"
 }
 
-output "security_groups" {
-  description = "The Security Groups associated with EC2 instances."
-  value       = local.security_groups
+output "codebuild_role" {
+  value = {
+    name = aws_iam_role.this[0].name
+    arn  = aws_iam_role.this[0].arn
+  }
+  description = "Name and ARN of codebuild role, to be used when running GitHub Actions"
 }
 
-output "aws_launch_template_arn" {
-  description = "The EC2 launch template."
-  value       = aws_launch_template.this.arn
-}
-*/
-
-output "software_packs" {
-  description = "List of software packs that were installed."
-  value       = flatten(module.software_packs[*].software_packs)
+output "ecr_repository" {
+  value = {
+    name = try(aws_ecr_repository.this[0].name, null)
+    arn  = try(aws_ecr_repository.this[0].arn, null)
+  }
+  description = "Name and ARN of ECR repository, to be used when to push custom docker images for the codebuiild project"
 }
 
-output "aws_instance_id" {
-  description = "Instance ID (when `scaled_mode=single-instance`)"
-  value       = concat([for x in aws_instance.this : x.id], [""])[0]
-}
-
-output "aws_instance_public_ip" {
-  description = "Instance public IP (when `scaled_mode=single-instance`)"
-  value       = concat([for x in aws_instance.this : x.public_ip], [""])[0]
-}
-
-output "per_instance_runner_count" {
-  description = "Effective per instance runner count."
-  value       = local.per_instance_runner_count
+output "custom_kms_key" {
+  value = local.custom_kms_key
 }
