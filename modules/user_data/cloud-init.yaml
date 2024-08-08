@@ -78,6 +78,12 @@ runcmd:
 - mv actions-runner /home/ubuntu/actions-runner
 - chown -R ubuntu:ubuntu /home/ubuntu
 
+# install kubectl/aws
+- apt remove awscli -y
+- snap install  kubectl --channel=1.28/stable --classic
+- snap install aws-cli --classic
+
+
 # configure actions-runner
 - PERSONAL_ACCESS_TOKEN=`aws ssm get-parameter --with-decryption --name ${SSM_PARAMETER_NAME} --region ${REGION} | jq -r '.Parameter.Value'`
 - >
