@@ -187,9 +187,9 @@ resource "aws_launch_template" "this" {
   image_id = data.aws_ami.ami.id
 
 
-# instance_market_options {
-#   market_type = "spot"
-# }
+  instance_market_options {
+    market_type = "spot"
+  }
 
   instance_type = var.ec2_instance_type
 
