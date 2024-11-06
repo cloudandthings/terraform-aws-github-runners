@@ -14,8 +14,8 @@ Simple to use, self-hosted GitHub Action runners. Uses EC2 spot instances with c
 ## Features
 
 - Simple! See the provided examples for a quick-start.
-- Cost-effective. Uses EC2 Spot pricing and AutoScaling to keep costs low. Runs multiple runners per EC2 instance depending on the number of vCPU available.
-- Customisable using [cloudinit](https://cloudinit.readthedocs.io/).
+- Serverless. No EC2 instances that need to be maintained and patched
+- Cost-effective. Only billed for when COdeBuild project is running as projects are billed per build minute.
 - Scalable. By default one runner process and 20GB storage is provided per vCPU per EC2 instance.
 
 ## Why?
@@ -27,23 +27,15 @@ This module additionally does not require public inbound traffic, and can be eas
 
 ### Known limitations
 
-1. Needs a VPC.
+1. Additional config needed if using custom ECR image
 
-Currently this module requires a VPC and Subnets for deployment. In future a non-VPC deployment could perhaps be added.
-
-2. Changes may affect the shared EC2 environment.
-
-Parallel runners are ephemeral and their work environment is destroyed after each job is done.
-However, they still run on the same underlying EC2 instance.
-This means they can make changes which impact each other, for example if the EBS storage gets full.
-
-A possible workaround could be to [run jobs in a container](https://docs.github.com/en/actions/using-jobs/running-jobs-in-a-container).
+If a custom ECR image is used additional install and config is needed when building the Dockerfile because some of the Github actions `uses` actions do not work
 
 ## How it works
 
 [![Infrastructure diagram](https://github.com/cloudandthings/terraform-aws-github-runners/blob/main/docs/images/runner.svg)](https://github.com/cloudandthings/terraform-aws-github-runners/blob/main/docs/images/runner.svg)
 
-An AutoScaling group is created to spin up Spot EC2 instances on a schedule. The instances retrieve a pre-configured GitHub access token from AWS SSM Parameter Store, and start one (or more) ephemeral actions runner processes. These authenticate with GitHub and wait for work.
+A Codebuild Project and a webhook is created in a specific Github repo. The webhook is used to trigger the build project when a action is triggered that runs on the codebuild project. The project run will self configure as a Github runner, and run the job commands in the workflow file.
 
 Steps execute arbitrary commands, defined by your repo workflows.
 
@@ -59,6 +51,7 @@ A full list of created resources is shown below.
 
 ### 1. Store your GitHub token
 Create a [GitHub personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token).
+Make sure that the fine grained token has [these](https://docs.aws.amazon.com/codebuild/latest/userguide/access-tokens-github.html#access-tokens-github-prereqs) permissions.
 Add it to AWS Systems Manager Parameter Store with the `SecureString` type.
 
 [![Parameter Store configuration](https://github.com/cloudandthings/terraform-aws-github-runners/blob/main/docs/images/ssm.png)](https://github.com/cloudandthings/terraform-aws-github-runners/blob/main/docs/images/ssm.png )
