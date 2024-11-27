@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.0.0](https://github.com/cloudandthings/terraform-aws-github-runners/compare/v1.2.0...v2.0.0) (2024-11-27)
+
+
+### ⚠ BREAKING CHANGES
+
+* Replace EC2+Autoscaling with AWS CodeBuild
+
+### Features
+
+* finalise and test codebuild runner ([52e65f3](https://github.com/cloudandthings/terraform-aws-github-runners/commit/52e65f36b2cb31389e2d875e4d4c47291e683cd5))
+* Replace EC2+Autoscaling with AWS CodeBuild ([e1a7059](https://github.com/cloudandthings/terraform-aws-github-runners/commit/e1a70595e31cff5c62ab429ef20fa71e0d2754c0))
+
 ## [1.2.0](https://github.com/cloudandthings/terraform-aws-github-runners/compare/v1.1.1...v1.2.0) (2023-02-10)
 
 
