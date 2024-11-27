@@ -23,6 +23,7 @@ resource "aws_security_group" "this" {
 
   vpc_id = local.vpc_id
   #checkov:skip=CKV2_AWS_5:The SG is attached by the module.
+  #checkov:skip=CKV_AWS_382:Egress to GitHub Actions is required for the runner to work.
 }
 
 data "http" "myip" {
@@ -44,50 +45,20 @@ module "github_runner" {
 
   # Required parameters
   ############################
-  region     = "af-south-1"
-  github_url = "https://github.com/my-org"
+  source_location                            = "https://github.com/my-org/my-repo.git"
+  github_personal_access_token_ssm_parameter = "example"
 
-  naming_prefix = local.naming_prefix
+  # Naming for all created resources
+  name = "github-runner-codebuild-test"
 
-  ssm_parameter_name = "/github/runner/token"
-
-  ec2_instance_type = "t3.micro"
-
-  vpc_id     = local.vpc_id
+  vpc_id     = "vpc-0ffaabbcc1122"
   subnet_ids = ["subnet-0123", "subnet-0456"]
-
   # Optional parameters
   ################################
 
-  # If for some reason you dont want to install everything.
-  software_packs = [
-    "BASE_PACKAGES", # Extra utility packages like curl, zip, etc
-    "docker-engine",
-    "node",
-    "python2" # Required for cloudwatch logging
-  ]
-
-  ec2_associate_public_ip_address = true
-  ec2_key_pair_name               = "my_key_pair"
-  security_groups                 = [aws_security_group.this.id]
-
-  autoscaling_max_instance_lifetime = 86400
-  autoscaling_min_size              = 2
-  autoscaling_desired_size          = 2
-  autoscaling_max_size              = 5
-
-  autoscaling_schedule_time_zone = "Africa/Johannesburg"
-  # Scale up to desired capacity during work hours
-  autoscaling_schedule_on_recurrences = ["0 07 * * MON-FRI"]
-  # Scale down to zero after hours
-  autoscaling_schedule_off_recurrences = ["0 18 * * *"]
-
-  cloud_init_extra_packages = ["neofetch"]
-  cloud_init_extra_runcmds = [
-    "echo \"hello world\" > ~/test_file"
-  ]
-
-  cloudwatch_log_group = "/some/log/group"
+  security_group_ids         = [aws_security_group.this.id]
+  use_ecr_image              = true
+  cloudwatch_logs_group_name = "/some/log/group"
 }
 ```
 ----

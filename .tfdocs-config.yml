@@ -25,10 +25,6 @@ content: |-
   ```hcl
   {{ include "examples/advanced/main.tf" }}
   ```
-  ### Software packs
-  ```hcl
-  {{ include "modules/software/software_packs.tf" }}
-  ```
 
   ----
   {{ .Inputs }}
