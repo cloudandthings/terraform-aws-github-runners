@@ -1,5 +1,5 @@
 data "aws_iam_policy_document" "cloudwatch_required" {
-  # Clouwatch permissions
+  # Cloudwatch permissions
   statement {
     sid    = "AllowCreateLogGroup"
     effect = "Allow"
@@ -27,7 +27,7 @@ resource "aws_iam_role_policy" "cloudwatch_required" {
 }
 
 data "aws_iam_policy_document" "networking_required" {
-  count = local.any_vpc_config ? 1 : 0
+  count = local.has_vpc_config ? 1 : 0
   # VPC permissions
   statement {
     sid    = "AllowNetworkingDescribe"
@@ -68,7 +68,7 @@ data "aws_iam_policy_document" "networking_required" {
 }
 
 resource "aws_iam_role_policy" "networking_required" {
-  count  = local.any_vpc_config ? 1 : 0
+  count  = local.has_vpc_config ? 1 : 0
   name   = "${var.name}-networking"
   role   = local.create_iam_role ? aws_iam_role.this[0].name : var.iam_role_name
   policy = data.aws_iam_policy_document.networking_required[0].json
@@ -76,19 +76,19 @@ resource "aws_iam_role_policy" "networking_required" {
 
 data "aws_iam_policy_document" "s3_required" {
   # S3 permissions
-  count = local.s3_log_bucket ? 1 : 0
+  count = local.has_s3_log_bucket ? 1 : 0
   statement {
     effect  = "Allow"
-    actions = ["s3:*"]
+    actions = ["s3:PutObject*"]
     resources = [
       local.s3_logs_bucket_arn,
-      "${local.s3_logs_bucket_arn}/*",
+      "${local.s3_logs_bucket_arn}/${var.s3_logs_bucket_prefix}*",
     ]
   }
 }
 
 resource "aws_iam_role_policy" "s3_required" {
-  count  = local.s3_log_bucket ? 1 : 0
+  count  = local.has_s3_log_bucket ? 1 : 0
   name   = "${var.name}-s3-logging"
   role   = local.create_iam_role ? aws_iam_role.this[0].name : var.iam_role_name
   policy = data.aws_iam_policy_document.s3_required[0].json

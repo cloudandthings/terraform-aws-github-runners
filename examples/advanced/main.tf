@@ -19,6 +19,7 @@ resource "aws_security_group" "this" {
 
   vpc_id = local.vpc_id
   #checkov:skip=CKV2_AWS_5:The SG is attached by the module.
+  #checkov:skip=CKV_AWS_382:Egress to GitHub Actions is required for the runner to work.
 }
 
 data "http" "myip" {

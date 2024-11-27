@@ -21,7 +21,3 @@ output "ecr_repository" {
   }
   description = "Name and ARN of ECR repository, to be used when to push custom docker images for the codebuiild project"
 }
-
-output "custom_kms_key" {
-  value = local.custom_kms_key
-}

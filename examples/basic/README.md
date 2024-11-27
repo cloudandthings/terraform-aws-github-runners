@@ -7,16 +7,11 @@ module "github_runner" {
 
   # Required parameters
   ############################
-  region     = "af-south-1"
-  github_url = "https://github.com/my-org"
+  source_location              = "https://github.com/my-org/my-repo.git"
+  github_personal_access_token = "example"
 
   # Naming for all created resources
-  naming_prefix = "test-github-runner"
-
-  ssm_parameter_name = "/github/runner/token"
-
-  # 2 cores, so 2 ephemeral runners will start in parallel.
-  ec2_instance_type = "t3.micro"
+  name = "github-runner-codebuild-test"
 
   vpc_id     = "vpc-0ffaabbcc1122"
   subnet_ids = ["subnet-0123", "subnet-0456"]

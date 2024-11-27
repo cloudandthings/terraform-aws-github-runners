@@ -1,11 +1,3 @@
-resource "aws_cloudwatch_log_group" "codebuild" {
-  #checkov:skip=CKV_AWS_338:log retention set to 14 days sw it is only show the github runner initialise
-  count             = local.create_cloudwatch_logs_group ? 1 : 0
-  name              = "/aws/codebuild/${var.name}"
-  retention_in_days = 14
-  kms_key_id        = local.custom_kms_key ? var.kms_key_id : null
-}
-
 resource "aws_codebuild_project" "this" {
   name          = var.name
   description   = var.description
@@ -26,15 +18,19 @@ resource "aws_codebuild_project" "this" {
 
   logs_config {
     cloudwatch_logs {
-      group_name  = local.create_cloudwatch_logs_group ? aws_cloudwatch_log_group.codebuild[0].name : var.cloudwatch_logs_group_name
+      group_name = (
+        var.create_cloudwatch_log_group
+        ? aws_cloudwatch_log_group.codebuild[0].name
+        : data.aws_cloudwatch_log_group.codebuild[0].name
+      )
       stream_name = local.cloudwatch_logs_steam_name
     }
 
     dynamic "s3_logs" {
-      for_each = try(var.s3_logs_location, null) == null ? toset([]) : toset([1])
+      for_each = try(var.s3_logs_bucket_name, null) == null ? toset([]) : toset([1])
       content {
         status   = "ENABLED"
-        location = "${var.s3_logs_location}/logs"
+        location = "${var.s3_logs_bucket_name}/${var.s3_logs_bucket_prefix}"
       }
     }
   }
@@ -50,7 +46,7 @@ resource "aws_codebuild_project" "this" {
   }
 
   dynamic "vpc_config" {
-    for_each = local.any_vpc_config ? toset([1]) : toset([])
+    for_each = local.has_vpc_config ? toset([1]) : toset([])
     content {
       vpc_id             = var.vpc_id
       subnets            = var.subnet_ids
@@ -87,7 +83,7 @@ resource "aws_codebuild_webhook" "this" {
 
 resource "aws_security_group" "codebuild" {
   #checkov:skip=CKV2_AWS_5:access logging not required
-  count       = local.any_vpc_config ? 1 : 0
+  count       = local.has_vpc_config ? 1 : 0
   vpc_id      = var.vpc_id
   name        = var.name
   description = "Security group for CodeBuild project ${var.name}"
@@ -97,7 +93,7 @@ resource "aws_security_group" "codebuild" {
 }
 
 resource "aws_vpc_security_group_egress_rule" "codebuild" {
-  count             = local.any_vpc_config ? 1 : 0
+  count             = local.has_vpc_config ? 1 : 0
   security_group_id = aws_security_group.codebuild[count.index].id
 
   cidr_ipv4   = "0.0.0.0/0"
@@ -106,7 +102,7 @@ resource "aws_vpc_security_group_egress_rule" "codebuild" {
 }
 
 resource "aws_vpc_security_group_ingress_rule" "codebuild" {
-  count             = local.any_vpc_config ? 1 : 0
+  count             = local.has_vpc_config ? 1 : 0
   security_group_id = aws_security_group.codebuild[count.index].id
 
   cidr_ipv4   = "0.0.0.0/0"
@@ -116,14 +112,23 @@ resource "aws_vpc_security_group_ingress_rule" "codebuild" {
   description = "Allow HTTPS traffic from ALL"
 }
 
+# TODO
 resource "aws_ecr_repository" "this" {
   #checkov:skip=CKV_AWS_136:encryption not required
   #checkov:skip=CKV_AWS_51:latest tag used by codebuild so tag needs to be overwritten
-  count        = var.use_ecr_image ? 1 : 0
-  name         = var.name
+  count = var.use_ecr_image ? 1 : 0
+  name  = var.name
+
+  image_tag_mutability = "IMMUTABLE"
+
   force_delete = true
   image_scanning_configuration {
     scan_on_push = true
+  }
+
+  encryption_configuration {
+    encryption_type = "KMS"
+    kms_key         = var.kms_key_id
   }
 }
 

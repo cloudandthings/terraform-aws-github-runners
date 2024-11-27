@@ -4,16 +4,16 @@
 variable "name" {
   description = "Created resources will be named with this."
   type        = string
-  default     = "github-runner"
   validation {
     condition     = length(var.name) > 0
-    error_message = "The name value cannot be an empty string."
+    error_message = "The name variable cannot be an empty string."
   }
 }
+# TODO check how this is done elsewhere.
 
 variable "source_location" {
   type        = string
-  description = "https://github.com/my/repo.git"
+  description = "Your source code repo location, for example https://github.com/my/repo.git"
 }
 
 # -----------------------------------------------------
@@ -53,6 +53,12 @@ variable "environment_image" {
 }
 
 # logs
+variable "create_cloudwatch_log_group" {
+  description = "Determines whether a log group is created by this module. If not, AWS will automatically create one if logging is enabled"
+  type        = bool
+  default     = true
+}
+
 variable "cloudwatch_logs_group_name" {
   description = "Name of the log group used by the codebuild project. If blank then a default is used."
   type        = string
@@ -65,10 +71,21 @@ variable "cloudwatch_logs_stream_name" {
   default     = null
 }
 
-variable "s3_logs_location" {
-  description = "Value of the S3 bucket to store logs in, if left blank a bucket will be created"
+variable "cloudwatch_log_group_retention_in_days" {
+  description = "Number of days to retain log events"
+  type        = number
+  default     = 14
+}
+
+variable "s3_logs_bucket_name" {
+  description = "Name of the S3 bucket to store logs in. If null then logging to S3 will be disabled."
   type        = string
   default     = null
+}
+variable "s3_logs_bucket_prefix" {
+  description = "Prefix to use for the logs in the S3 bucket"
+  type        = string
+  default     = ""
 }
 
 # vpc
@@ -125,6 +142,7 @@ variable "github_personal_access_token_ssm_parameter" {
 # Encryption
 variable "kms_key_id" {
   description = "The AWS KMS key to be used"
+  type        = string
   default     = null
 }
 
