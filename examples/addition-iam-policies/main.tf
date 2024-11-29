@@ -1,7 +1,7 @@
 module "runners" {
   source = "../../"
 
-  name            = "${var.source_name}-github-runner"
+  name            = "${var.name}-github-runner"
   source_location = var.source_location
 
   github_personal_access_token_ssm_parameter = var.github_personal_access_token_ssm_parameter

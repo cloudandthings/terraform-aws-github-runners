@@ -11,6 +11,6 @@ data "aws_iam_policy_document" "secrets_manager" {
 }
 
 resource "aws_iam_policy" "secrets_manager" {
-  name   = "${var.source_name}-secrets-manager-policy"
+  name   = "${var.name}-secrets-manager-policy"
   policy = data.aws_iam_policy_document.secrets_manager.json
 }

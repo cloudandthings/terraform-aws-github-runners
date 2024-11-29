@@ -1,27 +1,24 @@
-variable "account_id" {
-  type = string
-}
-
-variable "region" {
-  type = string
-}
-
 variable "source_location" {
-  type = string
+  type        = string
+  description = "Your source code repo location, for example https://github.com/my/repo.git"
 }
 
-variable "source_name" {
-  type = string
+variable "name" {
+  type        = string
+  description = "Name used as a prefix for all resources in this module"
 }
 
 variable "github_personal_access_token_ssm_parameter" {
-  type = string
+  type        = string
+  description = "The GitHub personal access token to use for accessing the repository"
 }
 
 variable "vpc_id" {
-  type = string
+  type        = string
+  description = "The VPC ID for AWS Codebuild to launch ephemeral instances in."
 }
 
 variable "subnet_ids" {
-  type = list(string)
+  type        = list(string)
+  description = "The list of Subnet IDs for AWS Codebuild to launch ephemeral EC2 instances in."
 }
