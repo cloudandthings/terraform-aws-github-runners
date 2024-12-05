@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.0.1](https://github.com/cloudandthings/terraform-aws-github-runners/compare/v2.0.0...v2.0.1) (2024-12-05)
+
+
+### Bug Fixes
+
+* Update aws_iam_role_policy_attachment and make codebuild role output optional ([#49](https://github.com/cloudandthings/terraform-aws-github-runners/issues/49)) ([212957a](https://github.com/cloudandthings/terraform-aws-github-runners/commit/212957a6487733e222c286b89c2ea584a120c3b8))
+* Update basic example ([#46](https://github.com/cloudandthings/terraform-aws-github-runners/issues/46)) ([3fb16d8](https://github.com/cloudandthings/terraform-aws-github-runners/commit/3fb16d894795e4769581a97927a4e73b68be765e))
+
 ## [2.0.0](https://github.com/cloudandthings/terraform-aws-github-runners/compare/v1.2.0...v2.0.0) (2024-11-27)
 
 
