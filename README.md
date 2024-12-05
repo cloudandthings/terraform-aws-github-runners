@@ -128,8 +128,8 @@ module "github_runner" {
   # Required parameters
   ############################
   # Naming for all created resources
-  name = "github-runner-codebuild-test"
-  source_location              = "https://github.com/my-org/my-repo.git"
+  name            = "github-runner-codebuild-test"
+  source_location = "https://github.com/my-org/my-repo.git"
 
   # Optional parameters
   ############################
