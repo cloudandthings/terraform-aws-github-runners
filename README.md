@@ -240,9 +240,11 @@ No modules.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_codebuild_project"></a> [codebuild\_project](#output\_codebuild\_project) | Name and ARN of codebuild project, to be used when running GitHub Actions |
-| <a name="output_codebuild_role"></a> [codebuild\_role](#output\_codebuild\_role) | Name and ARN of codebuild role, to be used when running GitHub Actions |
-| <a name="output_ecr_repository"></a> [ecr\_repository](#output\_ecr\_repository) | Name and ARN of ECR repository, to be used when to push custom docker images for the codebuiild project |
+| <a name="output_aws_security_group_id"></a> [aws\_security\_group\_id](#output\_aws\_security\_group\_id) | ID of the security group created for the codebuild project |
+| <a name="output_codebuild_project_arn"></a> [codebuild\_project\_arn](#output\_codebuild\_project\_arn) | ARN of the codebuild project, to be used when running GitHub Actions |
+| <a name="output_codebuild_project_name"></a> [codebuild\_project\_name](#output\_codebuild\_project\_name) | Name of the codebuild project, to be used when running GitHub Actions |
+| <a name="output_codebuild_role_name"></a> [codebuild\_role\_name](#output\_codebuild\_role\_name) | Name of the codebuild role, to be used when running GitHub Actions |
+| <a name="output_ecr_repository_name"></a> [ecr\_repository\_name](#output\_ecr\_repository\_name) | Name of the ECR repository, to be used when to push custom docker images for the codebuiild project |
 
 ----
 ### Providers
