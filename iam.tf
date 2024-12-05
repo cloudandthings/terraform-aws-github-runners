@@ -148,11 +148,8 @@ resource "aws_iam_role" "this" {
 }
 
 resource "aws_iam_role_policy_attachment" "additional" {
-  for_each = {
-    for k, v in var.iam_role_policies :
-    k => v if local.create_iam_role
-  }
+  for_each = var.iam_role_policies
 
-  role       = aws_iam_role.this[0].name
+  role       = local.create_iam_role ? aws_iam_role.this[0].name : var.iam_role_name
   policy_arn = each.value
 }

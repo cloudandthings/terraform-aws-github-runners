@@ -8,8 +8,8 @@ output "codebuild_project" {
 
 output "codebuild_role" {
   value = {
-    name = aws_iam_role.this[0].name
-    arn  = aws_iam_role.this[0].arn
+    name = try(aws_iam_role.this[0].name, null)
+    arn  = try(aws_iam_role.this[0].arn, null)
   }
   description = "Name and ARN of codebuild role, to be used when running GitHub Actions"
 }
