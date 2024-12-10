@@ -37,7 +37,8 @@ resource "aws_codebuild_project" "this" {
     image        = local.environment_image
 
     image_pull_credentials_type = (
-      startswith(local.environment_image, "aws/codebuild/")
+      # terraform > v1.3.0: startswith(local.environment_image, "aws/codebuild/")
+      length(regexall("^aws/codebuild/.*", local.environment_image)) > 0
       ? "CODEBUILD"
       : "SERVICE_ROLE"
     )
