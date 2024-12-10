@@ -1,18 +1,46 @@
+################################################################################
+# CodeBuild
+################################################################################
+
+locals {
+  use_ecr_repository  = var.create_ecr_repository || var.ecr_repository_name != null
+  ecr_repository_name = coalesce(var.ecr_repository_name, var.name)
+
+  environment_image = (
+    var.environment_image != null
+    ? var.environment_image
+    : (
+      local.use_ecr_repository
+      ? "${local.aws_account_id}.dkr.ecr.${local.aws_region}.amazonaws.com/${local.ecr_repository_name}:latest"
+      : "aws/codebuild/amazonlinux2-x86_64-standard:5.0"
+    )
+  )
+}
+
 resource "aws_codebuild_project" "this" {
   name          = var.name
   description   = var.description
   build_timeout = var.build_timeout
-  service_role  = local.create_iam_role ? aws_iam_role.this[0].arn : "arn:aws:iam::${local.aws_account_id}:role/${var.iam_role_name}"
+  service_role = (
+    local.create_iam_role
+    ? aws_iam_role.this[0].arn
+    : "arn:aws:iam::${local.aws_account_id}:role/${var.iam_role_name}"
+  )
 
   artifacts {
     type = "NO_ARTIFACTS"
   }
 
   environment {
-    type                        = var.environment_type
-    compute_type                = var.environment_compute_type
-    image                       = var.use_ecr_image ? "${aws_ecr_repository.this[0].repository_url}:latest" : var.environment_image
-    image_pull_credentials_type = var.use_ecr_image ? "SERVICE_ROLE" : "CODEBUILD"
+    type         = var.environment_type
+    compute_type = var.environment_compute_type
+    image        = local.environment_image
+
+    image_pull_credentials_type = (
+      startswith(local.environment_image, "aws/codebuild/")
+      ? "CODEBUILD"
+      : "SERVICE_ROLE"
+    )
     # privileged_mode             = true
   }
 
@@ -81,19 +109,35 @@ resource "aws_codebuild_webhook" "this" {
   }
 }
 
+################################################################################
+# Security Group
+################################################################################
+
+locals {
+  create_security_group = local.has_vpc_config && length(var.security_group_ids) == 0
+  security_group_name   = coalesce(var.security_group_name, var.name)
+
+  security_group_ids = concat(
+    local.create_security_group
+    ? [aws_security_group.codebuild[0].id]
+    : [],
+    var.security_group_ids
+  )
+}
+
 resource "aws_security_group" "codebuild" {
   #checkov:skip=CKV2_AWS_5:access logging not required
-  count       = local.has_vpc_config ? 1 : 0
+  count       = local.create_security_group ? 1 : 0
   vpc_id      = var.vpc_id
-  name        = var.name
+  name        = local.security_group_name
   description = "Security group for CodeBuild project ${var.name}"
   tags = {
-    Name = var.name
+    Name = local.security_group_name
   }
 }
 
 resource "aws_vpc_security_group_egress_rule" "codebuild" {
-  count             = local.has_vpc_config ? 1 : 0
+  count             = local.create_security_group ? 1 : 0
   security_group_id = aws_security_group.codebuild[count.index].id
 
   cidr_ipv4   = "0.0.0.0/0"
@@ -102,7 +146,7 @@ resource "aws_vpc_security_group_egress_rule" "codebuild" {
 }
 
 resource "aws_vpc_security_group_ingress_rule" "codebuild" {
-  count             = local.has_vpc_config ? 1 : 0
+  count             = local.create_security_group ? 1 : 0
   security_group_id = aws_security_group.codebuild[count.index].id
 
   cidr_ipv4   = "0.0.0.0/0"
@@ -112,12 +156,15 @@ resource "aws_vpc_security_group_ingress_rule" "codebuild" {
   description = "Allow HTTPS traffic from ALL"
 }
 
-# TODO
+################################################################################
+# ECR Repository
+################################################################################
+
 resource "aws_ecr_repository" "this" {
   #checkov:skip=CKV_AWS_136:encryption not required
   #checkov:skip=CKV_AWS_51:latest tag used by codebuild so tag needs to be overwritten
-  count = var.use_ecr_image ? 1 : 0
-  name  = var.name
+  count = var.create_ecr_repository ? 1 : 0
+  name  = local.ecr_repository_name
 
   image_tag_mutability = "IMMUTABLE"
 
@@ -133,7 +180,7 @@ resource "aws_ecr_repository" "this" {
 }
 
 resource "aws_ecr_lifecycle_policy" "policy" {
-  count      = var.use_ecr_image ? 1 : 0
+  count      = var.create_ecr_repository ? 1 : 0
   repository = aws_ecr_repository.this[0].name
 
   policy = <<-EOF

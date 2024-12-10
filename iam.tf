@@ -1,5 +1,7 @@
+################################################################################
+# Cloudwatch permissions
+################################################################################
 data "aws_iam_policy_document" "cloudwatch_required" {
-  # Cloudwatch permissions
   statement {
     sid    = "AllowCreateLogGroup"
     effect = "Allow"
@@ -26,9 +28,11 @@ resource "aws_iam_role_policy" "cloudwatch_required" {
   policy = data.aws_iam_policy_document.cloudwatch_required.json
 }
 
+################################################################################
+# VPC permissions
+################################################################################
 data "aws_iam_policy_document" "networking_required" {
   count = local.has_vpc_config ? 1 : 0
-  # VPC permissions
   statement {
     sid    = "AllowNetworkingDescribe"
     effect = "Allow"
@@ -74,8 +78,10 @@ resource "aws_iam_role_policy" "networking_required" {
   policy = data.aws_iam_policy_document.networking_required[0].json
 }
 
+################################################################################
+# S3 permissions
+################################################################################
 data "aws_iam_policy_document" "s3_required" {
-  # S3 permissions
   count = local.has_s3_log_bucket ? 1 : 0
   statement {
     effect  = "Allow"
@@ -94,9 +100,11 @@ resource "aws_iam_role_policy" "s3_required" {
   policy = data.aws_iam_policy_document.s3_required[0].json
 }
 
+################################################################################
+# ECR permissions
+################################################################################
 data "aws_iam_policy_document" "ecr_required" {
-  count = var.use_ecr_image ? 1 : 0
-  # ECR permissions
+  count = local.use_ecr_repository ? 1 : 0
   statement {
     effect = "Allow"
     actions = [
@@ -120,7 +128,7 @@ data "aws_iam_policy_document" "ecr_required" {
 }
 
 resource "aws_iam_role_policy" "ecr_required" {
-  count  = var.use_ecr_image ? 1 : 0
+  count  = local.use_ecr_repository ? 1 : 0
   name   = "${var.name}-ecr"
   role   = local.create_iam_role ? aws_iam_role.this[0].name : var.iam_role_name
   policy = data.aws_iam_policy_document.ecr_required[count.index].json
@@ -140,6 +148,9 @@ data "aws_iam_policy_document" "assume_role" {
   }
 }
 
+################################################################################
+# Create role
+################################################################################
 resource "aws_iam_role" "this" {
   count                = local.create_iam_role ? 1 : 0
   name                 = var.name
@@ -147,6 +158,9 @@ resource "aws_iam_role" "this" {
   permissions_boundary = var.iam_role_permissions_boundary == null ? null : var.iam_role_permissions_boundary
 }
 
+################################################################################
+# Custom permissions
+################################################################################
 resource "aws_iam_role_policy_attachment" "additional" {
   for_each = var.iam_role_policies
 

@@ -13,12 +13,6 @@ locals {
 
   subnet_arns = [for subnet_id in var.subnet_ids : "arn:aws:ec2:${local.aws_region}:${local.aws_account_id}:subnet/${subnet_id}"]
 
-  security_group_ids = (
-    length(var.security_group_ids) == 0
-    ? try([aws_security_group.codebuild[0].id], [])
-    : concat(try([aws_security_group.codebuild[0].id], []), var.security_group_ids)
-  )
-
   create_iam_role = var.iam_role_name == null
 
   cloudwatch_logs_group_arn = (
