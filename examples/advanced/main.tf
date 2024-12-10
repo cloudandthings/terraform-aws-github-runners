@@ -47,12 +47,17 @@ module "github_runner" {
   # Naming for all created resources
   name = "github-runner-codebuild-test"
 
+  # Environment image is not specified so it will default to:
+  # "${local.aws_account_id}.dkr.ecr.${local.aws_region}.amazonaws.com/${local.ecr_repository_name}:latest"
+  # Because an ECR repo is used
+
   vpc_id     = "vpc-0ffaabbcc1122"
   subnet_ids = ["subnet-0123", "subnet-0456"]
+
   # Optional parameters
   ################################
+  create_ecr_repository = true
 
   security_group_ids         = [aws_security_group.this.id]
-  use_ecr_image              = true
   cloudwatch_logs_group_name = "/some/log/group"
 }

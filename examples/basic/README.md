@@ -11,6 +11,9 @@ module "github_runner" {
   name            = "github-runner-codebuild-test"
   source_location = "https://github.com/my-org/my-repo.git"
 
+  # Environment image is not specified so it will default to:
+  # "aws/codebuild/amazonlinux2-x86_64-standard:5.0"
+
   # Optional parameters
   ############################
   github_personal_access_token = "example"

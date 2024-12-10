@@ -14,7 +14,7 @@
 exclude: '^modules/external/.*$'
 
 repos:
-# TERRAFORM
+  # TERRAFORM
   # If running tf-docs it must be run first to avoid race condition relating to version constraints.
   # BUG: terraform_docs hook conflicts when used more than once.
   # Workaround with Python
@@ -54,7 +54,8 @@ repos:
       - id: terraform_checkov
         # Configure checkov by creating and updating the config file below.
         args: ['--args=--config-file __GIT_WORKING_DIR__/.checkov-config.yml']
-# Python
+
+  # PYTHON
   - repo: https://github.com/psf/black
     rev: 22.6.0
     hooks:
@@ -63,7 +64,8 @@ repos:
     rev: 5.0.4
     hooks:
     - id: flake8
-# PRECOMMIT - GENERAL
+
+  # PRECOMMIT - GENERAL
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
     hooks:
@@ -91,6 +93,15 @@ repos:
         args: ['--branch', 'develop', '--branch', 'main', '--branch', 'master']
       - id: requirements-txt-fixer
       - id: trailing-whitespace
+
+  # CODESPELL
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.3.0
+    hooks:
+    - id: codespell
+      args: ['--write-changes']
+
+  # LOCAL
   - repo: local
     hooks:
     -   id: no-vanilla-readme
