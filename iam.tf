@@ -114,7 +114,7 @@ data "aws_iam_policy_document" "ecr_required" {
       "ecr:GetAuthorizationToken"
     ]
     resources = [
-      aws_ecr_repository.this[0].arn,
+      "arn:aws:ecr:${local.aws_region}:${local.aws_account_id}:repository/${local.ecr_repository_name}",
     ]
   }
 
