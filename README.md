@@ -42,7 +42,7 @@ This is because some of the GitHub `uses` actions do not work by default.
 
 # How it works
 
-<!-- TODO update diagram 
+<!-- TODO update diagram
 
 [![Infrastructure diagram](https://github.com/cloudandthings/terraform-aws-github-runners/blob/main/docs/images/runner.svg)](https://github.com/cloudandthings/terraform-aws-github-runners/blob/main/docs/images/runner.svg)
 
