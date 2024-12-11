@@ -8,31 +8,30 @@ Deploy GitHub Action runners in your AWS Account. Uses AWS CodeBuild to manage e
 ---
 
 [![Maintenance](https://img.shields.io/badge/Maintained-yes-green.svg)](https://github.com/cloudandthings/terraform-aws-github-runners/graphs/commit-activity)
-[![Test Status](https://github.com/cloudandthings/terraform-aws-github-runners/actions/workflows/main.yml/badge.svg)](https://github.com/cloudandthings/terraform-aws-github-runners/actions/workflows/main.yml)
 ![Terraform Version](https://img.shields.io/badge/tf-%3E%3D0.13.0-blue)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 
 ## Why?
 
-Deploying self-hosted GitHub runner should be simple.
+Deploying self-hosted GitHub runners should be simple and cheap.
 It shouldn't need a long setup process or a lot of infrastructure.
 
-This module additionally does not require public inbound traffic, and can be easily customised if needed.
+#### Features
 
-## Features
+- Simple. See the examples for a quick-start.
+- Serverless. No EC2 instances that need to be maintained.
+- Cost-effective. You are billed only when a CodeBuild project is running your GitHub workflow. Projects are billed per build minute.
+- Scalable. Runners are subject to [AWS CodeBuild quotas](https://docs.aws.amazon.com/codebuild/latest/userguide/limits.html)
 
-- Simple! See the provided examples for a quick-start.
-- Serverless. No EC2 instances that need to be maintained
-- Cost-effective. Only billed for when CodeBuild project is running as projects are billed per build minute.
-- Scalable. By default one runner process and 20GB storage is provided per vCPU per EC2 instance.
+For many projects, CI/CD is run infrequently and there are long periods of time when no CI/CD runs occur. Using AWS CodeBuild means that GitHub runners are always available, billed only when used, and cost nothing when idle.
 
-For many projects, CI/CD is run infrequently and there are long periods of time when no CI/CD runs occur. Using CodeBuild means that GitHub runners are always available, and cost nothing when idle.
+This module additionally does not require public inbound traffic, and it can be easily customised if needed.
 
 ## Previous version notice
 
 Previously, this module used EC2 spot instances with configurable AutoScaling.
 
-Should you wish to continue to use this older approach, the code has been moved to (terraform-aws-github-runners-ec2)[https://github.com/cloudandthings/terraform-aws-github-runners-ec2].
+Should you wish to continue to use this older approach, the code has been moved to [terraform-aws-github-runners-ec2](https://github.com/cloudandthings/terraform-aws-github-runners-ec2)
 
 ## Known limitations
 
@@ -43,9 +42,11 @@ This is because some of the GitHub `uses` actions do not work by default.
 
 # How it works
 
-<!-- TODO update diagram -->
+<!-- TODO update diagram 
 
 [![Infrastructure diagram](https://github.com/cloudandthings/terraform-aws-github-runners/blob/main/docs/images/runner.svg)](https://github.com/cloudandthings/terraform-aws-github-runners/blob/main/docs/images/runner.svg)
+
+-->
 
 An AWS CodeBuild Project and a webhook is created in a specific GitHub repo. The webhook is used to trigger the build project when a Github Action is triggered. The CodeBuild project run will self-configure as a GitHub runner, and run the job commands in the repo's workflow file.
 
@@ -61,19 +62,38 @@ For example:
 ## 1. Setup authentication to GitHub
 
 There are several ways to set up authentication to GitHub.
-Follow the guide [here](/docs/GITHUB-AUTH-SETUP.md).
+Follow the guide [here](https://github.com/cloudandthings/terraform-aws-github-runners/blob/main/docs/GITHUB-AUTH-SETUP.md).
 
 ## 2. Configure this module
 
 Configure and deploy this module using Terraform. See examples below.
 
-## 3. (Optional) create a custom Docker image
+## 3. (Optional) Use a custom Docker image
 
-If you want the runner to execute in a pre-configured environment you can build and push your own Docker image for it to use.
+You may want the runner to execute in a pre-configured environment.
+
+The value of `environment_image` is used to specify a Docker image for this purpose.
+
+Valid values include:
+
+- Docker images provided by CodeBuild, e.g `aws/codebuild/amazonlinux2-x86_64-standard:4.0`
+- Docker Hub images, e.g. `hashicorp/terraform:latest`
+- Full Docker repository URIs, such as those for Amazon ECR, e.g. `137112412989.dkr.ecr.us-west-2.amazonaws.com/amazonlinux:latest`
+
+Logic in the module is used to determine the final image to be used.
+
+- Whenever you specify a value for `var.environment_image` then your specified value is used.
+- If no value was specified for `var.environment_image` and you are not using Amazon ECR, then a default CodeBuild image is used - specifically `aws/codebuild/amazonlinux2-x86_64-standard:5.0`.
+- If no value was specified for `var.environment_image` and you are using Amazon ECR, then an image with a `latest` tag is assumed to exist in your Amazon ECR repo and the module will try to use it.
+
+To use Amazon ECR you may either provide the name of an existing ECR repository, or use this module to create one for you.
+You will need to ensure an image is created in the ECR repository with a `latest` tag, or you can specify a different tag by using a specific value for `environment_image` as described above.
+
+The final value of `environment_image` is provided as an output variable so you can view and use it.
 
 # More info
 
-- Found an issue? Want to help? See the [contribution guide](/CONTRIBUTING.md).
+- Found an issue? Want to help? See [CONTRIBUTING.md](https://github.com/cloudandthings/terraform-aws-github-runners/blob/main/CONTRIBUTING.md).
 
 <!-- TODO cost estimate
 
