@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.0.0](https://github.com/cloudandthings/terraform-aws-github-runners/compare/v2.0.1...v3.0.0) (2024-12-11)
+
+
+### ⚠ BREAKING CHANGES
+
+* Allow custom ECR, rename var.use_ecr_image, and cleanup
+
+### Features
+
+* Allow custom ECR, rename var.use_ecr_image, and cleanup ([a6bb3f8](https://github.com/cloudandthings/terraform-aws-github-runners/commit/a6bb3f865299d6194f6ac5106c9a13f4b07224c2))
+
+
+### Bug Fixes
+
+* Fix README and provide more details on custom image ([#53](https://github.com/cloudandthings/terraform-aws-github-runners/issues/53)) ([1df2713](https://github.com/cloudandthings/terraform-aws-github-runners/commit/1df2713d71be2faa71167ba630842cdf7b38b2e1))
+
 ## [2.0.1](https://github.com/cloudandthings/terraform-aws-github-runners/compare/v2.0.0...v2.0.1) (2024-12-05)
 
 
