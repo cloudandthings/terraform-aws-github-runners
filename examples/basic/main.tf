@@ -12,6 +12,8 @@ module "github_runner" {
 
   # Optional parameters
   ############################
+  description = "Created by my-org/my-runner-repo.git"
+
   github_personal_access_token = "example"
 
   vpc_id     = "vpc-0ffaabbcc1122"
