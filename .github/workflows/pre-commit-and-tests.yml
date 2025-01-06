@@ -33,7 +33,8 @@ jobs:
     container: bjorncloudandthings/terraform-aws-github:latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-python@v2
+      - uses: actions/setup-python@v5
+        # 2025-01: Can't upgrade to setup-terraform@v3 due to NodeJS incompatibility with container image.
       - uses: hashicorp/setup-terraform@v2
       - name: Install requirements
         run: |
