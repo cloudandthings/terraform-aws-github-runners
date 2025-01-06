@@ -56,6 +56,8 @@ module "github_runner" {
 
   # Optional parameters
   ################################
+  description = "Created by my-org/my-runner-repo.git"
+
   create_ecr_repository = true
 
   security_group_ids         = [aws_security_group.this.id]
