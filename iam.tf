@@ -134,6 +134,31 @@ resource "aws_iam_role_policy" "ecr_required" {
   policy = data.aws_iam_policy_document.ecr_required[count.index].json
 }
 
+data "aws_iam_policy_document" "codeconnection_required" {
+  count = local.has_github_codeconnection_arn ? 1 : 0
+  statement {
+    effect = "Allow"
+    actions = [
+      "codeconnections:GetConnection",
+      "codeconnections:GetConnectionToken",
+      "codeconnections:UseConnection",
+      "codestar-connections:GetConnection",
+      "codestar-connections:GetConnectionToken"
+    ]
+    resources = [
+      replace(var.github_codeconnection_arn, "/^arn:aws:code(star-|)connections:/", "arn:aws:codestar-connections:"),
+      replace(var.github_codeconnection_arn, "/^arn:aws:code(star-|)connections:/", "arn:aws:codeconnections:")
+    ]
+  }
+}
+
+resource "aws_iam_role_policy" "codeconnection_required" {
+  count  = local.has_github_codeconnection_arn ? 1 : 0
+  name   = "${var.name}-codeconnection"
+  role   = local.create_iam_role ? aws_iam_role.this[0].name : var.iam_role_name
+  policy = data.aws_iam_policy_document.codeconnection_required[count.index].json
+}
+
 data "aws_iam_policy_document" "assume_role" {
   count = local.create_iam_role ? 1 : 0
   statement {
