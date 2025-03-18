@@ -138,17 +138,16 @@ data "aws_iam_policy_document" "codeconnection_required" {
   count = local.has_github_codeconnection_arn ? 1 : 0
   statement {
     effect = "Allow"
-    actions = [
-      "codeconnections:GetConnection",
-      "codeconnections:GetConnectionToken",
-      "codeconnections:UseConnection",
+    # https://docs.aws.amazon.com/dtconsole/latest/userguide/rename.html
+    actions = startswith(var.github_codeconnection_arn, "arn:aws:codestar-connections:") ? [
       "codestar-connections:GetConnection",
       "codestar-connections:GetConnectionToken"
+      ] : [
+      "codeconnections:GetConnection",
+      "codeconnections:GetConnectionToken",
+      "codeconnections:UseConnection"
     ]
-    resources = [
-      replace(var.github_codeconnection_arn, "/^arn:aws:code(star-|)connections:/", "arn:aws:codestar-connections:"),
-      replace(var.github_codeconnection_arn, "/^arn:aws:code(star-|)connections:/", "arn:aws:codeconnections:")
-    ]
+    resources = [var.github_codeconnection_arn]
   }
 }
 
