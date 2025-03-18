@@ -110,7 +110,8 @@ resource "aws_codebuild_webhook" "this" {
   depends_on = [
     aws_codebuild_source_credential.string,
     aws_codebuild_source_credential.ssm,
-    aws_codebuild_source_credential.codeconnection
+    aws_codebuild_source_credential.codeconnection,
+    aws_iam_role_policy.codeconnection_required
   ]
   project_name = aws_codebuild_project.this.name
   build_type   = "BUILD"
