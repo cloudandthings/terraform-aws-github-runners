@@ -135,17 +135,23 @@ resource "aws_iam_role_policy" "ecr_required" {
 }
 
 data "aws_iam_policy_document" "assume_role" {
-  count = local.create_iam_role ? 1 : 0
   statement {
     effect = "Allow"
-
     principals {
       type        = "Service"
       identifiers = ["codebuild.amazonaws.com"]
     }
-
     actions = ["sts:AssumeRole"]
+    condition {
+      test     = "StringEquals"
+      variable = "aws:SourceAccount"
+      values   = [data.aws_caller_identity.current.account_id]
+    }
   }
+}
+
+locals {
+  assume_role_policy = var.iam_role_assume_role_policy == null ? data.aws_iam_policy_document.assume_role.json : var.iam_role_assume_role_policy
 }
 
 ################################################################################
@@ -154,7 +160,7 @@ data "aws_iam_policy_document" "assume_role" {
 resource "aws_iam_role" "this" {
   count                = local.create_iam_role ? 1 : 0
   name                 = var.name
-  assume_role_policy   = data.aws_iam_policy_document.assume_role[0].json
+  assume_role_policy   = local.assume_role_policy
   permissions_boundary = var.iam_role_permissions_boundary == null ? null : var.iam_role_permissions_boundary
 }
 
