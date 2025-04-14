@@ -120,6 +120,12 @@ variable "iam_role_name" {
   default     = null
 }
 
+variable "iam_role_assume_role_policy" {
+  description = "The IAM role assume role policy document to use. If not specified then a default is used."
+  type        = string
+  default     = null
+}
+
 variable "iam_role_policies" {
   description = "Map of IAM role policy ARNs to attach to the IAM role"
   type        = map(string)
