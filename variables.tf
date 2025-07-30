@@ -151,6 +151,12 @@ variable "github_personal_access_token_ssm_parameter" {
   default     = null
 }
 
+variable "github_codeconnection_arn" {
+  description = "ARN of an active GitHub app CodeConnection. If not specified then GitHub auth must be configured separately."
+  type        = string
+  default     = null
+}
+
 # Encryption
 variable "kms_key_id" {
   description = "The AWS KMS key to be used"
