@@ -11,6 +11,8 @@ locals {
 
   has_github_personal_access_token_ssm_parameter = var.github_personal_access_token_ssm_parameter != null
 
+  has_github_codeconnection_arn = var.github_codeconnection_arn != null
+
   subnet_arns = [for subnet_id in var.subnet_ids : "arn:aws:ec2:${local.aws_region}:${local.aws_account_id}:subnet/${subnet_id}"]
 
   create_iam_role = var.iam_role_name == null

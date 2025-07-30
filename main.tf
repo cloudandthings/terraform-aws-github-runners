@@ -18,6 +18,7 @@ locals {
 }
 
 resource "aws_codebuild_project" "this" {
+  depends_on    = [aws_iam_role_policy.codeconnection_required]
   name          = var.name
   description   = var.description
   build_timeout = var.build_timeout
@@ -98,8 +99,20 @@ resource "aws_codebuild_source_credential" "ssm" {
   token       = data.aws_ssm_parameter.github_personal_access_token[0].value
 }
 
+resource "aws_codebuild_source_credential" "codeconnection" {
+  count       = local.has_github_codeconnection_arn ? 1 : 0
+  auth_type   = "CODECONNECTIONS"
+  server_type = "GITHUB"
+  token       = var.github_codeconnection_arn
+}
+
 resource "aws_codebuild_webhook" "this" {
-  depends_on   = [aws_codebuild_source_credential.string, aws_codebuild_source_credential.ssm]
+  depends_on = [
+    aws_codebuild_source_credential.string,
+    aws_codebuild_source_credential.ssm,
+    aws_codebuild_source_credential.codeconnection,
+    aws_iam_role_policy.codeconnection_required
+  ]
   project_name = aws_codebuild_project.this.name
   build_type   = "BUILD"
   filter_group {
