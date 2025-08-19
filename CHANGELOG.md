@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.1.1](https://github.com/cloudandthings/terraform-aws-github-runners/compare/v3.1.0...v3.1.1) (2025-08-19)
+
+
+### Bug Fixes
+
+* **versions:** Bump aws provider version to allow v6 ([97d5f14](https://github.com/cloudandthings/terraform-aws-github-runners/commit/97d5f14117335d5ec46a94576640c1d2d879dfa1))
+
 ## [3.1.0](https://github.com/cloudandthings/terraform-aws-github-runners/compare/v3.0.1...v3.1.0) (2025-07-30)
 
 
