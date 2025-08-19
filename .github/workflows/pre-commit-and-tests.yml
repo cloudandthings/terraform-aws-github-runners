@@ -33,9 +33,22 @@ jobs:
     container: bjorncloudandthings/terraform-aws-github:latest
     steps:
       - uses: actions/checkout@v3
+
+      - name: Get versions
+        id: versions
+        run: |
+          echo "python_version=$(cat .python-version)" >> $GITHUB_OUTPUT
+          echo "terraform_version=$(cat .terraform-version)" >> $GITHUB_OUTPUT
+
       - uses: actions/setup-python@v5
-        # 2025-01: Can't upgrade to setup-terraform@v3 due to NodeJS incompatibility with container image.
+        with:
+          python-version: ${{ steps.versions.outputs.python_version }}
+
+          # 2025-01: Can't upgrade to setup-terraform@v3 due to NodeJS incompatibility with container image.
       - uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: ${{ steps.versions.outputs.terraform_version }}
+
       - name: Install requirements
         run: |
           python -m venv .venv
@@ -46,6 +59,7 @@ jobs:
             pip install pre-commit
             pip install checkov
           fi
+
       - name: Run
         run: |
           source .venv/bin/activate
@@ -54,6 +68,7 @@ jobs:
             export SKIP=no-vanilla-readme
           fi
           pre-commit run --all-files --show-diff-on-failure
+
       - name: cat pre-commit log
         if: failure()
         run: cat ~/.cache/pre-commit/pre-commit.log
