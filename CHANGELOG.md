@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.1.1](https://github.com/cloudandthings/terraform-aws-github-runners/compare/v3.1.0...v3.1.1) (2025-08-19)
+
+
+### Bug Fixes
+
+* **versions:** Bump aws provider version to allow v6 ([97d5f14](https://github.com/cloudandthings/terraform-aws-github-runners/commit/97d5f14117335d5ec46a94576640c1d2d879dfa1))
+
+## [3.1.0](https://github.com/cloudandthings/terraform-aws-github-runners/compare/v3.0.1...v3.1.0) (2025-07-30)
+
+
+### Features
+
+* Add support for GitHub App CodeConnection ([#64](https://github.com/cloudandthings/terraform-aws-github-runners/issues/64)) ([9772d72](https://github.com/cloudandthings/terraform-aws-github-runners/commit/9772d72961a8cda346cf253f50323245700b4a90))
+
+
+### Bug Fixes
+
+* Add condition to IAM assume role policy ([b8e2b3b](https://github.com/cloudandthings/terraform-aws-github-runners/commit/b8e2b3b9fb3ccd9ed52e14bdd4b359ab7f57fca7))
+
 ## [3.0.1](https://github.com/cloudandthings/terraform-aws-github-runners/compare/v3.0.0...v3.0.1) (2025-01-06)
 
 
