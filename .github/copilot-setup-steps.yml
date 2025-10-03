@@ -1,0 +1,29 @@
+steps:
+  - name: Install mise
+    command: |
+      curl https://mise.run | sh
+      echo 'eval "$(~/.local/bin/mise activate bash)"' >> ~/.bashrc
+      export PATH="$HOME/.local/bin:$PATH"
+      eval "$(~/.local/bin/mise activate bash)"
+    description: Install mise - a polyglot tool version manager
+
+  - name: Install development tools with mise
+    command: |
+      export PATH="$HOME/.local/bin:$PATH"
+      eval "$(~/.local/bin/mise activate bash)"
+      mise install
+    description: Install Terraform and Python using mise based on .tool-versions file
+
+  - name: Install pre-commit
+    command: |
+      export PATH="$HOME/.local/bin:$PATH"
+      eval "$(~/.local/bin/mise activate bash)"
+      pip install pre-commit
+    description: Install pre-commit hooks framework
+
+  - name: Install pre-commit hooks
+    command: |
+      export PATH="$HOME/.local/bin:$PATH"
+      eval "$(~/.local/bin/mise activate bash)"
+      pre-commit install
+    description: Set up pre-commit hooks for the repository
