@@ -140,19 +140,25 @@ variable "iam_role_permissions_boundary" {
 
 # GitHub
 variable "github_personal_access_token" {
-  description = "The GitHub personal access token to use for accessing the repository. If not specified then GitHub auth must be configured separately."
+  description = "The GitHub personal access token for the region-wide CodeBuild Source Credential. See `docs/GITHUB-AUTH-SETUP.md` for more information."
+  type        = string
+  default     = null
+}
+
+variable "github_personal_access_token_secretsmanager_secret_arn" {
+  description = "The Secret ARN containing the credentials to use for the region-wide CodeBuild Source Credential. See `docs/GITHUB-AUTH-SETUP.md` for more information."
   type        = string
   default     = null
 }
 
 variable "github_personal_access_token_ssm_parameter" {
-  description = "The GitHub personal access token to use for accessing the repository. If not specified then GitHub auth must be configured separately."
+  description = "SSM parameter containing the GitHub personal access token to use for the region-wide CodeBuild Source Credential. See `docs/GITHUB-AUTH-SETUP.md` for more information."
   type        = string
   default     = null
 }
 
 variable "github_codeconnection_arn" {
-  description = "ARN of an active GitHub app CodeConnection. If not specified then GitHub auth must be configured separately."
+  description = "ARN of an active GitHub app CodeConnection to use for the region-wide CodeBuild Source Credential. See `docs/GITHUB-AUTH-SETUP.md` for more information."
   type        = string
   default     = null
 }

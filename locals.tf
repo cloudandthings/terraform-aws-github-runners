@@ -9,6 +9,8 @@ locals {
 
   has_github_personal_access_token = var.github_personal_access_token != null
 
+  has_github_personal_access_token_secret_arn = var.github_personal_access_token_secretsmanager_secret_arn != null
+
   has_github_personal_access_token_ssm_parameter = var.github_personal_access_token_ssm_parameter != null
 
   has_github_codeconnection_arn = var.github_codeconnection_arn != null
