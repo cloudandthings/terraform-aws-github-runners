@@ -145,7 +145,7 @@ variable "github_personal_access_token" {
   default     = null
 }
 
-variable "github_personal_access_token_secretsmanager_secret_arn" {
+variable "github_secretsmanager_secret_arn" {
   description = "The Secret ARN containing the credentials to use for the region-wide CodeBuild Source Credential. See `docs/GITHUB-AUTH-SETUP.md` for more information."
   type        = string
   default     = null

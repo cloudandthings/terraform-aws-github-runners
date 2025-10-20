@@ -96,7 +96,7 @@ resource "aws_codebuild_source_credential" "secret" {
   count       = local.has_github_personal_access_token_secret_arn ? 1 : 0
   auth_type   = "SECRETS_MANAGER"
   server_type = "GITHUB"
-  token       = var.github_personal_access_token_secretsmanager_secret_arn
+  token       = var.github_secretsmanager_secret_arn
 }
 
 resource "aws_codebuild_source_credential" "ssm" {
