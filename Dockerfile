@@ -1,33 +1,21 @@
-# Docker image for executing Terraform static code analysis tools and pre-commit hooks
-# This may be run as a devcontainer in VSCode or as a standalone container for tests
-# Inspired by https://github.com/alastairhm/docker-terraform-check
-
-ARG TAG=latest
-
-FROM ubuntu:${TAG} as this
-
-ARG USER=user
-
-ARG TFSEC_VER=v1.28.1
-ARG TFLINT_VER=v0.43.0
-ARG TFDOCS_VER=v0.19.0
+# Use latest Ubuntu-based devcontainer by default
+ARG TAG="latest"
+FROM mcr.microsoft.com/vscode/devcontainers/base:${TAG}
 
 # Install additional OS packages.
-RUN apt-get update && export DEBIAN_FRONTEND=noninteractive && \
-    apt-get -y install --no-install-recommends \
-    bash ca-certificates wget git unzip tar python3 python3-venv && \
-    update-ca-certificates -f
+RUN apt update -y && export DEBIAN_FRONTEND=noninteractive \
+    && apt install -y --no-install-recommends gpg wget curl
 
-# Install Terraform static code analysis tools.
-COPY .tflint.hcl .
-COPY .tfsec-config.yml .
-COPY .tfdocs-config.yml .
-RUN wget https://github.com/aquasecurity/tfsec/releases/download/${TFSEC_VER}/tfsec-linux-amd64 -O /usr/bin/tfsec && chmod +x /usr/bin/tfsec && \
-    wget https://github.com/terraform-linters/tflint/releases/download/${TFLINT_VER}/tflint_linux_amd64.zip && unzip tflint_linux_amd64.zip && mv tflint /usr/bin && rm tflint_linux_amd64.zip && \
-    tflint --config .tflint.hcl --init && \
-    wget https://github.com/terraform-docs/terraform-docs/releases/download/${TFDOCS_VER}/terraform-docs-${TFDOCS_VER}-linux-amd64.tar.gz -O terraform-docs.tar.gz && \
-    tar -xzf terraform-docs.tar.gz && chmod +x terraform-docs && mv terraform-docs /usr/bin && rm terraform-docs.tar.gz
+# Install mise for Ubuntu
+RUN install -dm 755 /etc/apt/keyrings \
+    && wget -qO - https://mise.jdx.dev/gpg-key.pub | gpg --dearmor | tee /etc/apt/keyrings/mise-archive-keyring.gpg 1> /dev/null \
+    && echo "deb [signed-by=/etc/apt/keyrings/mise-archive-keyring.gpg arch=amd64] https://mise.jdx.dev/deb stable main" | tee /etc/apt/sources.list.d/mise.list \
+    && apt update -y && apt install -y mise
 
-# For dev container in VSCode, create a non-root user.
-RUN useradd -ms /bin/bash ${USER}
-USER ${USER}
+# 1] Activate mise by default in bash
+# 2] Add mise shims to path
+RUN echo 'eval "$(/usr/bin/mise activate bash)"' >> /etc/bash.bashrc \
+    && echo 'export PATH="$HOME/.local/share/mise/shims:$PATH"' >> /etc/bash.bashrc
+
+# AVD-DS-0002 (HIGH): Specify at least 1 USER command in Dockerfile with non-root user as argument
+USER vscode

@@ -34,7 +34,7 @@ Follow the [AWS documentation](https://docs.aws.amazon.com/dtconsole/latest/user
 
 ### Option B: Terraform Resource (Recommended for IaC)
 
-This approach is recommended for if you want to manage infrastructure through Terraform. 
+This approach is recommended for if you want to manage infrastructure through Terraform.
 
 Define an [`aws_codebuild_source_credential`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codebuild_source_credential) resource in your Terraform project.
 
@@ -70,7 +70,7 @@ You may use one of the following input variables:
 github_personal_access_token_secretsmanager_secret_arn = "arn:aws:secretsmanager:region:account-id:secret:name"
 ```
 
-You store the token in AWS Secrets Manager, and provide the secret ARN as input. 
+You store the token in AWS Secrets Manager, and provide the secret ARN as input.
 The module does not read the secret, it passes the ARN to the CodeBuild credential resource.
 
 #### Direct Token Value
@@ -87,8 +87,8 @@ You provide the token value as a string input.
 github_personal_access_token_ssm_parameter = "/path/to/parameter"
 ```
 
-Store your token in AWS Systems Manager Parameter Store as a `SecureString` type parameter. 
-YOu provide the SSM parameter path as input.
+Store your token in AWS Systems Manager Parameter Store as a `SecureString` type parameter.
+You provide the SSM parameter path as input.
 
 The module will retrieve it and use it to create the CodeBuild credential.
 

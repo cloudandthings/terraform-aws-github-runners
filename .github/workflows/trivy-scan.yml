@@ -1,0 +1,37 @@
+name: Trivy Security Scan
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+      - master
+      - develop
+  push:
+    branches:
+      - main
+      - master
+      - develop
+
+jobs:
+  security-scan:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write  # For uploading SARIF results
+      actions: read           # Required for workflow run information
+    strategy:
+      matrix:
+        scan-type: [fs, config]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run Trivy vulnerability scanner (console output)
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: ${{ matrix.scan-type }}
+          scan-ref: '.'
+          format: 'table'
+          severity: 'HIGH,CRITICAL'
+          exit-code: 1
