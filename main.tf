@@ -92,7 +92,7 @@ resource "aws_codebuild_source_credential" "string" {
   token       = var.github_personal_access_token
 }
 
-resource "aws_codebuild_source_credential" "string" {
+resource "aws_codebuild_source_credential" "secret" {
   count       = local.has_github_personal_access_token_secret_arn ? 1 : 0
   auth_type   = "SECRETS_MANAGER"
   server_type = "GITHUB"
@@ -117,6 +117,7 @@ resource "aws_codebuild_webhook" "this" {
   depends_on = [
     aws_codebuild_source_credential.string,
     aws_codebuild_source_credential.ssm,
+    aws_codebuild_source_credential.secret,
     aws_codebuild_source_credential.codeconnection,
     aws_iam_role_policy.codeconnection_required
   ]

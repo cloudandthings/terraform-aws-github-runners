@@ -1,5 +1,13 @@
 {
     "recommendations": [
-        "ms-vscode-remote.remote-containers"
+        "amazonwebservices.aws-toolkit-vscode",
+        "aquasecurityofficial.trivy-vulnerability-scanner",
+        "davidanson.vscode-markdownlint",
+        "hashicorp.terraform",
+        "redhat.vscode-yaml",
+        "ms-azuretools.vscode-containers",
+        "ms-python.black-formatter",
+        "ms-python.python",
+        "ms-python.vscode-pylance"
     ]
 }

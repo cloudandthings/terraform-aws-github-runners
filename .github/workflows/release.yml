@@ -1,0 +1,25 @@
+name: release
+
+# Overview ref: https://github.com/googleapis/release-please
+# Configuration ref: https://github.com/googleapis/release-please-action
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - master
+      - develop
+
+jobs:
+  release-please:
+    name: 🙏 release-please
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: release-please
+        uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          release-type: simple
