@@ -67,10 +67,10 @@ You may use one of the following input variables:
 
 #### AWS SecretsManager
 ```terraform
-github_personal_access_token_secretsmanager_secret_arn = "arn:aws:secretsmanager:region:account-id:secret:name"
+github_secretsmanager_secret_arn = "arn:aws:secretsmanager:region:account-id:secret:name"
 ```
 
-You store the token in AWS Secrets Manager, and provide the secret ARN as input.
+You store credentials in AWS Secrets Manager, and provide the secret ARN as input.
 The module does not read the secret, it passes the ARN to the CodeBuild credential resource.
 
 #### Direct Token Value
