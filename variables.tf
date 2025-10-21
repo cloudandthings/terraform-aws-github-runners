@@ -9,11 +9,14 @@ variable "name" {
     error_message = "The name variable cannot be an empty string."
   }
 }
-# TODO check how this is done elsewhere.
 
 variable "source_location" {
   type        = string
   description = "Your source code repo location, for example https://github.com/my/repo.git"
+  validation {
+    condition     = can(regex("^https://github\\.com/[^/]+/[^/]+\\.git$", var.source_location))
+    error_message = "The source_location must be a valid GitHub repository URL in the format: https://github.com/owner/repo.git"
+  }
 }
 
 # -----------------------------------------------------
@@ -25,6 +28,10 @@ variable "build_timeout" {
   type        = number
   default     = 5
   description = "Number of minutes, from 5 to 2160 (36 hours), for AWS CodeBuild to wait until timing out any related build that does not get marked as completed."
+  validation {
+    condition     = var.build_timeout >= 5 && var.build_timeout <= 2160
+    error_message = "The build_timeout must be between 5 and 2160 minutes (36 hours)."
+  }
 }
 
 variable "description" {
@@ -84,6 +91,12 @@ variable "cloudwatch_log_group_retention_in_days" {
   description = "Number of days to retain log events"
   type        = number
   default     = 14
+  validation {
+    condition = contains([
+      0, 1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1096, 1827, 2192, 2557, 2922, 3288, 3653
+    ], var.cloudwatch_log_group_retention_in_days)
+    error_message = "The cloudwatch_log_group_retention_in_days must be one of the valid CloudWatch Logs retention values: 0 (never expire), 1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1096, 1827, 2192, 2557, 2922, 3288, or 3653 days."
+  }
 }
 
 variable "s3_logs_bucket_name" {

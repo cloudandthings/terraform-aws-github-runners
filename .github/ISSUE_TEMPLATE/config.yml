@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Question or Discussion
+    url: https://github.com/cloudandthings/terraform-aws-github-runners/discussions
+    about: Ask questions or discuss ideas with the community
+  - name: 📚 Documentation
+    url: https://github.com/cloudandthings/terraform-aws-github-runners/blob/main/README.md
+    about: Read the documentation and examples
+  - name: 🔒 Security Vulnerability
+    url: https://github.com/cloudandthings/terraform-aws-github-runners/security/advisories/new
+    about: Report a security vulnerability privately
