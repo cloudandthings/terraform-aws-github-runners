@@ -83,7 +83,7 @@ body:
       placeholder: |
         module "github_runner" {
           source = "cloudandthings/github-runners/aws"
-          
+
           # Example of how the new feature would be used
           new_feature = "example"
         }
