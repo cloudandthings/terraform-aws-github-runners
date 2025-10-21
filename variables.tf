@@ -52,6 +52,15 @@ variable "environment_image" {
   description = "Docker image to use for this build project. Valid values include Docker images provided by CodeBuild (e.g `aws/codebuild/amazonlinux2-x86_64-standard:4.0`), Docker Hub images (e.g., `hashicorp/terraform:latest`) and full Docker repository URIs such as those for ECR (e.g., `137112412989.dkr.ecr.us-west-2.amazonaws.com/amazonlinux:latest`). If not specified and not using ECR, then a default CodeBuild image is used, or if using ECR then an ECR image with a `latest` tag is used."
 }
 
+variable "source_auth" {
+  description = "Override the default CodeBuild source credential for this project. This allows using project-specific authentication instead of the account/region baseline credential. See docs/GITHUB-AUTH-SETUP.md for usage details."
+  type = object({
+    type     = string
+    resource = string
+  })
+  default = null
+}
+
 # logs
 variable "create_cloudwatch_log_group" {
   description = "Determines whether a log group is created by this module. If not, AWS will automatically create one if logging is enabled"

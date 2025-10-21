@@ -73,6 +73,14 @@ resource "aws_codebuild_project" "this" {
     git_submodules_config {
       fetch_submodules = true
     }
+
+    dynamic "auth" {
+      for_each = var.source_auth != null ? [1] : []
+      content {
+        type     = var.source_auth.type
+        resource = var.source_auth.resource
+      }
+    }
   }
 
   dynamic "vpc_config" {

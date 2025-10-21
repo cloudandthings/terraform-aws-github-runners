@@ -188,6 +188,7 @@ module "github_runner" {
   ############################
   description = "Created by my-org/my-runner-repo.git"
 
+  # testing purposes only
   github_personal_access_token = "example"
 
   vpc_id     = "vpc-0ffaabbcc1122"
@@ -234,13 +235,19 @@ resource "aws_security_group_rule" "ssh_ingress" {
   security_group_id = aws_security_group.this.id
 }
 
+# Create a baseline CodeBuild credential that all GitHub projects will use by default
+resource "aws_codebuild_source_credential" "github" {
+  auth_type   = "SECRETS_MANAGER"
+  server_type = "GITHUB"
+  token       = "arn:aws:secretsmanager:region:account-id:secret:name"
+}
+
 module "github_runner" {
   source = "../../"
 
   # Required parameters
   ############################
-  source_location                            = "https://github.com/my-org/my-repo.git"
-  github_personal_access_token_ssm_parameter = "example"
+  source_location = "https://github.com/my-org/my-repo.git"
 
   # Naming for all created resources
   name = "github-runner-codebuild-test"
@@ -257,6 +264,12 @@ module "github_runner" {
   description = "Created by my-org/my-runner-repo.git"
 
   create_ecr_repository = true
+
+  # Override the baseline CodeBuild credential
+  source_auth = {
+    type     = "SECRETS_MANAGER"
+    resource = "arn:aws:secretsmanager:af-south-1:123456789012:secret:my-github-oauth-token-secret-nwYBWW"
+  }
 
   security_group_ids         = [aws_security_group.this.id]
   cloudwatch_logs_group_name = "/some/log/group"
@@ -293,6 +306,7 @@ module "github_runner" {
 | <a name="input_s3_logs_bucket_prefix"></a> [s3\_logs\_bucket\_prefix](#input\_s3\_logs\_bucket\_prefix) | Prefix to use for the logs in the S3 bucket | `string` | `""` | no |
 | <a name="input_security_group_ids"></a> [security\_group\_ids](#input\_security\_group\_ids) | The list of Security Group IDs for AWS CodeBuild to launch ephemeral EC2 instances in. | `list(string)` | `[]` | no |
 | <a name="input_security_group_name"></a> [security\_group\_name](#input\_security\_group\_name) | Name to use on created Security Group. Defaults to `name` | `string` | `null` | no |
+| <a name="input_source_auth"></a> [source\_auth](#input\_source\_auth) | Override the default CodeBuild source credential for this project. This allows using project-specific authentication instead of the account/region baseline credential. See docs/GITHUB-AUTH-SETUP.md for usage details. | <pre>object({<br/>    type     = string<br/>    resource = string<br/>  })</pre> | `null` | no |
 | <a name="input_source_location"></a> [source\_location](#input\_source\_location) | Your source code repo location, for example https://github.com/my/repo.git | `string` | n/a | yes |
 | <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | The list of Subnet IDs for AWS CodeBuild to launch ephemeral EC2 instances in. | `list(string)` | `[]` | no |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | The VPC ID for AWS CodeBuild to launch ephemeral instances in. | `string` | `null` | no |

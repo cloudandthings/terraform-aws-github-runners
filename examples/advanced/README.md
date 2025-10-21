@@ -40,13 +40,19 @@ resource "aws_security_group_rule" "ssh_ingress" {
   security_group_id = aws_security_group.this.id
 }
 
+# Create a baseline CodeBuild credential that all GitHub projects will use by default
+resource "aws_codebuild_source_credential" "github" {
+  auth_type   = "SECRETS_MANAGER"
+  server_type = "GITHUB"
+  token       = "arn:aws:secretsmanager:region:account-id:secret:name"
+}
+
 module "github_runner" {
   source = "../../"
 
   # Required parameters
   ############################
-  source_location                            = "https://github.com/my-org/my-repo.git"
-  github_personal_access_token_ssm_parameter = "example"
+  source_location = "https://github.com/my-org/my-repo.git"
 
   # Naming for all created resources
   name = "github-runner-codebuild-test"
@@ -63,6 +69,12 @@ module "github_runner" {
   description = "Created by my-org/my-runner-repo.git"
 
   create_ecr_repository = true
+
+  # Override the baseline CodeBuild credential
+  source_auth = {
+    type     = "SECRETS_MANAGER"
+    resource = "arn:aws:secretsmanager:af-south-1:123456789012:secret:my-github-oauth-token-secret-nwYBWW"
+  }
 
   security_group_ids         = [aws_security_group.this.id]
   cloudwatch_logs_group_name = "/some/log/group"
@@ -111,6 +123,7 @@ No outputs.
 
 | Name | Type |
 |------|------|
+| [aws_codebuild_source_credential.github](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codebuild_source_credential) | resource |
 | [aws_security_group.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
 | [aws_security_group_rule.ssh_ingress](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
 | [http_http.myip](https://registry.terraform.io/providers/hashicorp/http/latest/docs/data-sources/http) | data source |
