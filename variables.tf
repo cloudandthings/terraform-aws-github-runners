@@ -13,7 +13,7 @@ variable "name" {
 
 variable "source_location" {
   type        = string
-  description = "Your source code repo location, for example https://github.com/my/repo.git"
+  description = "Your source code repo location, for example https://github.com/my/repo.git, or `CODEBUILD_DEFAULT_WEBHOOK_SOURCE_LOCATION` for org-level webhooks"
 }
 
 # -----------------------------------------------------
@@ -21,6 +21,12 @@ variable "source_location" {
 # -----------------------------------------------------
 
 # General
+variable "source_organization" {
+  type        = string
+  default     = null
+  description = "Your Github organization name for organization-level webhook creation"
+}
+
 variable "build_timeout" {
   type        = number
   default     = 5
