@@ -7,6 +7,8 @@ Deploy GitHub Action runners in your AWS Account using serverless AWS CodeBuild.
 [![Maintenance](https://img.shields.io/badge/Maintained-yes-green.svg)](https://github.com/cloudandthings/terraform-aws-github-runners/graphs/commit-activity)
 ![Terraform Version](https://img.shields.io/badge/tf-%3E%3D0.13.0-blue)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
+[![Pre-commit](https://github.com/cloudandthings/terraform-aws-github-runners/actions/workflows/pre-commit-and-tests.yml/badge.svg)](https://github.com/cloudandthings/terraform-aws-github-runners/actions/workflows/pre-commit-and-tests.yml)
+[![Trivy Security Scan](https://github.com/cloudandthings/terraform-aws-github-runners/actions/workflows/trivy-scan.yml/badge.svg)](https://github.com/cloudandthings/terraform-aws-github-runners/actions/workflows/trivy-scan.yml)
 
 ## Overview
 
@@ -33,14 +35,6 @@ When a GitHub Action is triggered in your repository:
 3. The runner self-configures and connects to GitHub
 4. Your workflow jobs execute in the CodeBuild environment
 5. The runner terminates after job completion
-
-
-<!-- TODO update diagram
-
-[![Infrastructure diagram](https://github.com/cloudandthings/terraform-aws-github-runners/blob/main/docs/images/runner.svg)](https://github.com/cloudandthings/terraform-aws-github-runners/blob/main/docs/images/runner.svg)
-
--->
-
 
 ## Getting Started
 
@@ -147,25 +141,30 @@ This module previously used EC2 spot instances with configurable AutoScaling. If
 **[terraform-aws-github-runners-ec2](https://github.com/cloudandthings/terraform-aws-github-runners-ec2)**
 
 
+## Troubleshooting
+
+Having issues? Check out our [Troubleshooting Guide](https://github.com/cloudandthings/terraform-aws-github-runners/blob/main/docs/TROUBLESHOOTING.md) for common problems and solutions.
+
 ## Contributing
 
 Found an issue or want to contribute? See [CONTRIBUTING.md](https://github.com/cloudandthings/terraform-aws-github-runners/blob/main/CONTRIBUTING.md) for guidelines.
 
+Please note that this project has a [Code of Conduct](https://github.com/cloudandthings/terraform-aws-github-runners/blob/main/CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code.
+
+## Security
+
+For security concerns, please review our [Security Policy](https://github.com/cloudandthings/terraform-aws-github-runners/blob/main/SECURITY.md). To report a vulnerability, please use [GitHub Security Advisories](https://github.com/cloudandthings/terraform-aws-github-runners/security/advisories/new).
+
 ## Resources
 
 - [GitHub Authentication Setup Guide](https://github.com/cloudandthings/terraform-aws-github-runners/blob/main/docs/GITHUB-AUTH-SETUP.md)
+- [Troubleshooting Guide](https://github.com/cloudandthings/terraform-aws-github-runners/blob/main/docs/TROUBLESHOOTING.md)
 - [AWS CodeBuild Documentation](https://docs.aws.amazon.com/codebuild/)
 - [GitHub Actions Documentation](https://docs.github.com/en/actions)
 
 ---
 
 **License**: [View License](https://github.com/cloudandthings/terraform-aws-github-runners/blob/main/LICENSE)
-
-<!-- TODO cost estimate
-
-- Review a [cost estimate](https://github.com/cloudandthings/terraform-aws-github-runners/blob/main/docs/cost_estimate.md).
-
--->
 
 <!-- BEGIN_TF_DOCS -->
 ## Module Docs
