@@ -15,7 +15,7 @@ variable "source_location" {
   description = "Your source code repo location, for example https://github.com/my/repo.git"
   validation {
     condition     = can(regex("^https://github\\.com/[^/]+/[^/]+\\.git$", var.source_location))
-    error_message = "The source_location must be a valid GitHub repository URL in the format: https://github.com/owner/repo.git"
+    error_message = "The source_location must be a valid GitHub repository URL in the format: https://github.com/owner/repo.git."
   }
 }
 
