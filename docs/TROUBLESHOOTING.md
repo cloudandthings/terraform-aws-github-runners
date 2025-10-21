@@ -33,13 +33,13 @@ This guide covers common issues and their solutions when using terraform-aws-git
    ```hcl
    # Using Personal Access Token
    github_personal_access_token = var.github_token
-   
+
    # OR using SSM Parameter
    github_personal_access_token_ssm_parameter = "/github/token"
-   
+
    # OR using Secrets Manager
    github_secretsmanager_secret_arn = "arn:aws:secretsmanager:..."
-   
+
    # OR using CodeConnection
    github_codeconnection_arn = "arn:aws:codeconnections:..."
    ```
@@ -134,7 +134,7 @@ AWS CodeBuild only allows ONE GitHub credential per AWS account per region.
    ```bash
    # Verify image exists
    aws ecr describe-images --repository-name your-repo-name --image-ids imageTag=latest
-   
+
    # Check IAM permissions for ECR
    ```
 
@@ -220,7 +220,7 @@ Custom Docker images may not have all required GitHub Actions dependencies.
 1. **Use a GitHub Actions-compatible base image:**
    ```dockerfile
    FROM ubuntu:22.04
-   
+
    # Install required packages
    RUN apt-get update && apt-get install -y \
        curl \
