@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.3.0](https://github.com/cloudandthings/terraform-aws-github-runners/compare/v3.2.0...v3.3.0) (2025-11-06)
+
+
+### Features
+
+* Add default description and custom tags ([55663c9](https://github.com/cloudandthings/terraform-aws-github-runners/commit/55663c9f6c621a2e3a4de9a95b9101d66cbbcef1))
+* Use dynamic AWS partition for ARNs ([a8ac068](https://github.com/cloudandthings/terraform-aws-github-runners/commit/a8ac06830f785167f80a3ec4acfa7b916396ed51))
+
 ## [3.2.0](https://github.com/cloudandthings/terraform-aws-github-runners/compare/v3.1.1...v3.2.0) (2025-10-21)
 
 
