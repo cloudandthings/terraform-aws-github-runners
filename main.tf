@@ -18,9 +18,10 @@ locals {
 }
 
 resource "aws_codebuild_project" "this" {
-  depends_on    = [aws_iam_role_policy.codeconnection_required]
-  name          = var.name
-  description   = var.description
+  name        = var.name
+  description = local.description
+  tags        = local.tags
+
   build_timeout = var.build_timeout
   service_role = (
     local.create_iam_role
@@ -91,6 +92,8 @@ resource "aws_codebuild_project" "this" {
       security_group_ids = local.security_group_ids
     }
   }
+
+  depends_on = [aws_iam_role_policy.codeconnection_required]
 }
 
 resource "aws_codebuild_source_credential" "string" {
