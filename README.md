@@ -71,6 +71,7 @@ Modify your GitHub workflow file to use the CodeBuild runner:
 ```yaml
 jobs:
   my-job:
+    # The runner label below will trigger CodeBuild to run this job
     runs-on: codebuild-${{ RUNNER_NAME }}-${{ github.run_id }}-${{ github.run_attempt }}
     steps:
       - uses: actions/checkout@v3
@@ -79,6 +80,8 @@ jobs:
 ```
 
 Replace `RUNNER_NAME` with the name you configured for your runner.
+
+The runner label is also added as a description and a tag on the CodeBuild project.
 
 ## Docker Image Configuration
 
@@ -308,6 +311,7 @@ module "github_runner" {
 | <a name="input_source_auth"></a> [source\_auth](#input\_source\_auth) | Override the default CodeBuild source credential for this project. This allows using project-specific authentication instead of the account/region baseline credential. See docs/GITHUB-AUTH-SETUP.md for usage details. | <pre>object({<br/>    type     = string<br/>    resource = string<br/>  })</pre> | `null` | no |
 | <a name="input_source_location"></a> [source\_location](#input\_source\_location) | Your source code repo location, for example https://github.com/my/repo.git | `string` | n/a | yes |
 | <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | The list of Subnet IDs for AWS CodeBuild to launch ephemeral EC2 instances in. | `list(string)` | `[]` | no |
+| <a name="input_tags"></a> [tags](#input\_tags) | A map of tags to assign to the resources created by this module. If configured with a provider `default_tags` configuration block present, tags with matching keys will overwrite those defined at the provider-level. | `map(string)` | `{}` | no |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | The VPC ID for AWS CodeBuild to launch ephemeral instances in. | `string` | `null` | no |
 
 ----

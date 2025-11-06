@@ -3,6 +3,18 @@ locals {
   aws_region     = data.aws_region.current.name
   aws_partition  = data.aws_partition.current.partition
 
+  github_runner_label = "codebuild-${var.name}-$${{ github.run_id }}-$${{ github.run_attempt }}"
+  description = (
+    var.description != null
+    ? var.description
+    : "GitHub runner label: ${local.github_runner_label}"
+  )
+  tags = merge(var.tags,
+    {
+      github-runner-label = local.github_runner_label
+    }
+  )
+
   has_s3_log_bucket = var.s3_logs_bucket_name != null
 
   has_vpc_config = var.vpc_id != null

@@ -68,6 +68,12 @@ variable "source_auth" {
   default = null
 }
 
+variable "tags" {
+  description = "A map of tags to assign to the resources created by this module. If configured with a provider `default_tags` configuration block present, tags with matching keys will overwrite those defined at the provider-level."
+  type        = map(string)
+  default     = {}
+}
+
 # logs
 variable "create_cloudwatch_log_group" {
   description = "Determines whether a log group is created by this module. If not, AWS will automatically create one if logging is enabled"
