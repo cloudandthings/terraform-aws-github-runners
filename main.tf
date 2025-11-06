@@ -25,7 +25,7 @@ resource "aws_codebuild_project" "this" {
   service_role = (
     local.create_iam_role
     ? aws_iam_role.this[0].arn
-    : "arn:aws:iam::${local.aws_account_id}:role/${var.iam_role_name}"
+    : "arn:${local.aws_partition}:iam::${local.aws_account_id}:role/${var.iam_role_name}"
   )
 
   artifacts {
