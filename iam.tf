@@ -54,7 +54,7 @@ data "aws_iam_policy_document" "networking_required" {
     sid       = "AllowNetworkingAttachDetach"
     effect    = "Allow"
     actions   = ["ec2:CreateNetworkInterfacePermission"]
-    resources = ["arn:aws:ec2:${local.aws_region}:${local.aws_account_id}:network-interface/*"]
+    resources = ["arn:${local.aws_partition}:ec2:${local.aws_region}:${local.aws_account_id}:network-interface/*"]
 
     condition {
       test     = "StringEquals"
@@ -114,7 +114,7 @@ data "aws_iam_policy_document" "ecr_required" {
       "ecr:GetAuthorizationToken"
     ]
     resources = [
-      "arn:aws:ecr:${local.aws_region}:${local.aws_account_id}:repository/${local.ecr_repository_name}",
+      "arn:${local.aws_partition}:ecr:${local.aws_region}:${local.aws_account_id}:repository/${local.ecr_repository_name}",
     ]
   }
 
@@ -139,7 +139,7 @@ data "aws_iam_policy_document" "codeconnection_required" {
   statement {
     effect = "Allow"
     # https://docs.aws.amazon.com/dtconsole/latest/userguide/rename.html
-    actions = length(regexall("^arn:aws:codestar-connections:.*", var.github_codeconnection_arn)) > 0 ? [
+    actions = length(regexall("^arn:${local.aws_partition}:codestar-connections:.*", var.github_codeconnection_arn)) > 0 ? [
       "codestar-connections:GetConnection",
       "codestar-connections:GetConnectionToken"
       ] : [
