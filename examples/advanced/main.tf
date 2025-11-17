@@ -101,15 +101,15 @@ module "github_runner_with_custom_sg_rules" {
 
   # Add custom ingress rules to the default security group
   # Useful for tools like Packer that need additional ports (e.g., WinRM, SSH)
-  security_group_ingress_rules = [
-    {
+  security_group_ingress_rules = {
+    packer_ephemeral_ports = {
+      description = "Allow ephemeral ports from VPC for tools like Packer"
       from_port   = 1024
       to_port     = 65535
       ip_protocol = "tcp"
       cidr_ipv4   = "10.0.0.0/16" # Replace with your VPC CIDR
-      description = "Allow ephemeral ports from VPC for tools like Packer"
     }
-  ]
+  }
 
   cloudwatch_logs_group_name = "/some/log/group"
 }
