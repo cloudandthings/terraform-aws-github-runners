@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.4.0](https://github.com/cloudandthings/terraform-aws-github-runners/compare/v3.3.1...v3.4.0) (2025-11-17)
+
+
+### Features
+
+* Add custom ingress rules for security group ([66fd3ba](https://github.com/cloudandthings/terraform-aws-github-runners/commit/66fd3bac186f7108c7e02f40f29b742cd8153ac4))
+
 ## [3.3.1](https://github.com/cloudandthings/terraform-aws-github-runners/compare/v3.3.0...v3.3.1) (2025-11-17)
 
 
