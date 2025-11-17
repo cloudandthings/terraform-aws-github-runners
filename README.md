@@ -81,7 +81,7 @@ jobs:
 
 Replace `RUNNER_NAME` with the name you configured for your runner.
 
-The runner label is also added as a description and a tag on the CodeBuild project.
+The runner label is also added as a description on the CodeBuild project.
 
 ## Docker Image Configuration
 
