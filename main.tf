@@ -189,6 +189,32 @@ resource "aws_vpc_security_group_ingress_rule" "codebuild" {
   description = "Allow HTTPS traffic from ALL"
 }
 
+resource "aws_security_group_rule" "ingress_with_cidr_blocks" {
+  count = local.create_security_group ? length(var.ingress_with_cidr_blocks) : 0
+
+  security_group_id = aws_security_group.codebuild[0].id
+  type              = "ingress"
+
+  from_port   = var.ingress_with_cidr_blocks[count.index].from_port
+  to_port     = var.ingress_with_cidr_blocks[count.index].to_port
+  protocol    = var.ingress_with_cidr_blocks[count.index].protocol
+  cidr_blocks = var.ingress_with_cidr_blocks[count.index].cidr_blocks
+  description = var.ingress_with_cidr_blocks[count.index].description
+}
+
+resource "aws_security_group_rule" "ingress_with_source_security_group_id" {
+  count = local.create_security_group ? length(var.ingress_with_source_security_group_id) : 0
+
+  security_group_id = aws_security_group.codebuild[0].id
+  type              = "ingress"
+
+  from_port                = var.ingress_with_source_security_group_id[count.index].from_port
+  to_port                  = var.ingress_with_source_security_group_id[count.index].to_port
+  protocol                 = var.ingress_with_source_security_group_id[count.index].protocol
+  source_security_group_id = var.ingress_with_source_security_group_id[count.index].source_security_group_id
+  description              = var.ingress_with_source_security_group_id[count.index].description
+}
+
 ################################################################################
 # ECR Repository
 ################################################################################

@@ -202,6 +202,7 @@ module "github_runner" {
 locals {
   naming_prefix = "test-github-runner"
   vpc_id        = "vpc-0ffaabbcc1122"
+  vpc_cidr      = "10.0.0.0/16"
 }
 
 # Create a custom security-group to allow SSH to all EC2 instances
@@ -221,20 +222,6 @@ resource "aws_security_group" "this" {
   vpc_id = local.vpc_id
   #checkov:skip=CKV2_AWS_5:The SG is attached by the module.
   #checkov:skip=CKV_AWS_382:Egress to GitHub Actions is required for the runner to work.
-}
-
-data "http" "myip" {
-  url = "http://ipv4.icanhazip.com"
-}
-
-resource "aws_security_group_rule" "ssh_ingress" {
-  description       = "Allow SSH ingress to EC2 instance"
-  type              = "ingress"
-  from_port         = 22
-  to_port           = 22
-  protocol          = "tcp"
-  cidr_blocks       = ["${chomp(data.http.myip.body)}/32"]
-  security_group_id = aws_security_group.this.id
 }
 
 # Create a baseline CodeBuild credential that all GitHub projects will use by default
@@ -276,6 +263,38 @@ module "github_runner" {
   security_group_ids         = [aws_security_group.this.id]
   cloudwatch_logs_group_name = "/some/log/group"
 }
+
+# Example: Using the default security group with custom ingress rules for Packer
+module "github_runner_with_packer" {
+  source = "../../"
+
+  # Required parameters
+  source_location = "https://github.com/my-org/my-repo.git"
+  name            = "github-runner-packer"
+
+  # VPC configuration
+  vpc_id     = local.vpc_id
+  subnet_ids = ["subnet-0123", "subnet-0456"]
+
+  # Custom ingress rules added to the default security group
+  # This is useful when running Packer which requires ephemeral ports for WinRM/SSH
+  ingress_with_cidr_blocks = [
+    {
+      from_port   = 1024
+      to_port     = 65535
+      protocol    = "tcp"
+      description = "Ephemeral ports required for Packer WinRM/SSH communication"
+      cidr_blocks = [local.vpc_cidr]
+    },
+    {
+      from_port   = 5985
+      to_port     = 5986
+      protocol    = "tcp"
+      description = "WinRM ports for Packer"
+      cidr_blocks = [local.vpc_cidr]
+    }
+  ]
+}
 ```
 
 ----
@@ -302,6 +321,8 @@ module "github_runner" {
 | <a name="input_iam_role_name"></a> [iam\_role\_name](#input\_iam\_role\_name) | Name of the IAM role to be used. If not specified then a role will be created | `string` | `null` | no |
 | <a name="input_iam_role_permissions_boundary"></a> [iam\_role\_permissions\_boundary](#input\_iam\_role\_permissions\_boundary) | ARN of the policy that is used to set the permissions boundary for the IAM service role | `string` | `null` | no |
 | <a name="input_iam_role_policies"></a> [iam\_role\_policies](#input\_iam\_role\_policies) | Map of IAM role policy ARNs to attach to the IAM role | `map(string)` | `{}` | no |
+| <a name="input_ingress_with_cidr_blocks"></a> [ingress\_with\_cidr\_blocks](#input\_ingress\_with\_cidr\_blocks) | List of ingress rules to add to the default security group with CIDR blocks | <pre>list(object({<br/>    from_port   = number<br/>    to_port     = number<br/>    protocol    = string<br/>    description = string<br/>    cidr_blocks = list(string)<br/>  }))</pre> | `[]` | no |
+| <a name="input_ingress_with_source_security_group_id"></a> [ingress\_with\_source\_security\_group\_id](#input\_ingress\_with\_source\_security\_group\_id) | List of ingress rules to add to the default security group with source security group IDs | <pre>list(object({<br/>    from_port                = number<br/>    to_port                  = number<br/>    protocol                 = string<br/>    description              = string<br/>    source_security_group_id = string<br/>  }))</pre> | `[]` | no |
 | <a name="input_kms_key_id"></a> [kms\_key\_id](#input\_kms\_key\_id) | The AWS KMS key to be used | `string` | `null` | no |
 | <a name="input_name"></a> [name](#input\_name) | Created resources will be named with this. | `string` | n/a | yes |
 | <a name="input_s3_logs_bucket_name"></a> [s3\_logs\_bucket\_name](#input\_s3\_logs\_bucket\_name) | Name of the S3 bucket to store logs in. If not specified then logging to S3 will be disabled. | `string` | `null` | no |
@@ -370,6 +391,8 @@ No modules.
 | [aws_iam_role_policy.s3_required](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
 | [aws_iam_role_policy_attachment.additional](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_security_group.codebuild](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
+| [aws_security_group_rule.ingress_with_cidr_blocks](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
+| [aws_security_group_rule.ingress_with_source_security_group_id](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
 | [aws_vpc_security_group_egress_rule.codebuild](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_security_group_egress_rule) | resource |
 | [aws_vpc_security_group_ingress_rule.codebuild](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_security_group_ingress_rule) | resource |
 | [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
