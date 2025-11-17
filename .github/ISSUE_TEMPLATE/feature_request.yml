@@ -15,9 +15,9 @@ body:
       description: Describe the feature you'd like and the problem it solves
       placeholder: |
         Problem: I'm frustrated when...
-        
+
         Proposed solution: I would like to see...
-        
+
         Use case: This would be useful for...
     validations:
       required: true

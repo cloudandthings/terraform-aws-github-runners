@@ -15,7 +15,7 @@ body:
       description: Describe the bug and what you expected to happen
       placeholder: |
         Describe the issue...
-        
+
         Expected: ...
         Actual: ...
     validations:
@@ -44,7 +44,7 @@ body:
         # Terraform version: 1.5.7
         # AWS provider version: 5.31.0
         # AWS region: us-east-1
-        
+
         module "github_runner" {
           source = "cloudandthings/github-runners/aws"
           # your configuration
