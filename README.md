@@ -276,6 +276,44 @@ module "github_runner" {
   security_group_ids         = [aws_security_group.this.id]
   cloudwatch_logs_group_name = "/some/log/group"
 }
+
+# Example demonstrating custom security group ingress rules
+# This uses the default security group created by the module
+module "github_runner_with_custom_sg_rules" {
+  source = "../../"
+
+  # Required parameters
+  ############################
+  source_location = "https://github.com/my-org/my-repo.git"
+  name            = "github-runner-custom-sg-rules"
+
+  vpc_id     = "vpc-0ffaabbcc1122"
+  subnet_ids = ["subnet-0123", "subnet-0456"]
+
+  # Optional parameters
+  ################################
+  description = "GitHub runner with custom security group ingress rules"
+
+  # Override the baseline CodeBuild credential
+  source_auth = {
+    type     = "SECRETS_MANAGER"
+    resource = "arn:aws:secretsmanager:af-south-1:123456789012:secret:my-github-oauth-token-secret-nwYBWW"
+  }
+
+  # Add custom ingress rules to the default security group
+  # Useful for tools like Packer that need additional ports (e.g., WinRM, SSH)
+  security_group_ingress_rules = {
+    packer_ephemeral_ports = {
+      description = "Allow ephemeral ports from VPC for tools like Packer"
+      from_port   = 1024
+      to_port     = 65535
+      ip_protocol = "tcp"
+      cidr_ipv4   = "10.0.0.0/16" # Replace with your VPC CIDR
+    }
+  }
+
+  cloudwatch_logs_group_name = "/some/log/group"
+}
 ```
 
 ----
@@ -307,8 +345,9 @@ module "github_runner" {
 | <a name="input_s3_logs_bucket_name"></a> [s3\_logs\_bucket\_name](#input\_s3\_logs\_bucket\_name) | Name of the S3 bucket to store logs in. If not specified then logging to S3 will be disabled. | `string` | `null` | no |
 | <a name="input_s3_logs_bucket_prefix"></a> [s3\_logs\_bucket\_prefix](#input\_s3\_logs\_bucket\_prefix) | Prefix to use for the logs in the S3 bucket | `string` | `""` | no |
 | <a name="input_security_group_ids"></a> [security\_group\_ids](#input\_security\_group\_ids) | The list of Security Group IDs for AWS CodeBuild to launch ephemeral EC2 instances in. | `list(string)` | `[]` | no |
+| <a name="input_security_group_ingress_rules"></a> [security\_group\_ingress\_rules](#input\_security\_group\_ingress\_rules) | Map of ingress rules to add to the default security group created by this module. Only applies when security\_group\_ids is empty and vpc\_id is specified. | <pre>map(object({<br>    description                  = optional(string)<br>    from_port                    = number<br>    to_port                      = number<br>    ip_protocol                  = string<br>    cidr_ipv4                    = optional(string)<br>    cidr_ipv6                    = optional(string)<br>    referenced_security_group_id = optional(string)<br>    prefix_list_id               = optional(string)<br>  }))</pre> | `{}` | no |
 | <a name="input_security_group_name"></a> [security\_group\_name](#input\_security\_group\_name) | Name to use on created Security Group. Defaults to `name` | `string` | `null` | no |
-| <a name="input_source_auth"></a> [source\_auth](#input\_source\_auth) | Override the default CodeBuild source credential for this project. This allows using project-specific authentication instead of the account/region baseline credential. See docs/GITHUB-AUTH-SETUP.md for usage details. | <pre>object({<br/>    type     = string<br/>    resource = string<br/>  })</pre> | `null` | no |
+| <a name="input_source_auth"></a> [source\_auth](#input\_source\_auth) | Override the default CodeBuild source credential for this project. This allows using project-specific authentication instead of the account/region baseline credential. See docs/GITHUB-AUTH-SETUP.md for usage details. | <pre>object({<br>    type     = string<br>    resource = string<br>  })</pre> | `null` | no |
 | <a name="input_source_location"></a> [source\_location](#input\_source\_location) | Your source code repo location, for example https://github.com/my/repo.git | `string` | n/a | yes |
 | <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | The list of Subnet IDs for AWS CodeBuild to launch ephemeral EC2 instances in. | `list(string)` | `[]` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | A map of tags to assign to the resources created by this module. If configured with a provider `default_tags` configuration block present, tags with matching keys will overwrite those defined at the provider-level. | `map(string)` | `{}` | no |
@@ -372,6 +411,7 @@ No modules.
 | [aws_security_group.codebuild](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
 | [aws_vpc_security_group_egress_rule.codebuild](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_security_group_egress_rule) | resource |
 | [aws_vpc_security_group_ingress_rule.codebuild](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_security_group_ingress_rule) | resource |
+| [aws_vpc_security_group_ingress_rule.codebuild_custom](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_security_group_ingress_rule) | resource |
 | [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
 | [aws_cloudwatch_log_group.codebuild](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/cloudwatch_log_group) | data source |
 | [aws_iam_policy_document.assume_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
