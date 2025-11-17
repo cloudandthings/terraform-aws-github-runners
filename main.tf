@@ -193,14 +193,14 @@ resource "aws_vpc_security_group_ingress_rule" "codebuild_custom" {
   for_each          = local.create_security_group ? var.security_group_ingress_rules : {}
   security_group_id = aws_security_group.codebuild[0].id
 
-  description                  = each.value.description
+  description                  = each.value.description != "" ? each.value.description : null
   from_port                    = each.value.from_port
   to_port                      = each.value.to_port
   ip_protocol                  = each.value.ip_protocol
-  cidr_ipv4                    = each.value.cidr_ipv4
-  cidr_ipv6                    = each.value.cidr_ipv6
-  referenced_security_group_id = each.value.referenced_security_group_id
-  prefix_list_id               = each.value.prefix_list_id
+  cidr_ipv4                    = each.value.cidr_ipv4 != "" ? each.value.cidr_ipv4 : null
+  cidr_ipv6                    = each.value.cidr_ipv6 != "" ? each.value.cidr_ipv6 : null
+  referenced_security_group_id = each.value.referenced_security_group_id != "" ? each.value.referenced_security_group_id : null
+  prefix_list_id               = each.value.prefix_list_id != "" ? each.value.prefix_list_id : null
 }
 
 ################################################################################

@@ -144,25 +144,25 @@ variable "security_group_ids" {
 variable "security_group_ingress_rules" {
   description = "Map of ingress rules to add to the default security group created by this module. Only applies when security_group_ids is empty and vpc_id is specified."
   type = map(object({
-    description                  = optional(string)
+    description                  = string
     from_port                    = number
     to_port                      = number
     ip_protocol                  = string
-    cidr_ipv4                    = optional(string)
-    cidr_ipv6                    = optional(string)
-    referenced_security_group_id = optional(string)
-    prefix_list_id               = optional(string)
+    cidr_ipv4                    = string
+    cidr_ipv6                    = string
+    referenced_security_group_id = string
+    prefix_list_id               = string
   }))
   default = {}
   validation {
     condition = alltrue([
       for k, v in var.security_group_ingress_rules :
-      (v.cidr_ipv4 != null ? 1 : 0) +
-      (v.cidr_ipv6 != null ? 1 : 0) +
-      (v.referenced_security_group_id != null ? 1 : 0) +
-      (v.prefix_list_id != null ? 1 : 0) == 1
+      (v.cidr_ipv4 != null && v.cidr_ipv4 != "" ? 1 : 0) +
+      (v.cidr_ipv6 != null && v.cidr_ipv6 != "" ? 1 : 0) +
+      (v.referenced_security_group_id != null && v.referenced_security_group_id != "" ? 1 : 0) +
+      (v.prefix_list_id != null && v.prefix_list_id != "" ? 1 : 0) == 1
     ])
-    error_message = "Each ingress rule must specify exactly one of: cidr_ipv4, cidr_ipv6, referenced_security_group_id, or prefix_list_id."
+    error_message = "Each ingress rule must specify exactly one of: cidr_ipv4, cidr_ipv6, referenced_security_group_id, or prefix_list_id (non-empty string)."
   }
 }
 

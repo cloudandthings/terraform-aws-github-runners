@@ -103,11 +103,14 @@ module "github_runner_with_custom_sg_rules" {
   # Useful for tools like Packer that need additional ports (e.g., WinRM, SSH)
   security_group_ingress_rules = {
     packer_ephemeral_ports = {
-      description = "Allow ephemeral ports from VPC for tools like Packer"
-      from_port   = 1024
-      to_port     = 65535
-      ip_protocol = "tcp"
-      cidr_ipv4   = "10.0.0.0/16" # Replace with your VPC CIDR
+      description                  = "Allow ephemeral ports from VPC for tools like Packer"
+      from_port                    = 1024
+      to_port                      = 65535
+      ip_protocol                  = "tcp"
+      cidr_ipv4                    = "10.0.0.0/16" # Replace with your VPC CIDR
+      cidr_ipv6                    = null
+      referenced_security_group_id = null
+      prefix_list_id               = null
     }
   }
 

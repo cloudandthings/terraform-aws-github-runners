@@ -304,11 +304,14 @@ module "github_runner_with_custom_sg_rules" {
   # Useful for tools like Packer that need additional ports (e.g., WinRM, SSH)
   security_group_ingress_rules = {
     packer_ephemeral_ports = {
-      description = "Allow ephemeral ports from VPC for tools like Packer"
-      from_port   = 1024
-      to_port     = 65535
-      ip_protocol = "tcp"
-      cidr_ipv4   = "10.0.0.0/16" # Replace with your VPC CIDR
+      description                  = "Allow ephemeral ports from VPC for tools like Packer"
+      from_port                    = 1024
+      to_port                      = 65535
+      ip_protocol                  = "tcp"
+      cidr_ipv4                    = "10.0.0.0/16" # Replace with your VPC CIDR
+      cidr_ipv6                    = null
+      referenced_security_group_id = null
+      prefix_list_id               = null
     }
   }
 
@@ -345,7 +348,7 @@ module "github_runner_with_custom_sg_rules" {
 | <a name="input_s3_logs_bucket_name"></a> [s3\_logs\_bucket\_name](#input\_s3\_logs\_bucket\_name) | Name of the S3 bucket to store logs in. If not specified then logging to S3 will be disabled. | `string` | `null` | no |
 | <a name="input_s3_logs_bucket_prefix"></a> [s3\_logs\_bucket\_prefix](#input\_s3\_logs\_bucket\_prefix) | Prefix to use for the logs in the S3 bucket | `string` | `""` | no |
 | <a name="input_security_group_ids"></a> [security\_group\_ids](#input\_security\_group\_ids) | The list of Security Group IDs for AWS CodeBuild to launch ephemeral EC2 instances in. | `list(string)` | `[]` | no |
-| <a name="input_security_group_ingress_rules"></a> [security\_group\_ingress\_rules](#input\_security\_group\_ingress\_rules) | Map of ingress rules to add to the default security group created by this module. Only applies when security\_group\_ids is empty and vpc\_id is specified. | <pre>map(object({<br>    description                  = optional(string)<br>    from_port                    = number<br>    to_port                      = number<br>    ip_protocol                  = string<br>    cidr_ipv4                    = optional(string)<br>    cidr_ipv6                    = optional(string)<br>    referenced_security_group_id = optional(string)<br>    prefix_list_id               = optional(string)<br>  }))</pre> | `{}` | no |
+| <a name="input_security_group_ingress_rules"></a> [security\_group\_ingress\_rules](#input\_security\_group\_ingress\_rules) | Map of ingress rules to add to the default security group created by this module. Only applies when security\_group\_ids is empty and vpc\_id is specified. | <pre>map(object({<br>    description                  = string<br>    from_port                    = number<br>    to_port                      = number<br>    ip_protocol                  = string<br>    cidr_ipv4                    = string<br>    cidr_ipv6                    = string<br>    referenced_security_group_id = string<br>    prefix_list_id               = string<br>  }))</pre> | `{}` | no |
 | <a name="input_security_group_name"></a> [security\_group\_name](#input\_security\_group\_name) | Name to use on created Security Group. Defaults to `name` | `string` | `null` | no |
 | <a name="input_source_auth"></a> [source\_auth](#input\_source\_auth) | Override the default CodeBuild source credential for this project. This allows using project-specific authentication instead of the account/region baseline credential. See docs/GITHUB-AUTH-SETUP.md for usage details. | <pre>object({<br>    type     = string<br>    resource = string<br>  })</pre> | `null` | no |
 | <a name="input_source_location"></a> [source\_location](#input\_source\_location) | Your source code repo location, for example https://github.com/my/repo.git | `string` | n/a | yes |
