@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.3.1](https://github.com/cloudandthings/terraform-aws-github-runners/compare/v3.3.0...v3.3.1) (2025-11-17)
+
+
+### Bug Fixes
+
+* remove github-runner-label tag to avoid invalid characters ([ef726ad](https://github.com/cloudandthings/terraform-aws-github-runners/commit/ef726ad800ec847c1a86dc0a21378a29b786c997))
+
 ## [3.3.0](https://github.com/cloudandthings/terraform-aws-github-runners/compare/v3.2.0...v3.3.0) (2025-11-06)
 
 
