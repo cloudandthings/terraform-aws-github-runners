@@ -141,6 +141,30 @@ variable "security_group_ids" {
   default     = []
 }
 
+variable "ingress_with_cidr_blocks" {
+  description = "List of ingress rules to add to the default security group with CIDR blocks"
+  type = list(object({
+    from_port   = number
+    to_port     = number
+    protocol    = string
+    description = string
+    cidr_blocks = list(string)
+  }))
+  default = []
+}
+
+variable "ingress_with_source_security_group_id" {
+  description = "List of ingress rules to add to the default security group with source security group IDs"
+  type = list(object({
+    from_port                = number
+    to_port                  = number
+    protocol                 = string
+    description              = string
+    source_security_group_id = string
+  }))
+  default = []
+}
+
 # IAM
 variable "iam_role_name" {
   description = "Name of the IAM role to be used. If not specified then a role will be created"
