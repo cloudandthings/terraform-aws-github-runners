@@ -141,6 +141,26 @@ variable "security_group_ids" {
   default     = []
 }
 
+variable "security_group_ingress_rules" {
+  description = "List of ingress rules to add to the default security group created by this module. Only applies when security_group_ids is empty and vpc_id is specified."
+  type = list(object({
+    from_port   = number
+    to_port     = number
+    ip_protocol = string
+    cidr_ipv4   = optional(string)
+    cidr_ipv6   = optional(string)
+    description = optional(string)
+  }))
+  default = []
+  validation {
+    condition = alltrue([
+      for rule in var.security_group_ingress_rules :
+      rule.cidr_ipv4 != null || rule.cidr_ipv6 != null
+    ])
+    error_message = "Each ingress rule must specify either cidr_ipv4 or cidr_ipv6."
+  }
+}
+
 # IAM
 variable "iam_role_name" {
   description = "Name of the IAM role to be used. If not specified then a role will be created"
