@@ -9,11 +9,7 @@ locals {
     ? var.description
     : "GitHub runner label: ${local.github_runner_label}"
   )
-  tags = merge(var.tags,
-    {
-      github-runner-label = local.github_runner_label
-    }
-  )
+  tags = var.tags
 
   has_s3_log_bucket = var.s3_logs_bucket_name != null
 
