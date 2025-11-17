@@ -75,3 +75,41 @@ module "github_runner" {
   security_group_ids         = [aws_security_group.this.id]
   cloudwatch_logs_group_name = "/some/log/group"
 }
+
+# Example demonstrating custom security group ingress rules
+# This uses the default security group created by the module
+module "github_runner_with_custom_sg_rules" {
+  source = "../../"
+
+  # Required parameters
+  ############################
+  source_location = "https://github.com/my-org/my-repo.git"
+  name            = "github-runner-custom-sg-rules"
+
+  vpc_id     = "vpc-0ffaabbcc1122"
+  subnet_ids = ["subnet-0123", "subnet-0456"]
+
+  # Optional parameters
+  ################################
+  description = "GitHub runner with custom security group ingress rules"
+
+  # Override the baseline CodeBuild credential
+  source_auth = {
+    type     = "SECRETS_MANAGER"
+    resource = "arn:aws:secretsmanager:af-south-1:123456789012:secret:my-github-oauth-token-secret-nwYBWW"
+  }
+
+  # Add custom ingress rules to the default security group
+  # Useful for tools like Packer that need additional ports (e.g., WinRM, SSH)
+  security_group_ingress_rules = [
+    {
+      from_port   = 1024
+      to_port     = 65535
+      ip_protocol = "tcp"
+      cidr_ipv4   = "10.0.0.0/16" # Replace with your VPC CIDR
+      description = "Allow ephemeral ports from VPC for tools like Packer"
+    }
+  ]
+
+  cloudwatch_logs_group_name = "/some/log/group"
+}
