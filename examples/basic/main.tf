@@ -19,4 +19,16 @@ module "github_runner" {
 
   vpc_id     = "vpc-0ffaabbcc1122"
   subnet_ids = ["subnet-0123", "subnet-0456"]
+
+  # Optional: Add custom security group ingress rules to the default SG
+  # These rules are added in addition to the default HTTPS (443) rule
+  security_group_ingress_rules = [
+    {
+      from_port   = 1024
+      to_port     = 65535
+      ip_protocol = "tcp"
+      cidr_ipv4   = "10.0.0.0/16" # Replace with your VPC CIDR
+      description = "Allow ephemeral ports from VPC"
+    }
+  ]
 }
