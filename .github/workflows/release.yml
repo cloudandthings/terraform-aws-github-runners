@@ -16,7 +16,7 @@ jobs:
     name: 🙏 release-please
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: release-please
         uses: googleapis/release-please-action@v4
