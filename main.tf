@@ -44,7 +44,7 @@ resource "aws_codebuild_project" "this" {
       ? "CODEBUILD"
       : "SERVICE_ROLE"
     )
-    # privileged_mode             = true
+    privileged_mode = var.environment_privileged_mode
   }
 
   logs_config {
