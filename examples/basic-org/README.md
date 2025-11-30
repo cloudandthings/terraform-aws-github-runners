@@ -8,8 +8,8 @@ module "github_runner" {
   # Required parameters
   ############################
   # Naming for all created resources
-  name            = "github-runner-codebuild-test"
-  source_location = "CODEBUILD_DEFAULT_WEBHOOK_SOURCE_LOCATION"
+  name                = "github-runner-codebuild-test"
+  source_location     = "CODEBUILD_DEFAULT_WEBHOOK_SOURCE_LOCATION"
   source_organization = "cloudandthings"
 
   # Environment image is not specified so it will default to:
