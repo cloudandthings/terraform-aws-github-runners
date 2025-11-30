@@ -14,60 +14,9 @@
 exclude: '^modules/external/.*$'
 
 repos:
-  # TERRAFORM
-  # If running tf-docs it must be run first to avoid race condition relating to version constraints.
-  # BUG: terraform_docs hook conflicts when used more than once.
-  # Workaround with Python
-  - repo: local
-    hooks:
-    - id: Terraform docs
-      name: Terraform docs
-      entry: python examples/terraform-docs.py
-      language: system
-      types: [python]
-      always_run: true
-      pass_filenames: false
-
-  - repo: https://github.com/antonbabenko/pre-commit-terraform
-    rev: v1.96.3
-    hooks:
-      # - id: terraform_docs
-      #  args:
-      #    - --args=--lockfile=false
-      #    - --args=--config=.tfdocs-config.yml
-      - id: terraform_fmt
-      - id: terraform_validate
-        # [^/]+: Exclude root module. Validation is done via examples/basic
-        # see https://github.com/antonbabenko/pre-commit-terraform#terraform_validate
-        exclude: |
-            (?x)^(
-                tests/.*|
-                [^/]+|
-            )$
-      - id: terraform_tflint
-        # Configure tflint by creating and updating the config file below.
-        args: ['--args=--config=__GIT_WORKING_DIR__/.tflint.hcl']
-      - id: terraform_tfsec
-        files: ^.*.tf$
-        # Configure tfsec by creating and updating the config file below.
-        args: ['--args=--config-file=__GIT_WORKING_DIR__/.tfsec-config.yml']
-      - id: terraform_checkov
-        # Configure checkov by creating and updating the config file below.
-        args: ['--args=--config-file __GIT_WORKING_DIR__/.checkov-config.yml']
-
-  # PYTHON
-  - repo: https://github.com/psf/black
-    rev: 24.10.0
-    hooks:
-    - id: black
-  - repo: https://github.com/pycqa/flake8
-    rev: 7.1.1
-    hooks:
-    - id: flake8
-
   # PRECOMMIT - GENERAL
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
       - id: check-added-large-files
         args: ['--maxkb=1024']
@@ -96,17 +45,72 @@ repos:
 
   # CODESPELL
   - repo: https://github.com/codespell-project/codespell
-    rev: v2.3.0
+    rev: v2.4.1
     hooks:
     - id: codespell
       args: ['--write-changes']
 
-  # LOCAL
+  # SHFMT
+  - repo: https://github.com/scop/pre-commit-shfmt
+    rev: v3.12.0-2
+    hooks:
+    # Choose one of:
+    - id: shfmt # prebuilt upstream executable
+
+  # SHELLCHECK
+  - repo: https://github.com/koalaman/shellcheck-precommit
+    rev: v0.11.0
+    hooks:
+    - id: shellcheck
+      args: ["--severity=warning"]  # Optionally only show errors and warnings
+
+  # TERRAFORM
+  # If running tf-docs it must be run first to avoid race condition relating to version constraints.
+  # BUG: terraform_docs hook conflicts when used more than once.
+  # Workaround with Python
   - repo: local
     hooks:
-    -   id: no-vanilla-readme
-        name: Ensure README is updated
-        entry: "example content; edit to suit your module"
-        language: pygrep
-        types: [text]
-        files: README.md
+    - id: Terraform docs
+      name: Terraform docs
+      entry: python examples/terraform-docs.py
+      language: system
+      types: [python]
+      always_run: true
+      pass_filenames: false
+
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.100.0
+    hooks:
+      # - id: terraform_docs
+      #  args:
+      #    - --args=--lockfile=false
+      #    - --args=--config=.tfdocs-config.yml
+      - id: terraform_fmt
+      - id: terraform_validate
+        args:
+          - --hook-config=--retry-once-with-cleanup=true
+        # [^/]+: Exclude root module. Validation is done via examples/basic
+        # see https://github.com/antonbabenko/pre-commit-terraform#terraform_validate
+        exclude: |
+          (?x)^(
+              tests/.*|
+              [^/]+|
+          )$
+      - id: terraform_tflint
+        # Configure tflint by creating and updating the config file below.
+        args: ["--args=--config=__GIT_WORKING_DIR__/.tflint.hcl"]
+
+  # PYTHON
+  # ruff - must be placed before other repos
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    # Ruff version.
+    rev: v0.11.13
+    hooks:
+      - id: ruff-check
+        args: [--fix]
+      - id: ruff-format
+
+  - repo: https://github.com/psf/black
+    rev: 25.1.0
+    hooks:
+      - id: black

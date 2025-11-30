@@ -1,0 +1,44 @@
+name: 🚀 Feature Request
+description: Suggest a new feature or enhancement
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for your interest in improving this project! Please describe your feature request.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What would you like to see?
+      description: Describe the feature you'd like and the problem it solves
+      placeholder: |
+        Problem: I'm frustrated when...
+
+        Proposed solution: I would like to see...
+
+        Use case: This would be useful for...
+    validations:
+      required: true
+
+  - type: textarea
+    id: example
+    attributes:
+      label: Example Usage (optional)
+      description: If applicable, show how you'd like to use this feature
+      render: hcl
+      placeholder: |
+        module "github_runner" {
+          source = "cloudandthings/github-runners/aws"
+
+          # Example of how the new feature would be used
+          new_feature = "example"
+        }
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Any other information, alternatives considered, or relevant details
+      placeholder: Additional context...

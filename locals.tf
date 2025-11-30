@@ -1,7 +1,15 @@
 locals {
   aws_account_id = data.aws_caller_identity.current.account_id
+  aws_region     = data.aws_region.current.name
+  aws_partition  = data.aws_partition.current.partition
 
-  aws_region = data.aws_region.current.name
+  github_runner_label = "codebuild-${var.name}-$${{ github.run_id }}-$${{ github.run_attempt }}"
+  description = (
+    var.description != null
+    ? var.description
+    : "GitHub runner label: ${local.github_runner_label}"
+  )
+  tags = var.tags
 
   has_s3_log_bucket = var.s3_logs_bucket_name != null
 
@@ -9,9 +17,13 @@ locals {
 
   has_github_personal_access_token = var.github_personal_access_token != null
 
+  has_github_personal_access_token_secret_arn = var.github_secretsmanager_secret_arn != null
+
   has_github_personal_access_token_ssm_parameter = var.github_personal_access_token_ssm_parameter != null
 
-  subnet_arns = [for subnet_id in var.subnet_ids : "arn:aws:ec2:${local.aws_region}:${local.aws_account_id}:subnet/${subnet_id}"]
+  has_github_codeconnection_arn = var.github_codeconnection_arn != null
+
+  subnet_arns = [for subnet_id in var.subnet_ids : "arn:${local.aws_partition}:ec2:${local.aws_region}:${local.aws_account_id}:subnet/${subnet_id}"]
 
   create_iam_role = var.iam_role_name == null
 
@@ -30,6 +42,6 @@ locals {
   s3_logs_bucket_arn = (
     var.s3_logs_bucket_name == null
     ? null
-    : "arn:aws:s3:::${var.s3_logs_bucket_name}"
+    : "arn:${local.aws_partition}:s3:::${var.s3_logs_bucket_name}"
   )
 }

@@ -54,7 +54,7 @@ data "aws_iam_policy_document" "networking_required" {
     sid       = "AllowNetworkingAttachDetach"
     effect    = "Allow"
     actions   = ["ec2:CreateNetworkInterfacePermission"]
-    resources = ["arn:aws:ec2:${local.aws_region}:${local.aws_account_id}:network-interface/*"]
+    resources = ["arn:${local.aws_partition}:ec2:${local.aws_region}:${local.aws_account_id}:network-interface/*"]
 
     condition {
       test     = "StringEquals"
@@ -114,7 +114,7 @@ data "aws_iam_policy_document" "ecr_required" {
       "ecr:GetAuthorizationToken"
     ]
     resources = [
-      "arn:aws:ecr:${local.aws_region}:${local.aws_account_id}:repository/${local.ecr_repository_name}",
+      "arn:${local.aws_partition}:ecr:${local.aws_region}:${local.aws_account_id}:repository/${local.ecr_repository_name}",
     ]
   }
 
@@ -134,18 +134,48 @@ resource "aws_iam_role_policy" "ecr_required" {
   policy = data.aws_iam_policy_document.ecr_required[count.index].json
 }
 
-data "aws_iam_policy_document" "assume_role" {
-  count = local.create_iam_role ? 1 : 0
+data "aws_iam_policy_document" "codeconnection_required" {
+  count = local.has_github_codeconnection_arn ? 1 : 0
   statement {
     effect = "Allow"
+    # https://docs.aws.amazon.com/dtconsole/latest/userguide/rename.html
+    actions = length(regexall("^arn:${local.aws_partition}:codestar-connections:.*", var.github_codeconnection_arn)) > 0 ? [
+      "codestar-connections:GetConnection",
+      "codestar-connections:GetConnectionToken"
+      ] : [
+      "codeconnections:GetConnection",
+      "codeconnections:GetConnectionToken",
+      "codeconnections:UseConnection"
+    ]
+    resources = [var.github_codeconnection_arn]
+  }
+}
 
+resource "aws_iam_role_policy" "codeconnection_required" {
+  count  = local.has_github_codeconnection_arn ? 1 : 0
+  name   = "${var.name}-codeconnection"
+  role   = local.create_iam_role ? aws_iam_role.this[0].name : var.iam_role_name
+  policy = data.aws_iam_policy_document.codeconnection_required[count.index].json
+}
+
+data "aws_iam_policy_document" "assume_role" {
+  statement {
+    effect = "Allow"
     principals {
       type        = "Service"
       identifiers = ["codebuild.amazonaws.com"]
     }
-
     actions = ["sts:AssumeRole"]
+    condition {
+      test     = "StringEquals"
+      variable = "aws:SourceAccount"
+      values   = [data.aws_caller_identity.current.account_id]
+    }
   }
+}
+
+locals {
+  assume_role_policy = var.iam_role_assume_role_policy == null ? data.aws_iam_policy_document.assume_role.json : var.iam_role_assume_role_policy
 }
 
 ################################################################################
@@ -154,7 +184,7 @@ data "aws_iam_policy_document" "assume_role" {
 resource "aws_iam_role" "this" {
   count                = local.create_iam_role ? 1 : 0
   name                 = var.name
-  assume_role_policy   = data.aws_iam_policy_document.assume_role[0].json
+  assume_role_policy   = local.assume_role_policy
   permissions_boundary = var.iam_role_permissions_boundary == null ? null : var.iam_role_permissions_boundary
 }
 

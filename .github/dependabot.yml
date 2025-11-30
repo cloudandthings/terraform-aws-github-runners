@@ -1,0 +1,95 @@
+version: 2
+updates:
+  # GitHub Actions dependencies
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+      - "github-actions"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+
+  # Terraform dependencies
+  - package-ecosystem: "terraform"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+      - "terraform"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+
+  # Example: basic
+  - package-ecosystem: "terraform"
+    directory: "/examples/basic"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "terraform"
+      - "examples"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+
+  # Example: advanced
+  - package-ecosystem: "terraform"
+    directory: "/examples/advanced"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "terraform"
+      - "examples"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+
+  # Example: addition-iam-policies
+  - package-ecosystem: "terraform"
+    directory: "/examples/addition-iam-policies"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "terraform"
+      - "examples"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+
+  # Example: multiple-runners
+  - package-ecosystem: "terraform"
+    directory: "/examples/multiple-runners"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "terraform"
+      - "examples"
+    commit-message:
+      prefix: "chore"
+      include: "scope"

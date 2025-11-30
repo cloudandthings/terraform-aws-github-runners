@@ -1,0 +1,68 @@
+name: 🐛 Bug Report
+description: Report a bug or unexpected behavior
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug! Please provide the key information below.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Describe the bug and what you expected to happen
+      placeholder: |
+        Describe the issue...
+
+        Expected: ...
+        Actual: ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to Reproduce
+      description: How can we reproduce this issue?
+      placeholder: |
+        1. Deploy module with...
+        2. Run terraform apply...
+        3. See error...
+    validations:
+      required: true
+
+  - type: textarea
+    id: terraform-config
+    attributes:
+      label: Terraform Configuration
+      description: Provide your Terraform configuration and versions (sanitize sensitive information)
+      render: hcl
+      placeholder: |
+        # Module version: 3.1.1
+        # Terraform version: 1.5.7
+        # AWS provider version: 5.31.0
+        # AWS region: us-east-1
+
+        module "github_runner" {
+          source = "cloudandthings/github-runners/aws"
+          # your configuration
+        }
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Error Messages / Logs
+      description: Provide any error messages or relevant logs
+      render: shell
+      placeholder: Paste error messages or logs here
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Any other relevant information (VPC config, ECR usage, GitHub App/PAT, etc.)
+      placeholder: Additional context...

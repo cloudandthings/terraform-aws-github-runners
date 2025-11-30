@@ -18,13 +18,15 @@ locals {
 }
 
 resource "aws_codebuild_project" "this" {
-  name          = var.name
-  description   = var.description
+  name        = var.name
+  description = local.description
+  tags        = local.tags
+
   build_timeout = var.build_timeout
   service_role = (
     local.create_iam_role
     ? aws_iam_role.this[0].arn
-    : "arn:aws:iam::${local.aws_account_id}:role/${var.iam_role_name}"
+    : "arn:${local.aws_partition}:iam::${local.aws_account_id}:role/${var.iam_role_name}"
   )
 
   artifacts {
@@ -72,6 +74,14 @@ resource "aws_codebuild_project" "this" {
     git_submodules_config {
       fetch_submodules = true
     }
+
+    dynamic "auth" {
+      for_each = var.source_auth != null ? [1] : []
+      content {
+        type     = var.source_auth.type
+        resource = var.source_auth.resource
+      }
+    }
   }
 
   dynamic "vpc_config" {
@@ -82,6 +92,8 @@ resource "aws_codebuild_project" "this" {
       security_group_ids = local.security_group_ids
     }
   }
+
+  depends_on = [aws_iam_role_policy.codeconnection_required]
 }
 
 resource "aws_codebuild_source_credential" "string" {
@@ -91,6 +103,13 @@ resource "aws_codebuild_source_credential" "string" {
   token       = var.github_personal_access_token
 }
 
+resource "aws_codebuild_source_credential" "secret" {
+  count       = local.has_github_personal_access_token_secret_arn ? 1 : 0
+  auth_type   = "SECRETS_MANAGER"
+  server_type = "GITHUB"
+  token       = var.github_secretsmanager_secret_arn
+}
+
 resource "aws_codebuild_source_credential" "ssm" {
   count       = local.has_github_personal_access_token_ssm_parameter ? 1 : 0
   auth_type   = "PERSONAL_ACCESS_TOKEN"
@@ -98,8 +117,21 @@ resource "aws_codebuild_source_credential" "ssm" {
   token       = data.aws_ssm_parameter.github_personal_access_token[0].value
 }
 
+resource "aws_codebuild_source_credential" "codeconnection" {
+  count       = local.has_github_codeconnection_arn ? 1 : 0
+  auth_type   = "CODECONNECTIONS"
+  server_type = "GITHUB"
+  token       = var.github_codeconnection_arn
+}
+
 resource "aws_codebuild_webhook" "this" {
-  depends_on   = [aws_codebuild_source_credential.string, aws_codebuild_source_credential.ssm]
+  depends_on = [
+    aws_codebuild_source_credential.string,
+    aws_codebuild_source_credential.ssm,
+    aws_codebuild_source_credential.secret,
+    aws_codebuild_source_credential.codeconnection,
+    aws_iam_role_policy.codeconnection_required
+  ]
   project_name = aws_codebuild_project.this.name
   build_type   = "BUILD"
   filter_group {
@@ -162,6 +194,32 @@ resource "aws_vpc_security_group_ingress_rule" "codebuild" {
   ip_protocol = "tcp"
   to_port     = 443
   description = "Allow HTTPS traffic from ALL"
+}
+
+resource "aws_security_group_rule" "ingress_with_cidr_blocks" {
+  count = local.create_security_group ? length(var.ingress_with_cidr_blocks) : 0
+
+  security_group_id = aws_security_group.codebuild[0].id
+  type              = "ingress"
+
+  from_port   = var.ingress_with_cidr_blocks[count.index].from_port
+  to_port     = var.ingress_with_cidr_blocks[count.index].to_port
+  protocol    = var.ingress_with_cidr_blocks[count.index].protocol
+  cidr_blocks = var.ingress_with_cidr_blocks[count.index].cidr_blocks
+  description = var.ingress_with_cidr_blocks[count.index].description
+}
+
+resource "aws_security_group_rule" "ingress_with_source_security_group_id" {
+  count = local.create_security_group ? length(var.ingress_with_source_security_group_id) : 0
+
+  security_group_id = aws_security_group.codebuild[0].id
+  type              = "ingress"
+
+  from_port                = var.ingress_with_source_security_group_id[count.index].from_port
+  to_port                  = var.ingress_with_source_security_group_id[count.index].to_port
+  protocol                 = var.ingress_with_source_security_group_id[count.index].protocol
+  source_security_group_id = var.ingress_with_source_security_group_id[count.index].source_security_group_id
+  description              = var.ingress_with_source_security_group_id[count.index].description
 }
 
 ################################################################################

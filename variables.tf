@@ -9,11 +9,14 @@ variable "name" {
     error_message = "The name variable cannot be an empty string."
   }
 }
-# TODO check how this is done elsewhere.
 
 variable "source_location" {
   type        = string
-  description = "Your source code repo location, for example https://github.com/my/repo.git, or `CODEBUILD_DEFAULT_WEBHOOK_SOURCE_LOCATION` for org-level webhooks"
+  description = "Your source code repo location, for example https://github.com/my/repo.git, or `CODEBUILD_DEFAULT_WEBHOOK_SOURCE_LOCATION` for org-level webhooks."
+  validation {
+    condition     = can(regex("^(?:https://github\\.com/[^/]+/[^/]+\\.git|CODEBUILD_DEFAULT_WEBHOOK_SOURCE_LOCATION)$", var.source_location))
+    error_message = "The source_location must be a valid GitHub repository URL in the format: https://github.com/owner/repo.git, or the string `CODEBUILD_DEFAULT_WEBHOOK_SOURCE_LOCATION`."
+  }
 }
 
 # -----------------------------------------------------
@@ -24,13 +27,17 @@ variable "source_location" {
 variable "source_organization" {
   type        = string
   default     = null
-  description = "Your Github organization name for organization-level webhook creation"
+  description = "Your Github organization name for organization-level webhook creation."
 }
 
 variable "build_timeout" {
   type        = number
   default     = 5
   description = "Number of minutes, from 5 to 2160 (36 hours), for AWS CodeBuild to wait until timing out any related build that does not get marked as completed."
+  validation {
+    condition     = var.build_timeout >= 5 && var.build_timeout <= 2160
+    error_message = "The build_timeout must be between 5 and 2160 minutes (36 hours)."
+  }
 }
 
 variable "description" {
@@ -58,6 +65,21 @@ variable "environment_image" {
   description = "Docker image to use for this build project. Valid values include Docker images provided by CodeBuild (e.g `aws/codebuild/amazonlinux2-x86_64-standard:4.0`), Docker Hub images (e.g., `hashicorp/terraform:latest`) and full Docker repository URIs such as those for ECR (e.g., `137112412989.dkr.ecr.us-west-2.amazonaws.com/amazonlinux:latest`). If not specified and not using ECR, then a default CodeBuild image is used, or if using ECR then an ECR image with a `latest` tag is used."
 }
 
+variable "source_auth" {
+  description = "Override the default CodeBuild source credential for this project. This allows using project-specific authentication instead of the account/region baseline credential. See docs/GITHUB-AUTH-SETUP.md for usage details."
+  type = object({
+    type     = string
+    resource = string
+  })
+  default = null
+}
+
+variable "tags" {
+  description = "A map of tags to assign to the resources created by this module. If configured with a provider `default_tags` configuration block present, tags with matching keys will overwrite those defined at the provider-level."
+  type        = map(string)
+  default     = {}
+}
+
 # logs
 variable "create_cloudwatch_log_group" {
   description = "Determines whether a log group is created by this module. If not, AWS will automatically create one if logging is enabled"
@@ -81,6 +103,12 @@ variable "cloudwatch_log_group_retention_in_days" {
   description = "Number of days to retain log events"
   type        = number
   default     = 14
+  validation {
+    condition = contains([
+      0, 1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1096, 1827, 2192, 2557, 2922, 3288, 3653
+    ], var.cloudwatch_log_group_retention_in_days)
+    error_message = "The cloudwatch_log_group_retention_in_days must be one of the valid CloudWatch Logs retention values: 0 (never expire), 1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1096, 1827, 2192, 2557, 2922, 3288, or 3653 days."
+  }
 }
 
 variable "s3_logs_bucket_name" {
@@ -119,9 +147,39 @@ variable "security_group_ids" {
   default     = []
 }
 
+variable "ingress_with_cidr_blocks" {
+  description = "List of ingress rules to add to the default security group with CIDR blocks"
+  type = list(object({
+    from_port   = number
+    to_port     = number
+    protocol    = string
+    description = string
+    cidr_blocks = list(string)
+  }))
+  default = []
+}
+
+variable "ingress_with_source_security_group_id" {
+  description = "List of ingress rules to add to the default security group with source security group IDs"
+  type = list(object({
+    from_port                = number
+    to_port                  = number
+    protocol                 = string
+    description              = string
+    source_security_group_id = string
+  }))
+  default = []
+}
+
 # IAM
 variable "iam_role_name" {
   description = "Name of the IAM role to be used. If not specified then a role will be created"
+  type        = string
+  default     = null
+}
+
+variable "iam_role_assume_role_policy" {
+  description = "The IAM role assume role policy document to use. If not specified then a default is used."
   type        = string
   default     = null
 }
@@ -140,13 +198,25 @@ variable "iam_role_permissions_boundary" {
 
 # GitHub
 variable "github_personal_access_token" {
-  description = "The GitHub personal access token to use for accessing the repository. If not specified then GitHub auth must be configured separately."
+  description = "The GitHub personal access token for the region-wide CodeBuild Source Credential. See `docs/GITHUB-AUTH-SETUP.md` for more information."
+  type        = string
+  default     = null
+}
+
+variable "github_secretsmanager_secret_arn" {
+  description = "The Secret ARN containing the credentials to use for the region-wide CodeBuild Source Credential. See `docs/GITHUB-AUTH-SETUP.md` for more information."
   type        = string
   default     = null
 }
 
 variable "github_personal_access_token_ssm_parameter" {
-  description = "The GitHub personal access token to use for accessing the repository. If not specified then GitHub auth must be configured separately."
+  description = "SSM parameter containing the GitHub personal access token to use for the region-wide CodeBuild Source Credential. See `docs/GITHUB-AUTH-SETUP.md` for more information."
+  type        = string
+  default     = null
+}
+
+variable "github_codeconnection_arn" {
+  description = "ARN of an active GitHub app CodeConnection to use for the region-wide CodeBuild Source Credential. See `docs/GITHUB-AUTH-SETUP.md` for more information."
   type        = string
   default     = null
 }

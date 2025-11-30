@@ -48,3 +48,5 @@ test.auto.tfvars.json
 
 # Apple
 .DS_Store
+
+.idea

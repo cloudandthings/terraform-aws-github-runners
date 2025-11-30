@@ -2,6 +2,64 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.4.0](https://github.com/cloudandthings/terraform-aws-github-runners/compare/v3.3.1...v3.4.0) (2025-11-17)
+
+
+### Features
+
+* Add custom ingress rules for security group ([66fd3ba](https://github.com/cloudandthings/terraform-aws-github-runners/commit/66fd3bac186f7108c7e02f40f29b742cd8153ac4))
+
+## [3.3.1](https://github.com/cloudandthings/terraform-aws-github-runners/compare/v3.3.0...v3.3.1) (2025-11-17)
+
+
+### Bug Fixes
+
+* remove github-runner-label tag to avoid invalid characters ([ef726ad](https://github.com/cloudandthings/terraform-aws-github-runners/commit/ef726ad800ec847c1a86dc0a21378a29b786c997))
+
+## [3.3.0](https://github.com/cloudandthings/terraform-aws-github-runners/compare/v3.2.0...v3.3.0) (2025-11-06)
+
+
+### Features
+
+* Add default description and custom tags ([55663c9](https://github.com/cloudandthings/terraform-aws-github-runners/commit/55663c9f6c621a2e3a4de9a95b9101d66cbbcef1))
+* Use dynamic AWS partition for ARNs ([a8ac068](https://github.com/cloudandthings/terraform-aws-github-runners/commit/a8ac06830f785167f80a3ec4acfa7b916396ed51))
+
+## [3.2.0](https://github.com/cloudandthings/terraform-aws-github-runners/compare/v3.1.1...v3.2.0) (2025-10-21)
+
+
+### Features
+
+* Add comprehensive repository improvements including documentation and templates ([ca0835c](https://github.com/cloudandthings/terraform-aws-github-runners/commit/ca0835cba368f6dbaace78037e792d1a8aa404fa))
+* Add source_auth variable to override default CodeBuild credential ([fb8efdc](https://github.com/cloudandthings/terraform-aws-github-runners/commit/fb8efdcca130461f0679800d0de70e31a72c3c5a))
+* Support SecretsManager secrets ([cd74bb8](https://github.com/cloudandthings/terraform-aws-github-runners/commit/cd74bb8c01190e4f5f0c3976303f22a084f4e3b2))
+
+
+### Bug Fixes
+
+* Add period to validation error message to comply with Terraform requirements ([13403cb](https://github.com/cloudandthings/terraform-aws-github-runners/commit/13403cbf2b4f6eee23ba279b76834efba1db01f2))
+* Remove trailing whitespace from feature_request.yml to pass pre-commit checks ([5a0b160](https://github.com/cloudandthings/terraform-aws-github-runners/commit/5a0b160e5d7892f50e7815cb6dc5f17610444994))
+* Remove trailing whitespace from TROUBLESHOOTING.md to pass pre-commit checks ([c8fb9fc](https://github.com/cloudandthings/terraform-aws-github-runners/commit/c8fb9fc21ab97f9097f611e76d41481458fe9dbf))
+* Rename secretsmanager variable ([a763923](https://github.com/cloudandthings/terraform-aws-github-runners/commit/a763923fc752b38fd2250e8c9840aeb80fceb680))
+
+## [3.1.1](https://github.com/cloudandthings/terraform-aws-github-runners/compare/v3.1.0...v3.1.1) (2025-08-19)
+
+
+### Bug Fixes
+
+* **versions:** Bump aws provider version to allow v6 ([97d5f14](https://github.com/cloudandthings/terraform-aws-github-runners/commit/97d5f14117335d5ec46a94576640c1d2d879dfa1))
+
+## [3.1.0](https://github.com/cloudandthings/terraform-aws-github-runners/compare/v3.0.1...v3.1.0) (2025-07-30)
+
+
+### Features
+
+* Add support for GitHub App CodeConnection ([#64](https://github.com/cloudandthings/terraform-aws-github-runners/issues/64)) ([9772d72](https://github.com/cloudandthings/terraform-aws-github-runners/commit/9772d72961a8cda346cf253f50323245700b4a90))
+
+
+### Bug Fixes
+
+* Add condition to IAM assume role policy ([b8e2b3b](https://github.com/cloudandthings/terraform-aws-github-runners/commit/b8e2b3b9fb3ccd9ed52e14bdd4b359ab7f57fca7))
+
 ## [3.0.1](https://github.com/cloudandthings/terraform-aws-github-runners/compare/v3.0.0...v3.0.1) (2025-01-06)
 
 
