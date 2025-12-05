@@ -20,45 +20,14 @@
 - [ ] ✅ Test addition or update
 - [ ] 🔒 Security improvement
 
-## Changes Made
-
-<!-- Describe what changes you made and why -->
-
--
--
--
-
 ## Testing
 
 <!-- Describe the tests you ran and/or how you verified your changes -->
-
-- [ ] Pre-commit hooks passed (`pre-commit run -a`)
-- [ ] Terraform format checked (`terraform fmt -recursive`)
-- [ ] Terraform validation passed (`terraform validate`)
-- [ ] Examples tested
-- [ ] Security scans passed (tfsec, checkov, trivy)
-
-### Test Configuration
-
 <!-- If applicable, describe your test setup -->
 
 ```hcl
 # Example configuration used for testing
 ```
-
-## Documentation
-
-- [ ] Updated README.md (or documentation auto-generated via terraform-docs)
-- [ ] Updated relevant example configurations
-- [ ] Added/updated comments in code where necessary
-- [ ] Updated CHANGELOG.md (or will be auto-generated)
-
-## Security
-
-- [ ] No secrets or credentials are committed
-- [ ] Security scanning tools passed (checkov, tfsec, trivy)
-- [ ] IAM policies follow principle of least privilege
-- [ ] Security implications have been considered and documented
 
 ## Breaking Changes
 
@@ -70,14 +39,11 @@
 
 ## Checklist
 
+- [ ] Updated README.md (or documentation auto-generated via terraform-docs)
+- [ ] Updated relevant or added new example configurations
+- [ ] Added/updated comments in code where necessary
 - [ ] My code follows the style guidelines of this project
-- [ ] I have performed a self-review of my own code
 - [ ] I have commented my code, particularly in hard-to-understand areas
-- [ ] My changes generate no new warnings
-- [ ] I have added tests that prove my fix is effective or that my feature works
-- [ ] New and existing tests pass locally with my changes
-- [ ] Any dependent changes have been merged and published
-- [ ] I have updated the documentation accordingly
 - [ ] My commit messages follow the [Conventional Commits](https://www.conventionalcommits.org/) specification
 
 ## Additional Notes
