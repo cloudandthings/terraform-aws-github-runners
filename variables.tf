@@ -27,7 +27,7 @@ variable "source_location" {
 variable "source_organization" {
   type        = string
   default     = null
-  description = "Your Github organization name for organization-level webhook creation."
+  description = "Your GitHub organization name for organization-level webhook creation."
 }
 
 variable "build_timeout" {
