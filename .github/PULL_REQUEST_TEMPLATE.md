@@ -20,6 +20,10 @@
 - [ ] ✅ Test addition or update
 - [ ] 🔒 Security improvement
 
+## Changes Made
+
+<!-- Describe what changes you made and why -->
+
 ## Testing
 
 <!-- Describe the tests you ran and/or how you verified your changes -->
