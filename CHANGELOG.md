@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.5.0](https://github.com/cloudandthings/terraform-aws-github-runners/compare/v3.4.0...v3.5.0) (2025-12-05)
+
+
+### Features
+
+* Add IAM role path variable ([c3280e5](https://github.com/cloudandthings/terraform-aws-github-runners/commit/c3280e50d71001d487ea4886c70920665cec72d1))
+* Add IAM role path variable ([f66e3da](https://github.com/cloudandthings/terraform-aws-github-runners/commit/f66e3da0a2beb258094f0fabf25ba551eb84c75d))
+
 ## [3.4.0](https://github.com/cloudandthings/terraform-aws-github-runners/compare/v3.3.1...v3.4.0) (2025-11-17)
 
 
