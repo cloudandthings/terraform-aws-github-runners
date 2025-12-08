@@ -141,7 +141,7 @@ resource "aws_codebuild_webhook" "this" {
     }
   }
   dynamic "scope_configuration" {
-    for_each = var.source_location == "CODEBUILD_DEFAULT_WEBHOOK_SOURCE_LOCATION" ? toset([1]) : toset([])
+    for_each = var.source_location == "CODEBUILD_DEFAULT_WEBHOOK_SOURCE_LOCATION" && var.source_organization != null ? toset([1]) : toset([])
     content {
       name  = var.source_organization
       scope = "GITHUB_ORGANIZATION"
