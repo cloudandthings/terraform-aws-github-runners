@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.6.0](https://github.com/cloudandthings/terraform-aws-github-runners/compare/v3.5.0...v3.6.0) (2025-12-09)
+
+
+### Features
+
+* Add support for org-level runners ([#58](https://github.com/cloudandthings/terraform-aws-github-runners/issues/58)) ([f8c498a](https://github.com/cloudandthings/terraform-aws-github-runners/commit/f8c498a28b99954f320f9bc95195700bec27c2f6))
+
 ## [3.5.0](https://github.com/cloudandthings/terraform-aws-github-runners/compare/v3.4.0...v3.5.0) (2025-12-05)
 
 
