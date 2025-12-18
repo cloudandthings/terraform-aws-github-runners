@@ -27,3 +27,8 @@ output "environment_image" {
   value       = local.environment_image
   description = "Docker image used for this CodeBuild project"
 }
+
+output "cloudwatch_log_group_name" {
+  value       = try(aws_cloudwatch_log_group.codebuild[0].name, null)
+  description = "Name of the CloudWatch log group for the CodeBuild project"
+}
