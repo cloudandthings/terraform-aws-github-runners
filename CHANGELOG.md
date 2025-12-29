@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.7.0](https://github.com/cloudandthings/terraform-aws-github-runners/compare/v3.6.0...v3.7.0) (2025-12-29)
+
+
+### Features
+
+* Add Cloudwatch group output ([#100](https://github.com/cloudandthings/terraform-aws-github-runners/issues/100)) ([5811d49](https://github.com/cloudandthings/terraform-aws-github-runners/commit/5811d49954635a31291527a83ddac5a918c20555))
+
 ## [3.6.0](https://github.com/cloudandthings/terraform-aws-github-runners/compare/v3.5.0...v3.6.0) (2025-12-09)
 
 
