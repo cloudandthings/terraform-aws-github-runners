@@ -64,6 +64,7 @@ The module creates an AWS CodeBuild Project and a webhook in a specific GitHub r
 - `environment_type`: Build environment type (default: LINUX_CONTAINER)
 - `environment_compute_type`: Compute resources (default: BUILD_GENERAL1_SMALL)
 - `environment_image`: Docker image (defaults to aws/codebuild/amazonlinux2-x86_64-standard:5.0)
+- `privileged_mode`: Enable Docker daemon inside the build container (default: false)
 - `create_ecr_repository`: Whether to create an ECR repository
 - `build_timeout`: Build timeout in minutes (default: 5)
 
