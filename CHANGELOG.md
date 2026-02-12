@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.8.0](https://github.com/cloudandthings/terraform-aws-github-runners/compare/v3.7.0...v3.8.0) (2026-02-12)
+
+
+### Features
+
+* Add privileged_mode variable to CodeBuild project configuration ([#102](https://github.com/cloudandthings/terraform-aws-github-runners/issues/102)) ([b1ea6ac](https://github.com/cloudandthings/terraform-aws-github-runners/commit/b1ea6acd4c561641f5b3ba754c57b85c4dc27dab))
+
 ## [3.7.0](https://github.com/cloudandthings/terraform-aws-github-runners/compare/v3.6.0...v3.7.0) (2025-12-29)
 
 
