@@ -187,6 +187,7 @@ resource "aws_iam_role" "this" {
   path                 = var.iam_role_path
   assume_role_policy   = local.assume_role_policy
   permissions_boundary = var.iam_role_permissions_boundary == null ? null : var.iam_role_permissions_boundary
+  tags                 = merge(var.tags, var.iam_role_tags)
 }
 
 ################################################################################

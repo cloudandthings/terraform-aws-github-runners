@@ -208,6 +208,12 @@ variable "iam_role_path" {
   default     = "/"
 }
 
+variable "iam_role_tags" {
+  description = "A map of tags to assign specifically to the IAM role. These tags will be merged with the module-level tags."
+  type        = map(string)
+  default     = {}
+}
+
 # GitHub
 variable "github_personal_access_token" {
   description = "The GitHub personal access token for the region-wide CodeBuild Source Credential. See `docs/GITHUB-AUTH-SETUP.md` for more information."
