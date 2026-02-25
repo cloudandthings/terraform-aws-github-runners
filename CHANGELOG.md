@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.9.0](https://github.com/cloudandthings/terraform-aws-github-runners/compare/v3.8.0...v3.9.0) (2026-02-25)
+
+
+### Features
+
+* 2026-02-25 Add iam role tags variable ([66b8995](https://github.com/cloudandthings/terraform-aws-github-runners/commit/66b8995c7d45c1771e9e527995e96b14cfcbf64d))
+* Add iam role tags variable ([3d2aa4e](https://github.com/cloudandthings/terraform-aws-github-runners/commit/3d2aa4e7b13c03d44dc0a98eb4437ddf0ffd4848))
+
 ## [3.8.0](https://github.com/cloudandthings/terraform-aws-github-runners/compare/v3.7.0...v3.8.0) (2026-02-12)
 
 
