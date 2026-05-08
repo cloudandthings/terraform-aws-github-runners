@@ -45,41 +45,44 @@ repos:
 
   # CODESPELL
   - repo: https://github.com/codespell-project/codespell
-    rev: v2.4.1
+    rev: v2.4.2
     hooks:
     - id: codespell
       args: ['--write-changes']
 
   # SHFMT
-  - repo: https://github.com/scop/pre-commit-shfmt
-    rev: v3.12.0-2
+  - repo: local
     hooks:
-    # Choose one of:
-    - id: shfmt # prebuilt upstream executable
+      - id: shfmt
+        name: shfmt
+        entry: shfmt -w
+        language: system
+        types: [shell]
 
   # SHELLCHECK
-  - repo: https://github.com/koalaman/shellcheck-precommit
-    rev: v0.11.0
+  - repo: local
     hooks:
-    - id: shellcheck
-      args: ["--severity=warning"]  # Optionally only show errors and warnings
+      - id: shellcheck
+        name: shellcheck
+        entry: shellcheck --severity=warning
+        language: system
+        types: [shell]
 
   # TERRAFORM
   # If running tf-docs it must be run first to avoid race condition relating to version constraints.
-  # BUG: terraform_docs hook conflicts when used more than once.
-  # Workaround with Python
+  # The terraform_docs pre-commit hook cannot be used twice in the same run (hook conflict bug),
+  # so we use a mise task to run terraform-docs on both the root module and all examples/modules.
   - repo: local
     hooks:
-    - id: Terraform docs
-      name: Terraform docs
-      entry: python examples/terraform-docs.py
-      language: system
-      types: [python]
-      always_run: true
-      pass_filenames: false
+      - id: terraform-docs
+        name: terraform-docs
+        entry: mise run terraform-docs
+        language: system
+        always_run: true
+        pass_filenames: false
 
   - repo: https://github.com/antonbabenko/pre-commit-terraform
-    rev: v1.100.0
+    rev: v1.105.0
     hooks:
       # - id: terraform_docs
       #  args:
@@ -110,7 +113,14 @@ repos:
         args: [--fix]
       - id: ruff-format
 
-  - repo: https://github.com/psf/black
-    rev: 25.1.0
+  # SECURITY
+  # Mirrors the trivy config scan in trivy-scan.yml CI workflow.
+  # Only the 'config' scan type is run here (IaC misconfig); the 'fs' vuln scan runs in CI only.
+  - repo: local
     hooks:
-      - id: black
+      - id: trivy-config
+        name: trivy config scan
+        entry: trivy config --severity HIGH,CRITICAL --exit-code 1 --config trivy.yaml .
+        language: system
+        pass_filenames: false
+        always_run: true
