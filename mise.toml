@@ -1,13 +1,22 @@
+[settings]
+lockfile = true
+
 [tools]
-awscli = 'latest'
-black = 'latest'
-jq = 'latest'
-node = 'latest'
-pre-commit = 'latest'
-python = '3.10.8'
-ruff = 'latest'
-shellcheck = 'latest'
-starship = 'latest'
-terraform = '1.5.7'
-terraform-docs = 'latest'
-tflint = 'latest'
+awscli          = "latest"
+jq              = "latest"
+node            = "latest"
+pre-commit      = "latest"
+python          = "3.13" # For pre-commit
+ruff            = "latest"
+shellcheck      = "0.11.0"
+shfmt           = "3.13.0"
+starship        = "latest"
+terraform       = "1.5.7"
+terraform-docs  = "0.21.0"
+tflint          = "0.61.0"
+trivy           = "v0.69.3"
+
+# AI tools support
+fd             = "v10.4.2"
+github-cli     = "v2.89.0"
+ripgrep        = "15.1.0"

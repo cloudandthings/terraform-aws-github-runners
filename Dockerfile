@@ -1,6 +1,6 @@
 # Use latest Ubuntu-based devcontainer by default
-ARG TAG="latest"
-FROM mcr.microsoft.com/vscode/devcontainers/base:${TAG}
+ARG IMAGE="mcr.microsoft.com/devcontainers/base:ubuntu"
+FROM ${IMAGE}
 
 # Install additional OS packages.
 RUN apt update -y && export DEBIAN_FRONTEND=noninteractive \

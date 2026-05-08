@@ -35,3 +35,7 @@ jobs:
         run: |
           echo ...running pre-commit checks...
           pre-commit run --config .pre-commit-config.yaml --all-files --show-diff-on-failure
+        env:
+          # trivy-scan.yml runs a dedicated trivy scan; skip here to avoid redundancy
+          # and GitHub API rate limits when mise downloads trivy on CI runners.
+          SKIP: trivy-config
