@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [4.0.0](https://github.com/cloudandthings/terraform-aws-github-runners/compare/v3.9.0...v4.0.0) (2026-05-13)
+
+
+### ⚠ BREAKING CHANGES
+
+* Bump terraform required_version to >= 1.5.7 and AWS provider to >= 6
+
+### Features
+
+* Add var.environment_variables ([5bb3bef](https://github.com/cloudandthings/terraform-aws-github-runners/commit/5bb3befe590edcbb4ceb2ca9b6b2dcf975ea567c))
+* Bump terraform required_version to &gt;= 1.5.7 and AWS provider to &gt;= 6 ([c80bb67](https://github.com/cloudandthings/terraform-aws-github-runners/commit/c80bb67d805df02c265fe6a763648f9a4a201464))
+
+
+### Bug Fixes
+
+* Update name to region ([#109](https://github.com/cloudandthings/terraform-aws-github-runners/issues/109)) ([f77cbad](https://github.com/cloudandthings/terraform-aws-github-runners/commit/f77cbad8ed56e33b7c407017e65ee6963a44bac0))
+
 ## [3.9.0](https://github.com/cloudandthings/terraform-aws-github-runners/compare/v3.8.0...v3.9.0) (2026-02-25)
 
 
