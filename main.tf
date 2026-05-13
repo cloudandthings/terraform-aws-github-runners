@@ -45,6 +45,15 @@ resource "aws_codebuild_project" "this" {
       : "SERVICE_ROLE"
     )
     privileged_mode = var.privileged_mode
+
+    dynamic "environment_variable" {
+      for_each = var.environment_variables
+      content {
+        name  = environment_variable.value.name
+        value = environment_variable.value.value
+        type  = environment_variable.value.type
+      }
+    }
   }
 
   logs_config {

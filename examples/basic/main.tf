@@ -17,6 +17,14 @@ module "github_runner" {
   # testing purposes only
   github_personal_access_token = "example"
 
+  environment_variables = [
+    {
+      name  = "RUNNER_LOG_LEVEL"
+      value = "debug"
+      type  = "PLAINTEXT"
+    }
+  ]
+
   vpc_id     = "vpc-0ffaabbcc1122"
   subnet_ids = ["subnet-0123", "subnet-0456"]
 }

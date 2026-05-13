@@ -423,36 +423,36 @@ checksum = "sha256:0cf9f41ba11b46f1fb6251952df98bf9c37ec294f26be7091b4909850659b
 url = "https://releases.hashicorp.com/terraform/1.5.7/terraform_1.5.7_windows_amd64.zip"
 
 [[tools.terraform-docs]]
-version = "0.21.0"
+version = "0.24.0"
 backend = "aqua:terraform-docs/terraform-docs"
 
 [tools.terraform-docs."platforms.linux-arm64"]
-checksum = "sha256:35b2e6846268841484e6eea7d00d7dfe2c94b4725e52cfe19aa6c26a86c32edc"
-url = "https://github.com/terraform-docs/terraform-docs/releases/download/v0.21.0/terraform-docs-v0.21.0-linux-arm64.tar.gz"
+checksum = "sha256:d12bd7b73c1fc9c64efc79f8157dd713dabd559f1ecf3cfc0f42e32279a155fd"
+url = "https://github.com/terraform-docs/terraform-docs/releases/download/v0.24.0/terraform-docs-v0.24.0-linux-arm64.tar.gz"
 
 [tools.terraform-docs."platforms.linux-arm64-musl"]
-checksum = "sha256:35b2e6846268841484e6eea7d00d7dfe2c94b4725e52cfe19aa6c26a86c32edc"
-url = "https://github.com/terraform-docs/terraform-docs/releases/download/v0.21.0/terraform-docs-v0.21.0-linux-arm64.tar.gz"
+checksum = "sha256:d12bd7b73c1fc9c64efc79f8157dd713dabd559f1ecf3cfc0f42e32279a155fd"
+url = "https://github.com/terraform-docs/terraform-docs/releases/download/v0.24.0/terraform-docs-v0.24.0-linux-arm64.tar.gz"
 
 [tools.terraform-docs."platforms.linux-x64"]
-checksum = "sha256:2fdd81b8d21ff1498cd559af0dcc5d155835f84600db06d3923e217124fc735a"
-url = "https://github.com/terraform-docs/terraform-docs/releases/download/v0.21.0/terraform-docs-v0.21.0-linux-amd64.tar.gz"
+checksum = "sha256:9005daf969de0b50134493a2c00078b49f5f5b39d021cda7c89bf4d4f3d776d3"
+url = "https://github.com/terraform-docs/terraform-docs/releases/download/v0.24.0/terraform-docs-v0.24.0-linux-amd64.tar.gz"
 
 [tools.terraform-docs."platforms.linux-x64-musl"]
-checksum = "sha256:2fdd81b8d21ff1498cd559af0dcc5d155835f84600db06d3923e217124fc735a"
-url = "https://github.com/terraform-docs/terraform-docs/releases/download/v0.21.0/terraform-docs-v0.21.0-linux-amd64.tar.gz"
+checksum = "sha256:9005daf969de0b50134493a2c00078b49f5f5b39d021cda7c89bf4d4f3d776d3"
+url = "https://github.com/terraform-docs/terraform-docs/releases/download/v0.24.0/terraform-docs-v0.24.0-linux-amd64.tar.gz"
 
 [tools.terraform-docs."platforms.macos-arm64"]
-checksum = "sha256:92d6988d8c59c25aa1724068f4bc2d0f01a9d4706077e258e946e944ad7eee03"
-url = "https://github.com/terraform-docs/terraform-docs/releases/download/v0.21.0/terraform-docs-v0.21.0-darwin-arm64.tar.gz"
+checksum = "sha256:f6b114f4b032f3f9202ab6c23bfd28c3c8e68aeeb8a8f12fc118bf2073081d71"
+url = "https://github.com/terraform-docs/terraform-docs/releases/download/v0.24.0/terraform-docs-v0.24.0-darwin-arm64.tar.gz"
 
 [tools.terraform-docs."platforms.macos-x64"]
-checksum = "sha256:ddf4b53925d857ae81210ebeda32b429a17385d6e4561ab1972067a9ccb36873"
-url = "https://github.com/terraform-docs/terraform-docs/releases/download/v0.21.0/terraform-docs-v0.21.0-darwin-amd64.tar.gz"
+checksum = "sha256:3c3f7f18f908457fd1209cbe341418f7f6bae78c08126cfbe8de0d1b06aa8781"
+url = "https://github.com/terraform-docs/terraform-docs/releases/download/v0.24.0/terraform-docs-v0.24.0-darwin-amd64.tar.gz"
 
 [tools.terraform-docs."platforms.windows-x64"]
-checksum = "sha256:9f45957d50656ec91c6172d73a6c9e6a22df2ccc7ca880cf288d19d6f5e349db"
-url = "https://github.com/terraform-docs/terraform-docs/releases/download/v0.21.0/terraform-docs-v0.21.0-windows-amd64.zip"
+checksum = "sha256:afc02cbdf63726d3e5fb26a077ca1f24acd4820d7e44c21b03a3e030f9266490"
+url = "https://github.com/terraform-docs/terraform-docs/releases/download/v0.24.0/terraform-docs-v0.24.0-windows-amd64.zip"
 
 [[tools.tflint]]
 version = "0.61.0"
