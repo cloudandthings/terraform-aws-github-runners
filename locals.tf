@@ -1,6 +1,6 @@
 locals {
   aws_account_id = data.aws_caller_identity.current.account_id
-  aws_region     = data.aws_region.current.name
+  aws_region     = data.aws_region.current.region
   aws_partition  = data.aws_partition.current.partition
 
   github_runner_label = "codebuild-${var.name}-$${{ github.run_id }}-$${{ github.run_attempt }}"

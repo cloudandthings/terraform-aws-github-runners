@@ -112,7 +112,7 @@ No inputs.
 ### Modules
 
 | Name | Source | Version |
-|------|--------|---------|
+| ---- | ------ | ------- |
 | <a name="module_github_runner"></a> [github\_runner](#module\_github\_runner) | ../../ | n/a |
 | <a name="module_github_runner_with_packer"></a> [github\_runner\_with\_packer](#module\_github\_runner\_with\_packer) | ../../ | n/a |
 
@@ -125,14 +125,14 @@ No outputs.
 ### Providers
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 6.0 |
 
 ----
 ### Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5.7 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 6.0 |
 | <a name="requirement_http"></a> [http](#requirement\_http) | ~> 3.0 |
@@ -141,7 +141,7 @@ No outputs.
 ### Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [aws_codebuild_source_credential.github](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codebuild_source_credential) | resource |
 | [aws_security_group.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
 
