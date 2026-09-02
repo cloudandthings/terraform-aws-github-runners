@@ -143,12 +143,23 @@ resource "aws_codebuild_webhook" "this" {
   ]
   project_name = aws_codebuild_project.this.name
   build_type   = "BUILD"
-  filter_group {
-    filter {
-      type    = "EVENT"
-      pattern = "WORKFLOW_JOB_QUEUED"
+
+  dynamic "filter_group" {
+    for_each = var.webhook_filter_groups
+
+    content {
+      dynamic "filter" {
+        for_each = filter_group.value
+
+        content {
+          type                    = filter.value.type
+          pattern                 = filter.value.pattern
+          exclude_matched_pattern = filter.value.exclude_matched_pattern
+        }
+      }
     }
   }
+
   dynamic "scope_configuration" {
     for_each = var.source_location == "CODEBUILD_DEFAULT_WEBHOOK_SOURCE_LOCATION" && var.source_organization != null ? toset([1]) : toset([])
     content {
