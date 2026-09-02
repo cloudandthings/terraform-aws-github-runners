@@ -104,6 +104,30 @@ variable "tags" {
   default     = {}
 }
 
+variable "webhook_filter_groups" {
+  description = <<-EOT
+    CodeBuild webhook filter groups.
+
+    Filters within a group are combined with AND logic.
+    Multiple filter groups are combined with OR logic.
+  EOT
+
+  type = list(list(object({
+    type                    = string
+    pattern                 = string
+    exclude_matched_pattern = optional(bool, false)
+  })))
+
+  default = [
+    [
+      {
+        type    = "EVENT"
+        pattern = "WORKFLOW_JOB_QUEUED"
+      }
+    ]
+  ]
+}
+
 # logs
 variable "create_cloudwatch_log_group" {
   description = "Determines whether a log group is created by this module. If not, AWS will automatically create one if logging is enabled"

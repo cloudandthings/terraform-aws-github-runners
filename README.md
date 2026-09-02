@@ -347,6 +347,7 @@ module "github_runner_with_packer" {
 | <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | The list of Subnet IDs for AWS CodeBuild to launch ephemeral EC2 instances in. | `list(string)` | `[]` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | A map of tags to assign to the resources created by this module. If configured with a provider `default_tags` configuration block present, tags with matching keys will overwrite those defined at the provider-level. | `map(string)` | `{}` | no |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | The VPC ID for AWS CodeBuild to launch ephemeral instances in. | `string` | `null` | no |
+| <a name="input_webhook_filter_groups"></a> [webhook\_filter\_groups](#input\_webhook\_filter\_groups) | CodeBuild webhook filter groups.<br/><br/>Filters within a group are combined with AND logic.<br/>Multiple filter groups are combined with OR logic. | <pre>list(list(object({<br/>    type                    = string<br/>    pattern                 = string<br/>    exclude_matched_pattern = optional(bool, false)<br/>  })))</pre> | <pre>[<br/>  [<br/>    {<br/>      "pattern": "WORKFLOW_JOB_QUEUED",<br/>      "type": "EVENT"<br/>    }<br/>  ]<br/>]</pre> | no |
 
 ----
 ### Modules
