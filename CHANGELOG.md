@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [4.1.0](https://github.com/cloudandthings/terraform-aws-github-runners/compare/v4.0.0...v4.1.0) (2026-09-07)
+
+
+### Features
+
+* add var to allow specifying webhook filter groups ([08cbd3b](https://github.com/cloudandthings/terraform-aws-github-runners/commit/08cbd3bf045ec7019dfd7e96cd2ff53572e7bab2))
+
 ## [4.0.0](https://github.com/cloudandthings/terraform-aws-github-runners/compare/v3.9.0...v4.0.0) (2026-05-13)
 
 
