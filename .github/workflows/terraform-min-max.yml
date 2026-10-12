@@ -33,7 +33,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
-      - uses: jdx/mise-action@v4.3.0
+      - uses: jdx/mise-action@v5.1.1
 
       - name: Get Terraform min/max versions
         id: minMax
